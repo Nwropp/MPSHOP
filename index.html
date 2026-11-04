@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Genshin Farm - จองคิวฟาร์มเกม</title>
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<style>
+:root{--bg:#f8fafc;--card:#fff;--line:#e2e8f0;--tx:#0f172a;--mut:#64748b;--ac:#0ea5e9;--ac2:#0284c7;--soft:#e0f2fe;--inp:#f1f5f9;--ok:#059669;--warn:#b45309;--warnbg:#fef3c7;--dk:#0f172a}
+@media(prefers-color-scheme:dark){:root{--bg:#0b1220;--card:#111a2e;--line:#22304a;--tx:#e8eefc;--mut:#94a3b8;--ac:#38bdf8;--ac2:#7dd3fc;--soft:#0c2a40;--inp:#0b1220;--ok:#34d399;--warn:#fbbf24;--warnbg:#3a2a08;--dk:#020617}}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;font-family:'Prompt',system-ui,sans-serif;background:var(--bg);color:var(--tx);font-size:14px}
+a{color:var(--ac2)}.wrap{max-width:1100px;margin:0 auto;padding:0 16px}
+nav{background:var(--card);border-bottom:1px solid var(--line)}nav .wrap{height:60px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.logo{font-weight:700;font-size:18px;display:flex;align-items:center;gap:8px}.logo i{width:30px;height:30px;background:var(--ac);color:#fff;border-radius:8px;display:grid;place-items:center;font-style:normal}.logo b{color:var(--ac)}
+.pill{background:var(--soft);color:var(--ac2);padding:6px 12px;border-radius:99px;font-size:12px;font-weight:500}
+.hero{text-align:center;padding:34px 16px;background:linear-gradient(var(--soft),var(--bg));border-bottom:1px solid var(--line)}.hero h1{font-size:28px;margin:10px 0 6px}.hero p{color:var(--mut);margin:0}
+.grid{display:grid;gap:24px;grid-template-columns:2fr 1fr;padding:28px 0}@media(max-width:860px){.grid{grid-template-columns:1fr}}
+h2{font-size:18px;margin:0 0 14px;display:flex;align-items:center;gap:8px}h2:before{content:"";width:7px;height:22px;background:var(--ac);border-radius:9px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:14px}
+.svc{display:flex;gap:12px;cursor:pointer}.svc:hover{border-color:var(--ac)}.svc input{margin-top:4px;width:16px;height:16px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:600px){.two{grid-template-columns:1fr}}
+.ico{width:44px;height:44px;border-radius:12px;background:var(--soft);display:grid;place-items:center;font-size:22px;flex:none}
+.mut{color:var(--mut);font-size:12px}.pr{color:var(--ac2);font-weight:700}
+input,select{width:100%;background:var(--inp);color:var(--tx);border:1px solid var(--line);border-radius:10px;padding:9px 12px;font:inherit;margin-top:4px}
+label.l{font-size:12px;font-weight:500;color:var(--mut);display:block;margin-top:10px}
+button{font:inherit;cursor:pointer;border:0;border-radius:10px;padding:9px 14px;font-weight:600;background:var(--ac);color:#fff}button:hover{background:var(--ac2)}button:disabled{opacity:.5}
+button.g{background:var(--inp);color:var(--tx);border:1px solid var(--line)}button.d{background:var(--dk);color:#fff}button.r{background:#dc2626}
+.sum{position:sticky;top:16px}.row{display:flex;justify-content:space-between;gap:8px;padding:4px 0}.tot{font-size:26px;font-weight:700;color:var(--ac2)}
+.tw{overflow-x:auto}table{width:100%;border-collapse:collapse;min-width:520px}th{background:var(--inp);color:var(--mut);text-align:left;padding:10px;font-size:12px}td{padding:10px;border-top:1px solid var(--line);vertical-align:middle}
+.st{padding:3px 10px;border-radius:99px;font-size:12px;font-weight:600;background:var(--inp);border:1px solid var(--line);white-space:nowrap}.st.doing{background:var(--warnbg);color:var(--warn)}.st.done{color:var(--ok)}
+tr.me td{background:var(--soft)}
+#toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--dk);color:#fff;padding:10px 18px;border-radius:12px;opacity:0;pointer-events:none;transition:.25s;z-index:99;max-width:90vw}#toast.on{opacity:1}
+.top{background:var(--dk);color:#fff;padding:14px 0}.top .wrap{display:flex;justify-content:space-between;align-items:center}
+.warn{background:var(--warnbg);color:var(--warn);padding:10px 14px;border-radius:10px;margin-bottom:14px}
+.modal{position:fixed;inset:0;background:rgba(2,6,23,.6);display:grid;place-items:center;padding:16px;z-index:50}.modal .card{width:100%;max-width:380px;margin:0}
+.tabs{display:flex;gap:6px;margin-bottom:8px}.tabs button{flex:1}
+footer{text-align:center;padding:24px;color:var(--mut);font-size:12px}.hide{display:none!important}
+</style>
+</head>
+<body>
+<!-- ตั้งค่า: แก้สองค่านี้ในสคริปต์ด้านล่าง (SB_URL, SB_KEY) -->
+<div id="front">
+<nav><div class="wrap"><div class="logo"><i>G</i>GENSHIN<b>FARM</b></div>
+<div><span id="who" class="mut"></span> <button id="authbtn" class="g" onclick="openAuth()">เข้าสู่ระบบ / สมัครสมาชิก</button></div></div></nav>
+<header class="hero"><span class="pill">บริการรับฟาร์ม Genshin Impact</span><h1>คำนวณราคาและจองคิวฟาร์มได้อย่างรวดเร็ว</h1><p>เลือกบริการ คำนวณราคาตามจริง และติดตามสถานะคิว</p></header>
+<main class="wrap">
+<div class="grid">
+<section id="services"><h2>เลือกบริการที่ต้องการ</h2>
+<div class="card"><div style="display:flex;gap:12px;align-items:center"><div class="ico">💎</div><div><b style="font-size:16px">ฟาร์ม Primogems</b><div class="mut" id="gemrate"></div></div></div>
+<label class="l">จำนวน Primogems ที่ต้องการ</label><input type="number" id="gem" value="1000" min="0" step="500" oninput="calc()"></div>
+<div id="svclist" class="two"></div>
+<h2 style="margin-top:22px">ข้อมูลติดต่อลูกค้า</h2>
+<div class="card"><div class="two">
+<div><label class="l" style="margin-top:0">ชื่อที่ใช้เรียก</label><input id="cname" maxlength="40"></div>
+<div><label class="l" style="margin-top:0">ช่องทางติดต่อ</label><select id="cch"><option>Discord</option><option>Facebook</option><option>LINE</option><option>อื่นๆ</option></select></div></div>
+<label class="l">ไอดี / ลิงก์ติดต่อ</label><input id="cid" maxlength="100" placeholder="เช่น kitti#1234">
+<label class="l">UID เกม และหมายเหตุ (ถ้ามี)</label><input id="cnote" maxlength="200"></div>
+</section>
+<aside><div class="card sum"><h3 style="margin:0 0 12px">สรุปรายการจอง</h3>
+<div id="lines" style="border-bottom:1px solid var(--line);padding-bottom:10px;margin-bottom:12px"></div>
+<div style="display:flex;gap:8px"><input id="promo" placeholder="โค้ดส่วนลด" style="text-transform:uppercase;margin:0"><button class="d" onclick="applyPromo()">ใช้โค้ด</button></div>
+<div class="row" style="margin-top:10px"><span class="mut">ส่วนลด (โดยประมาณ)</span><span id="dsc" style="color:var(--ok)">-0 ฿</span></div>
+<div class="row" style="align-items:baseline;margin-bottom:14px"><b>ราคารวม</b><span class="tot" id="total">0 ฿</span></div>
+<button id="bk" style="width:100%;padding:12px" onclick="book()">ยืนยันการจองคิว</button></div></aside>
+</div>
+<section id="queue" class="card"><h2>ตารางคิวปัจจุบัน</h2>
+<div class="tw"><table><thead><tr><th>คิวที่</th><th>ชื่อผู้จอง</th><th>รายการ</th><th>สถานะ</th></tr></thead><tbody id="pq"></tbody></table></div></section>
+</main>
+<footer><a href="#admin">หลังบ้าน</a></footer>
+</div>
+
+<div id="back" class="hide">
+<div class="top"><div class="wrap"><div><b>ADMIN</b> &nbsp; ระบบจัดการร้านฟาร์ม Genshin</div><a href="#services" style="color:#fff;font-size:12px">← กลับหน้าร้าน</a></div></div>
+<main class="wrap" style="padding-top:24px">
+<div id="deny" class="warn hide">หน้านี้สำหรับแอดมินเท่านั้น กรุณาเข้าสู่ระบบด้วยบัญชีแอดมินจากหน้าร้าน</div>
+<div id="adm" class="hide">
+<section class="card"><h2>รายการคิวทั้งหมด</h2><div class="tw"><table><thead><tr><th>คิว</th><th>ลูกค้า / ช่องทางติดต่อ</th><th>รายการ</th><th>ราคา</th><th>สถานะ</th><th></th></tr></thead><tbody id="aq"></tbody></table></div></section>
+<section class="card"><h2>ราคาและบริการ</h2><div class="two">
+<div><label class="l" style="margin-top:0">ราคาต่อ 1,000 Primogems (บาท)</label><input type="number" id="gp" min="0">
+<label class="l">เพิ่มโค้ดส่วนลด (โค้ด และจำนวนบาท)</label><div style="display:flex;gap:8px"><input id="pc" placeholder="NEW10" style="text-transform:uppercase"><input id="pa" type="number" placeholder="50"></div>
+<div id="pl" style="margin-top:8px"></div><button style="margin-top:10px" onclick="savePrice()">บันทึกราคาและโค้ด</button></div>
+<div><b>บริการเสริม</b><div id="sl"></div><label class="l">เพิ่มบริการใหม่</label>
+<div style="display:flex;gap:8px"><input id="ni" placeholder="🎯" style="width:64px;flex:none"><input id="nn" placeholder="ชื่อบริการ"></div>
+<input id="nd" placeholder="รายละเอียดสั้นๆ"><input id="np" type="number" placeholder="ราคา (บาท)"><button class="d" style="margin-top:10px" onclick="addSvc()">เพิ่มบริการ</button></div>
+</div></section></div>
+</main></div>
+
+<div id="auth" class="modal hide" onclick="if(event.target===this)closeAuth()"><div class="card">
+<div class="tabs"><button id="t-in" onclick="tab('in')">เข้าสู่ระบบ</button><button id="t-up" class="g" onclick="tab('up')">สมัครสมาชิก</button></div>
+<div id="f-name" class="hide"><label class="l">ชื่อที่ใช้เรียก</label><input id="a-name" maxlength="40"></div>
+<label class="l">อีเมล</label><input id="a-email" type="email" autocomplete="email">
+<label class="l">รหัสผ่าน (อย่างน้อย 6 ตัว)</label><input id="a-pass" type="password" autocomplete="current-password">
+<button id="a-go" style="width:100%;margin-top:14px" onclick="doAuth()">เข้าสู่ระบบ</button>
+<button class="g" style="width:100%;margin-top:8px" onclick="closeAuth()">ปิด</button></div></div>
+<div id="toast"></div>
+
+<script>
+const SB_URL='https://jhntnqqnurljeugujitu.supabase.co', SB_KEY='sb_publishable_mD8V-zQ0CSDZmn9A9NdlDw_8KoYKSBi';
+const sb=supabase.createClient(SB_URL,SB_KEY);
+const DEF={gemPrice:80,promos:{},services:[]};
+const ST={pending:'⏳ รอคิว',doing:'🟡 กำลังดำเนินการ',done:'🟢 เสร็จสิ้น'};
+let cfg=DEF,queue=[],orders=[],me=null,prof=null,sel=new Set(),discCode='',mode='in';
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt=n=>Number(n).toLocaleString()+' ฿';
+const isAdmin=()=>!!(prof&&prof.is_admin);
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('on'),3200)}
+
+/* ---------- เส้นทาง ---------- */
+function route(){const a=location.hash==='#admin';$('front').classList.toggle('hide',a);$('back').classList.toggle('hide',!a);if(a)renderAdmin()}
+addEventListener('hashchange',route);
+
+/* ---------- สมาชิก ---------- */
+function openAuth(){if(me){sb.auth.signOut();return}$('auth').classList.remove('hide')}
+function closeAuth(){$('auth').classList.add('hide')}
+function tab(m){mode=m;$('t-in').className=m==='in'?'':'g';$('t-up').className=m==='up'?'':'g';$('f-name').classList.toggle('hide',m!=='up');$('a-go').textContent=m==='in'?'เข้าสู่ระบบ':'สมัครสมาชิก'}
+async function doAuth(){
+  const email=$('a-email').value.replace(/[\s\u200B-\u200F\u202A-\u202E\u2060\uFEFF]/g,'').toLowerCase(),password=$('a-pass').value;
+  if(!/^[^@]+@[^@]+\.[^@]+$/.test(email))return toast('รูปแบบอีเมลไม่ถูกต้อง');
+  if(password.length<6)return toast('รหัสผ่านต้องมีอย่างน้อย 6 ตัว');
+  $('a-go').disabled=true;
+  const r=mode==='in'?await sb.auth.signInWithPassword({email,password}):await sb.auth.signUp({email,password,options:{data:{name:$('a-name').value.trim()}}});
+  $('a-go').disabled=false;
+  if(r.error)return toast(r.error.message);
+  if(mode==='up'&&!r.data.session){
+    const l=await sb.auth.signInWithPassword({email,password});
+    if(l.error)return toast('สมัครแล้ว แต่เข้าสู่ระบบไม่ได้: '+l.error.message);
+  }
+  closeAuth();toast('ยินดีต้อนรับ');
+}
+async function setUser(u){
+  me=u||null;prof=null;
+  if(me){const{data}=await sb.from('profiles').select('*').eq('id',me.id).maybeSingle();prof=data}
+  $('authbtn').textContent=me?'ออกจากระบบ':'เข้าสู่ระบบ / สมัครสมาชิก';
+  $('who').textContent=me?(prof&&prof.name||me.email):'';
+  if(me&&prof&&prof.name&&!$('cname').value)$('cname').value=prof.name;
+  loadQueue();loadOrders();route();
+}
+sb.auth.onAuthStateChange((_e,s)=>setTimeout(()=>setUser(s&&s.user),0));
+
+/* ---------- หน้าบ้าน ---------- */
+async function loadCfg(){const{data}=await sb.from('settings').select('config').eq('id',1).maybeSingle();if(data){const c=data.config;cfg={...DEF,...c,promos:c.promos||{},services:c.services||[]}}renderServices();renderAdmin()}
+function renderServices(){
+  $('gemrate').textContent='อัตราค่าบริการ: '+cfg.gemPrice+' บาท ต่อ 1,000 Primogems';
+  $('svclist').innerHTML=cfg.services.map(s=>`<label class="card svc"><input type="checkbox" ${sel.has(s.id)?'checked':''} onchange="tog('${esc(s.id)}',this.checked)"><div><b style="font-size:15px">${esc(s.icon)} ${esc(s.name)}</b><div class="mut" style="margin:4px 0 6px">${esc(s.desc)}</div><span class="pr">${fmt(s.price)}</span></div></label>`).join('');
+  calc();
+}
+function tog(id,on){on?sel.add(id):sel.delete(id);calc()}
+function calc(){
+  const g=Math.max(0,parseInt($('gem').value)||0),gp=Math.ceil(g/1000)*cfg.gemPrice;
+  let h=g?`<div class="row"><span>Primogems (${g.toLocaleString()})</span><b>${fmt(gp)}</b></div>`:'',sub=gp;
+  cfg.services.forEach(s=>{if(sel.has(s.id)){sub+=s.price;h+=`<div class="row"><span>${esc(s.name)}</span><b>${fmt(s.price)}</b></div>`}});
+  $('lines').innerHTML=sub?h:'<div class="mut">ยังไม่ได้เลือกรายการ</div>';
+  const d=Math.min(cfg.promos[discCode]||0,sub);
+  $('dsc').textContent='-'+fmt(d);$('total').textContent=fmt(Math.max(0,sub-d));
+  return{g,sub};
+}
+function applyPromo(){const c=$('promo').value.trim().toUpperCase();if(cfg.promos[c]){discCode=c;toast('ใช้โค้ดส่วนลดแล้ว')}else{discCode='';toast('โค้ดส่วนลดไม่ถูกต้อง')}calc()}
+async function loadQueue(){
+  const{data}=await sb.from('public_queue').select('*').order('no');queue=data||[];
+  $('pq').innerHTML=queue.length?queue.map(q=>`<tr class="${q.mine?'me':''}"><td><b>#${String(q.no).padStart(3,'0')}</b></td><td>${esc(q.name)}${q.mine?' <span class="mut">(คุณ)</span>':''}</td><td>${esc(q.items)}</td><td><span class="st ${esc(q.status)}">${ST[q.status]||''}</span></td></tr>`).join(''):'<tr><td colspan="4" class="mut">ยังไม่มีคิว</td></tr>';
+}
+async function book(){
+  if(!me){toast('กรุณาเข้าสู่ระบบก่อนจอง');return openAuth()}
+  const{g,sub}=calc(),name=$('cname').value.trim(),cid=$('cid').value.trim();
+  if(!sub)return toast('กรุณาเลือกบริการอย่างน้อย 1 รายการ');
+  if(!name||!cid)return toast('กรุณากรอกชื่อและช่องทางติดต่อ');
+  $('bk').disabled=true;
+  const{data,error}=await sb.rpc('place_order',{p_name:name,p_channel:$('cch').value,p_contact:cid,p_note:$('cnote').value.trim(),p_gems:g,p_services:[...sel],p_promo:discCode});
+  $('bk').disabled=false;
+  if(error)return toast('จองไม่สำเร็จ: '+error.message);
+  toast('จองคิว #'+String(data).padStart(3,'0')+' สำเร็จ แอดมินจะติดต่อกลับ');
+  sel.clear();$('gem').value=1000;discCode='';$('promo').value='';renderServices();loadQueue();$('queue').scrollIntoView();
+}
+
+/* ---------- หลังบ้าน ---------- */
+async function loadOrders(){if(!isAdmin())return;const{data}=await sb.from('orders').select('*').order('created_at',{ascending:false});orders=data||[];renderAdmin()}
+function renderAdmin(){
+  $('deny').classList.toggle('hide',isAdmin());$('adm').classList.toggle('hide',!isAdmin());
+  if(!isAdmin())return;
+  $('aq').innerHTML=orders.length?orders.map(o=>`<tr><td><b>#${String(o.no).padStart(3,'0')}</b></td><td><b>${esc(o.name)}</b><div class="mut">${esc(o.channel)}: ${esc(o.contact)}</div>${o.note?`<div class="mut">${esc(o.note)}</div>`:''}</td><td>${esc(o.items)}</td><td><b>${fmt(o.total)}</b></td><td><select style="width:auto;margin:0" onchange="setSt('${o.id}',this.value)">${Object.keys(ST).map(k=>`<option value="${k}" ${o.status===k?'selected':''}>${ST[k]}</option>`).join('')}</select></td><td><button class="g" onclick="delQ(this,'${o.id}')">ลบ</button></td></tr>`).join(''):'<tr><td colspan="6" class="mut">ยังไม่มีคิว</td></tr>';
+  if(document.activeElement.id!=='gp')$('gp').value=cfg.gemPrice;
+  $('pl').innerHTML=Object.entries(cfg.promos).map(([c,v])=>`<span class="pill">${esc(c)} −${v}฿ <a href="#admin" onclick="delPromo('${esc(c)}');return false">✕</a></span> `).join('')||'<span class="mut">ยังไม่มีโค้ด</span>';
+  $('sl').innerHTML=cfg.services.map(s=>`<div class="row" style="align-items:center;border-bottom:1px solid var(--line)"><span>${esc(s.icon)} ${esc(s.name)}</span><span style="display:flex;gap:6px"><input type="number" value="${s.price}" style="width:80px;margin:0" onchange="setSvcPrice('${esc(s.id)}',this.value)"><button class="g" onclick="delSvc('${esc(s.id)}')">✕</button></span></div>`).join('')||'<div class="mut">ยังไม่มีบริการเสริม</div>';
+}
+async function setSt(id,v){const{error}=await sb.from('orders').update({status:v}).eq('id',id);toast(error?error.message:'อัปเดตสถานะแล้ว');loadQueue()}
+async function delQ(b,id){
+  if(!b.dataset.s){b.dataset.s=1;b.textContent='แน่ใจ?';b.className='r';return}
+  const{error}=await sb.from('orders').delete().eq('id',id);toast(error?error.message:'ลบคิวแล้ว');loadOrders();loadQueue();
+}
+async function saveCfg(msg){const{error}=await sb.from('settings').upsert({id:1,config:cfg});toast(error?error.message:msg);renderServices();renderAdmin()}
+function savePrice(){
+  const p=parseInt($('gp').value);if(!(p>=0))return toast('ราคาไม่ถูกต้อง');
+  cfg={...cfg,gemPrice:p,promos:{...cfg.promos}};
+  const c=$('pc').value.trim().toUpperCase(),a=parseInt($('pa').value);
+  if(c&&a>0){cfg.promos[c]=a;$('pc').value='';$('pa').value=''}
+  saveCfg('บันทึกราคาและโค้ดแล้ว');
+}
+function delPromo(c){cfg={...cfg,promos:{...cfg.promos}};delete cfg.promos[c];saveCfg('ลบโค้ดแล้ว')}
+function setSvcPrice(id,v){cfg={...cfg,services:cfg.services.map(s=>s.id===id?{...s,price:Math.max(0,parseInt(v)||0)}:s)};saveCfg('บันทึกราคาแล้ว')}
+function delSvc(id){cfg={...cfg,services:cfg.services.filter(s=>s.id!==id)};sel.delete(id);saveCfg('ลบบริการแล้ว')}
+function addSvc(){
+  const n=$('nn').value.trim(),p=parseInt($('np').value);if(!n||!(p>=0))return toast('กรอกชื่อและราคาให้ครบ');
+  cfg={...cfg,services:[...cfg.services,{id:'s'+Date.now(),icon:$('ni').value.trim()||'✨',name:n,desc:$('nd').value.trim(),price:p}]};
+  ['nn','np','nd','ni'].forEach(i=>$(i).value='');saveCfg('เพิ่มบริการใหม่แล้ว');
+}
+
+/* ---------- เริ่มต้น ---------- */
+renderServices();route();loadCfg();loadQueue();
+setInterval(()=>{if(!document.hidden){loadQueue();loadOrders()}},8000);
+</script>
+</body>
+</html>
