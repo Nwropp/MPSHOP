@@ -52,7 +52,7 @@ footer{text-align:center;padding:24px;color:var(--mut);font-size:12px}.hide{disp
 <div class="grid">
 <section id="services"><h2>เลือกบริการที่ต้องการ</h2>
 <div class="card"><div style="display:flex;gap:12px;align-items:center"><div class="ico">💎</div><div><b style="font-size:16px">ฟาร์ม Primogems</b><div class="mut" id="gemrate"></div></div></div>
-<label class="l">จำนวน Primogems ที่ต้องการ</label><input type="number" id="gem" value="1000" min="0" step="500" oninput="calc()"></div>
+<label class="l">จำนวน Primogems ที่ต้องการ</label><input type="number" id="gem" value="1600" min="0" step="160" oninput="calc()"><div class="mut" id="gemhint" style="margin-top:6px"></div></div>
 <div id="svclist" class="two"></div>
 <h2 style="margin-top:22px">ข้อมูลติดต่อลูกค้า</h2>
 <div class="card"><div class="two">
@@ -91,7 +91,9 @@ footer{text-align:center;padding:24px;color:var(--mut);font-size:12px}.hide{disp
 <section id="p-cust" class="pane hide"><div class="card"><h2>จัดการลูกค้า</h2><div class="tw"><table><thead><tr><th>ชื่อ</th><th>อีเมล</th><th>ออเดอร์</th><th>ยอดรวม (ไม่นับที่ยกเลิก)</th><th>จองล่าสุด</th></tr></thead><tbody id="cl"></tbody></table></div></div></section>
 <section id="p-svc" class="pane hide"><div class="card"><h2>จัดการบริการ</h2><div class="two"><div><b>บริการเสริมที่เปิดอยู่</b><div id="sl"></div></div><div><b>เพิ่มบริการใหม่</b>
 <div style="display:flex;gap:8px"><input id="ni" placeholder="🎯" style="width:64px;flex:none"><input id="nn" placeholder="ชื่อบริการ"></div><input id="nd" placeholder="รายละเอียดสั้นๆ"><input id="np" type="number" placeholder="ราคา (บาท)"><button class="d" style="margin-top:10px" onclick="addSvc()">เพิ่มบริการ</button></div></div></div></section>
-<section id="p-price" class="pane hide"><div class="card"><h2>จัดการราคา</h2><label class="l" style="margin-top:0">ราคาต่อ 1,000 Primogems (บาท)</label><input type="number" id="gp" min="0" style="max-width:260px"><button style="margin-top:10px" onclick="savePrice()">บันทึกราคา</button><div class="mut" style="margin-top:8px">ราคาบริการเสริมแก้ได้ที่เมนู "จัดการบริการ"</div></div></section>
+<section id="p-price" class="pane hide"><div class="card"><h2>จัดการราคา</h2><div class="mut">ราคาฟาร์ม Primogems คิดเป็นรอบ ปัดขึ้นเป็นรอบเต็ม (เช่น 160 เจม ต่อ 9 บาท)</div>
+<div class="two" style="max-width:420px"><div><label class="l">จำนวนเจมต่อ 1 รอบ</label><input type="number" id="gu" min="1"></div><div><label class="l">ราคาต่อ 1 รอบ (บาท)</label><input type="number" id="gp" min="0"></div></div>
+<button style="margin-top:10px" onclick="savePrice()">บันทึกราคา</button><div class="mut" style="margin-top:8px">ราคาบริการเสริมแก้ได้ที่เมนู "จัดการบริการ"</div></div></section>
 <section id="p-promo" class="pane hide"><div class="card"><h2>จัดการโปรโมชั่น</h2><div id="pl" style="margin-bottom:10px"></div><label class="l">เพิ่มโค้ดส่วนลด (โค้ด และจำนวนบาทที่ลด)</label><div style="display:flex;gap:8px;max-width:360px"><input id="pc" placeholder="NEW10" style="text-transform:uppercase"><input id="pa" type="number" placeholder="50"></div><button style="margin-top:10px" onclick="addPromo()">เพิ่มโค้ด</button><div class="mut" style="margin-top:8px">ส่วนลดเป็นเปอร์เซ็นต์ วันหมดอายุ จำกัดสิทธิ์ และประวัติการใช้โค้ด จะทำใน Phase 5</div></div></section>
 <section id="p-rev" class="pane hide"><div class="card"><h2>จัดการรีวิว</h2><div id="rl"></div></div></section>
 <section id="p-team" class="pane hide"><div class="card"><h2>จัดการทีมงาน</h2>
@@ -123,7 +125,7 @@ footer{text-align:center;padding:24px;color:var(--mut);font-size:12px}.hide{disp
 <script>
 const SB_URL='https://jhntnqqnurljeugujitu.supabase.co', SB_KEY='sb_publishable_mD8V-zQ0CSDZmn9A9NdlDw_8KoYKSBi';
 const sb=supabase.createClient(SB_URL,SB_KEY);
-const DEF={gemPrice:80,promos:{},services:[]};
+const DEF={gemUnit:160,gemUnitPrice:9,promos:{},services:[]};
 const ST={pending:'⏳ รอคิว',confirmed:'✅ ยืนยันแล้ว',doing:'🟡 กำลังดำเนินการ',waiting:'⏸ รอดำเนินการต่อ',done:'🟢 เสร็จสิ้น',cancelled:'🔴 ยกเลิก'};
 let mine=[],myRev=new Set(),cfgReady=false,booking=false,cfg=DEF,queue=[],orders=[],me=null,prof=null,sel=new Set(),discCode='',mode='in';
 const $=id=>document.getElementById(id);
@@ -168,13 +170,14 @@ sb.auth.onAuthStateChange((_e,s)=>setTimeout(()=>setUser(s&&s.user),0));
 /* ---------- หน้าบ้าน ---------- */
 async function loadCfg(){const{data,error}=await sb.from('settings').select('config').eq('id',1).maybeSingle();if(error)return toast('โหลดการตั้งค่าไม่สำเร็จ');cfgReady=true;if(data){const c=data.config;cfg={...DEF,...c,promos:c.promos||{},services:c.services||[]}}renderServices();renderAdmin();renderContact()}
 function renderServices(){
-  $('gemrate').textContent='อัตราค่าบริการ: '+cfg.gemPrice+' บาท ต่อ 1,000 Primogems';
+  $('gemrate').textContent='อัตราค่าบริการ: '+cfg.gemUnitPrice+' บาท ต่อ '+cfg.gemUnit.toLocaleString()+' Primogems (คิดเป็นรอบ ปัดขึ้น)';$('gem').step=cfg.gemUnit;
   $('svclist').innerHTML=cfg.services.map(s=>`<label class="card svc"><input type="checkbox" ${sel.has(s.id)?'checked':''} onchange="tog('${esc(s.id)}',this.checked)"><div><b style="font-size:15px">${esc(s.icon)} ${esc(s.name)}</b><div class="mut" style="margin:4px 0 6px">${esc(s.desc)}</div><span class="pr">${fmt(s.price)}</span></div></label>`).join('');
   calc();
 }
 function tog(id,on){on?sel.add(id):sel.delete(id);calc()}
 function calc(){
-  const g=Math.max(0,parseInt($('gem').value)||0),gp=Math.ceil(g/1000)*cfg.gemPrice;
+  const g=Math.max(0,parseInt($('gem').value)||0),gu=Math.ceil(g/cfg.gemUnit),gp=gu*cfg.gemUnitPrice;
+  $('gemhint').textContent=g?`${gu.toLocaleString()} รอบ × ${cfg.gemUnitPrice} บาท`+(gu*cfg.gemUnit!==g?` (เต็มรอบที่ ${(gu*cfg.gemUnit).toLocaleString()} เจม)`:''):'';
   let h=g?`<div class="row"><span>Primogems (${g.toLocaleString()})</span><b>${fmt(gp)}</b></div>`:'',sub=gp;
   cfg.services.forEach(s=>{if(sel.has(s.id)){sub+=s.price;h+=`<div class="row"><span>${esc(s.name)}</span><b>${fmt(s.price)}</b></div>`}});
   $('lines').innerHTML=sub?h:'<div class="mut">ยังไม่ได้เลือกรายการ</div>';
@@ -276,11 +279,11 @@ async function loadCust(){const{data,error}=await sb.rpc('admin_customers');if(e
 function renderCust(){$('cl').innerHTML=custs.length?custs.map(c=>`<tr><td><b>${esc(c.name||'-')}</b>${c.is_admin?' <span class="pill">แอดมิน</span>':''}</td><td>${esc(c.email)}</td><td>${c.orders_count}</td><td>${fmt(c.total_spent)}</td><td>${c.last_order?esc(dt(c.last_order)):'-'}</td></tr>`).join(''):'<tr><td colspan="5" class="mut">ยังไม่มีลูกค้า</td></tr>'}
 /* ราคา / บริการ / โปรโมชั่น */
 async function saveCfg(msg){if(!cfgReady)return toast('ยังโหลดการตั้งค่าไม่เสร็จ กรุณารีเฟรชหน้า');const{error}=await sb.from('settings').upsert({id:1,config:cfg});toast(error?error.message:msg);renderServices();renderAdmin();renderContact()}
-function renderPrice(){if(document.activeElement.id!=='gp')$('gp').value=cfg.gemPrice}
+function renderPrice(){if(document.activeElement.id!=='gp')$('gp').value=cfg.gemUnitPrice;if(document.activeElement.id!=='gu')$('gu').value=cfg.gemUnit}
 function renderSet(){const sh=cfg.shop||{};[['d','discord'],['f','facebook'],['l','line']].forEach(([k,f])=>{const e=$('sc-'+k);if(document.activeElement!==e)e.value=sh[f]||''})}
 function renderPromo(){$('pl').innerHTML=Object.entries(cfg.promos).map(([c,v])=>`<span class="pill">${esc(c)} −${v}฿ <a href="#admin" onclick="delPromo('${esc(c)}');return false">✕</a></span> `).join('')||'<span class="mut">ยังไม่มีโค้ด</span>'}
 function renderSvc(){$('sl').innerHTML=cfg.services.map(s=>`<div class="row" style="align-items:center;border-bottom:1px solid var(--line)"><span>${esc(s.icon)} ${esc(s.name)}</span><span style="display:flex;gap:6px"><input type="number" value="${s.price}" style="width:80px;margin:0" onchange="setSvcPrice('${esc(s.id)}',this.value)"><button class="g" onclick="delSvc('${esc(s.id)}')">✕</button></span></div>`).join('')||'<div class="mut">ยังไม่มีบริการเสริม</div>'}
-function savePrice(){const p=parseInt($('gp').value);if(!(p>=0))return toast('ราคาไม่ถูกต้อง');cfg={...cfg,gemPrice:p};saveCfg('บันทึกราคาแล้ว')}
+function savePrice(){const u=parseInt($('gu').value),p=parseInt($('gp').value);if(!(u>=1&&u<=1000000)||!(p>=0))return toast('กรอกจำนวนเจมและราคาให้ถูกต้อง');const{gemPrice,...rest}=cfg;cfg={...rest,gemUnit:u,gemUnitPrice:p};saveCfg('บันทึกราคาแล้ว')}
 function addPromo(){const c=$('pc').value.trim().toUpperCase(),a=parseInt($('pa').value);if(!/^[A-Z0-9_-]{2,20}$/.test(c))return toast('โค้ดใช้ได้เฉพาะ A-Z 0-9 _ - (2-20 ตัว)');if(!(a>0))return toast('ใส่จำนวนบาทที่ลด');cfg={...cfg,promos:{...cfg.promos,[c]:a}};$('pc').value='';$('pa').value='';saveCfg('เพิ่มโค้ดแล้ว')}
 function delPromo(c){cfg={...cfg,promos:{...cfg.promos}};delete cfg.promos[c];saveCfg('ลบโค้ดแล้ว')}
 function setSvcPrice(id,v){cfg={...cfg,services:cfg.services.map(s=>s.id===id?{...s,price:Math.max(0,parseInt(v)||0)}:s)};saveCfg('บันทึกราคาแล้ว')}
