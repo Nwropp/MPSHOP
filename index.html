@@ -65,8 +65,11 @@ footer{text-align:center;padding:24px;color:var(--mut);font-size:12px}.hide{disp
 <div class="row" style="align-items:baseline;margin-bottom:14px"><b>ราคารวม</b><span class="tot" id="total">0 ฿</span></div>
 <button id="bk" style="width:100%;padding:12px" onclick="book()">ยืนยันการจองคิว</button></div></aside>
 </div>
+<section id="mine" class="card hide"><h2>คิวของฉัน</h2><div id="minelist"></div></section>
 <section id="queue" class="card"><h2>ตารางคิวปัจจุบัน</h2>
 <div class="tw"><table><thead><tr><th>คิวที่</th><th>ชื่อผู้จอง</th><th>รายการ</th><th>สถานะ</th></tr></thead><tbody id="pq"></tbody></table></div></section>
+<section id="reviews" class="card"><h2>รีวิวจากลูกค้า <span id="avg" class="mut"></span></h2><div id="rvl" class="two"></div></section>
+<section id="contact" class="card hide"><h2>ติดต่อร้าน</h2><div id="ctl"></div></section>
 </main>
 <footer><a href="#admin">หลังบ้าน</a></footer>
 </div>
@@ -84,7 +87,10 @@ footer{text-align:center;padding:24px;color:var(--mut);font-size:12px}.hide{disp
 <div><b>บริการเสริม</b><div id="sl"></div><label class="l">เพิ่มบริการใหม่</label>
 <div style="display:flex;gap:8px"><input id="ni" placeholder="🎯" style="width:64px;flex:none"><input id="nn" placeholder="ชื่อบริการ"></div>
 <input id="nd" placeholder="รายละเอียดสั้นๆ"><input id="np" type="number" placeholder="ราคา (บาท)"><button class="d" style="margin-top:10px" onclick="addSvc()">เพิ่มบริการ</button></div>
-</div></section></div>
+</div></section>
+<section class="card"><h2>ช่องทางติดต่อร้าน</h2><div class="mut">แสดงในหน้าร้านเฉพาะช่องที่กรอก (ลิงก์ต้องขึ้นต้นด้วย https://)</div>
+<div class="two"><div><label class="l">Discord</label><input id="sc-d" maxlength="100"></div><div><label class="l">Facebook</label><input id="sc-f" maxlength="200"></div></div>
+<label class="l">LINE</label><input id="sc-l" maxlength="100"><button style="margin-top:10px" onclick="saveShop()">บันทึกช่องทางติดต่อ</button></section></div>
 </main></div>
 
 <div id="auth" class="modal hide" onclick="if(event.target===this)closeAuth()"><div class="card">
@@ -94,6 +100,7 @@ footer{text-align:center;padding:24px;color:var(--mut);font-size:12px}.hide{disp
 <label class="l">รหัสผ่าน (อย่างน้อย 6 ตัว)</label><input id="a-pass" type="password" autocomplete="current-password">
 <button id="a-go" style="width:100%;margin-top:14px" onclick="doAuth()">เข้าสู่ระบบ</button>
 <button class="g" style="width:100%;margin-top:8px" onclick="closeAuth()">ปิด</button></div></div>
+<div id="od" class="modal hide" onclick="if(event.target===this)this.classList.add('hide')"><div class="card" id="odb" style="max-height:90vh;overflow:auto"></div></div>
 <div id="toast"></div>
 
 <script>
@@ -101,7 +108,7 @@ const SB_URL='https://jhntnqqnurljeugujitu.supabase.co', SB_KEY='sb_publishable_
 const sb=supabase.createClient(SB_URL,SB_KEY);
 const DEF={gemPrice:80,promos:{},services:[]};
 const ST={pending:'⏳ รอคิว',doing:'🟡 กำลังดำเนินการ',done:'🟢 เสร็จสิ้น'};
-let cfgReady=false,booking=false,cfg=DEF,queue=[],orders=[],me=null,prof=null,sel=new Set(),discCode='',mode='in';
+let mine=[],myRev=new Set(),cfgReady=false,booking=false,cfg=DEF,queue=[],orders=[],me=null,prof=null,sel=new Set(),discCode='',mode='in';
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmt=n=>Number(n).toLocaleString()+' ฿';
@@ -136,12 +143,12 @@ async function setUser(u){
   $('authbtn').textContent=me?'ออกจากระบบ':'เข้าสู่ระบบ / สมัครสมาชิก';
   $('who').textContent=me?(prof&&prof.name||me.email):'';
   if(me&&prof&&prof.name&&!$('cname').value)$('cname').value=prof.name;
-  loadQueue();loadOrders();route();
+  loadQueue();loadOrders();loadMine();route();
 }
 sb.auth.onAuthStateChange((_e,s)=>setTimeout(()=>setUser(s&&s.user),0));
 
 /* ---------- หน้าบ้าน ---------- */
-async function loadCfg(){const{data,error}=await sb.from('settings').select('config').eq('id',1).maybeSingle();if(error)return toast('โหลดการตั้งค่าไม่สำเร็จ');cfgReady=true;if(data){const c=data.config;cfg={...DEF,...c,promos:c.promos||{},services:c.services||[]}}renderServices();renderAdmin()}
+async function loadCfg(){const{data,error}=await sb.from('settings').select('config').eq('id',1).maybeSingle();if(error)return toast('โหลดการตั้งค่าไม่สำเร็จ');cfgReady=true;if(data){const c=data.config;cfg={...DEF,...c,promos:c.promos||{},services:c.services||[]}}renderServices();renderAdmin();renderContact()}
 function renderServices(){
   $('gemrate').textContent='อัตราค่าบริการ: '+cfg.gemPrice+' บาท ต่อ 1,000 Primogems';
   $('svclist').innerHTML=cfg.services.map(s=>`<label class="card svc"><input type="checkbox" ${sel.has(s.id)?'checked':''} onchange="tog('${esc(s.id)}',this.checked)"><div><b style="font-size:15px">${esc(s.icon)} ${esc(s.name)}</b><div class="mut" style="margin:4px 0 6px">${esc(s.desc)}</div><span class="pr">${fmt(s.price)}</span></div></label>`).join('');
@@ -174,7 +181,7 @@ async function book(){
   booking=false;$('bk').disabled=false;
   if(error)return toast(ERR[error.message]||'จองไม่สำเร็จ: '+error.message);
   toast('จองคิว #'+String(data).padStart(3,'0')+' สำเร็จ แอดมินจะติดต่อกลับ');
-  sel.clear();$('gem').value=1000;discCode='';$('promo').value='';renderServices();loadQueue();$('queue').scrollIntoView();
+  sel.clear();$('gem').value=1000;discCode='';$('promo').value='';renderServices();loadQueue();loadMine().then(()=>$('mine').scrollIntoView());
 }
 
 /* ---------- หลังบ้าน ---------- */
@@ -184,6 +191,7 @@ function renderAdmin(){
   if(!isAdmin())return;
   $('aq').innerHTML=orders.length?orders.map(o=>`<tr><td><b>#${String(o.no).padStart(3,'0')}</b></td><td><b>${esc(o.name)}</b><div class="mut">${esc(o.channel)}: ${esc(o.contact)}</div>${o.note?`<div class="mut">${esc(o.note)}</div>`:''}</td><td>${esc(o.items)}</td><td><b>${fmt(o.total)}</b></td><td><select style="width:auto;margin:0" onchange="setSt('${o.id}',this.value)">${Object.keys(ST).map(k=>`<option value="${k}" ${o.status===k?'selected':''}>${ST[k]}</option>`).join('')}</select></td><td><button class="g" onclick="delQ(this,'${o.id}')">ลบ</button></td></tr>`).join(''):'<tr><td colspan="6" class="mut">ยังไม่มีคิว</td></tr>';
   if(document.activeElement.id!=='gp')$('gp').value=cfg.gemPrice;
+  const sh=cfg.shop||{};[['d','discord'],['f','facebook'],['l','line']].forEach(([k,f])=>{const e=$('sc-'+k);if(document.activeElement!==e)e.value=sh[f]||''});
   $('pl').innerHTML=Object.entries(cfg.promos).map(([c,v])=>`<span class="pill">${esc(c)} −${v}฿ <a href="#admin" onclick="delPromo('${esc(c)}');return false">✕</a></span> `).join('')||'<span class="mut">ยังไม่มีโค้ด</span>';
   $('sl').innerHTML=cfg.services.map(s=>`<div class="row" style="align-items:center;border-bottom:1px solid var(--line)"><span>${esc(s.icon)} ${esc(s.name)}</span><span style="display:flex;gap:6px"><input type="number" value="${s.price}" style="width:80px;margin:0" onchange="setSvcPrice('${esc(s.id)}',this.value)"><button class="g" onclick="delSvc('${esc(s.id)}')">✕</button></span></div>`).join('')||'<div class="mut">ยังไม่มีบริการเสริม</div>';
 }
@@ -192,7 +200,7 @@ async function delQ(b,id){
   if(!b.dataset.s){b.dataset.s=1;b.textContent='แน่ใจ?';b.className='r';return}
   const{error}=await sb.from('orders').delete().eq('id',id);toast(error?error.message:'ลบคิวแล้ว');loadOrders();loadQueue();
 }
-async function saveCfg(msg){if(!cfgReady)return toast('ยังโหลดการตั้งค่าไม่เสร็จ กรุณารีเฟรชหน้า');const{error}=await sb.from('settings').upsert({id:1,config:cfg});toast(error?error.message:msg);renderServices();renderAdmin()}
+async function saveCfg(msg){if(!cfgReady)return toast('ยังโหลดการตั้งค่าไม่เสร็จ กรุณารีเฟรชหน้า');const{error}=await sb.from('settings').upsert({id:1,config:cfg});toast(error?error.message:msg);renderServices();renderAdmin();renderContact()}
 function savePrice(){
   const p=parseInt($('gp').value);if(!(p>=0))return toast('ราคาไม่ถูกต้อง');
   cfg={...cfg,gemPrice:p,promos:{...cfg.promos}};
@@ -210,9 +218,68 @@ function addSvc(){
   ['nn','np','nd','ni'].forEach(i=>$(i).value='');saveCfg('เพิ่มบริการใหม่แล้ว');
 }
 
+/* ---------- ลูกค้า: คิวของฉัน / รายละเอียด / รีวิว ---------- */
+const STEPS=['pending','doing','done'];
+const RERR={order_not_done:'รีวิวได้เมื่องานเสร็จสิ้นแล้ว',already_reviewed:'คุณรีวิวออเดอร์นี้ไปแล้ว',invalid_rating:'กรุณาเลือกคะแนน',order_not_found:'ไม่พบออเดอร์',login_required:'กรุณาเข้าสู่ระบบ'};
+const dt=v=>new Date(v).toLocaleString('th-TH',{dateStyle:'medium',timeStyle:'short'});
+const stars=n=>'★'.repeat(n)+'☆'.repeat(5-n);
+const no3=n=>'#'+String(n).padStart(3,'0');
+async function loadMine(){
+  if(!me){mine=[];myRev=new Set();renderMine();return}
+  const o=await sb.from('orders').select('*').eq('user_id',me.id).order('created_at',{ascending:false});
+  const r=await sb.from('reviews').select('order_id').eq('user_id',me.id);
+  mine=o.data||[];myRev=new Set((r.data||[]).map(x=>x.order_id));renderMine();
+}
+function renderMine(){
+  $('mine').classList.toggle('hide',!me);
+  $('minelist').innerHTML=mine.length?mine.map(o=>`<div class="row" style="border-bottom:1px solid var(--line);align-items:center;flex-wrap:wrap"><div><b>${no3(o.no)}</b> <span class="mut">${esc(dt(o.created_at))}</span><div>${esc(o.items)}</div></div><div style="display:flex;gap:8px;align-items:center"><b>${fmt(o.total)}</b><span class="st ${esc(o.status)}">${ST[o.status]||esc(o.status)}</span><button class="g" onclick="openOd('${o.id}')">รายละเอียด</button></div></div>`).join(''):'<div class="mut">คุณยังไม่มีรายการจอง</div>';
+}
+function openOd(id){
+  const o=mine.find(x=>x.id===id);if(!o)return;
+  const i=STEPS.indexOf(o.status);
+  const tl=STEPS.map((k,j)=>`<span class="st ${j<=i?(k==='done'?'done':'doing'):''}" style="${j>i?'opacity:.5':''}">${ST[k]}</span>`).join(' → ');
+  let rv='';
+  if(o.status==='done'){
+    rv=myRev.has(o.id)?'<div class="mut" style="margin-top:12px">✅ ขอบคุณสำหรับรีวิวของคุณ</div>':`<h3 style="margin:16px 0 4px">รีวิวงานนี้</h3><select id="rv-r"><option value="5">★★★★★ ดีมาก</option><option value="4">★★★★☆ ดี</option><option value="3">★★★☆☆ ปานกลาง</option><option value="2">★★☆☆☆ พอใช้</option><option value="1">★☆☆☆☆ ควรปรับปรุง</option></select><input id="rv-c" maxlength="500" placeholder="เล่าประสบการณ์ของคุณ (ไม่บังคับ)"><button style="margin-top:10px" onclick="submitRev('${o.id}')">ส่งรีวิว</button>`;
+  }
+  $('odb').innerHTML=`<h3 style="margin:0 0 4px">คิว ${no3(o.no)}</h3><div class="mut">จองเมื่อ ${esc(dt(o.created_at))}</div>
+  <div style="margin:12px 0">${tl}</div>
+  <div class="row"><span class="mut">รายการ</span><span style="text-align:right">${esc(o.items)}</span></div>
+  <div class="row"><span class="mut">ราคารวม</span><b>${fmt(o.total)}</b></div>
+  <div class="row"><span class="mut">ช่องทางติดต่อ</span><span>${esc(o.channel)}: ${esc(o.contact)}</span></div>
+  ${o.note?`<div class="row"><span class="mut">หมายเหตุ</span><span>${esc(o.note)}</span></div>`:''}${rv}
+  <button class="g" style="width:100%;margin-top:14px" onclick="$('od').classList.add('hide')">ปิด</button>`;
+  $('od').classList.remove('hide');
+}
+async function submitRev(id){
+  const{error}=await sb.rpc('submit_review',{p_order:id,p_rating:parseInt($('rv-r').value),p_comment:$('rv-c').value.trim()});
+  if(error)return toast(RERR[error.message]||'ส่งรีวิวไม่สำเร็จ: '+error.message);
+  toast('ขอบคุณสำหรับรีวิว');await loadMine();loadReviews();openOd(id);
+}
+async function loadReviews(){
+  const{data}=await sb.from('reviews').select('rating,comment,reviewer,created_at').eq('visible',true).order('created_at',{ascending:false}).limit(12);
+  const v=data||[];
+  $('avg').textContent=v.length?'เฉลี่ย '+(v.reduce((a,x)=>a+x.rating,0)/v.length).toFixed(1)+' / 5 ('+v.length+' รีวิวล่าสุด)':'';
+  $('rvl').innerHTML=v.length?v.map(x=>`<div class="card" style="margin:0"><div style="color:#f59e0b">${stars(x.rating)}</div><div>${esc(x.comment)||'<span class="mut">ไม่ได้เขียนความคิดเห็น</span>'}</div><div class="mut" style="margin-top:6px">${esc(x.reviewer)} · ${esc(dt(x.created_at))}</div></div>`).join(''):'<div class="mut">ยังไม่มีรีวิว</div>';
+}
+/* ---------- ช่องทางติดต่อร้าน ---------- */
+function renderContact(){
+  const sh=cfg.shop||{},L=[];
+  const link=v=>/^https?:\/\//i.test(v)?`<a href="${esc(v)}" target="_blank" rel="noopener noreferrer">${esc(v)}</a>`:esc(v);
+  if(sh.discord)L.push('Discord: '+link(sh.discord));
+  if(sh.facebook)L.push('Facebook: '+link(sh.facebook));
+  if(sh.line)L.push('LINE: '+link(sh.line));
+  $('contact').classList.toggle('hide',!L.length);
+  $('ctl').innerHTML=L.map(x=>`<div class="row">${x}</div>`).join('');
+}
+function saveShop(){
+  cfg={...cfg,shop:{discord:$('sc-d').value.trim(),facebook:$('sc-f').value.trim(),line:$('sc-l').value.trim()}};
+  saveCfg('บันทึกช่องทางติดต่อแล้ว');
+}
+
 /* ---------- เริ่มต้น ---------- */
-renderServices();route();loadCfg();loadQueue();
-setInterval(()=>{if(!document.hidden){loadQueue();loadOrders()}},8000);
+renderServices();route();loadCfg();loadQueue();loadReviews();
+setInterval(()=>{if(!document.hidden){loadQueue();loadOrders();loadMine()}},8000);
 </script>
 </body>
 </html>
