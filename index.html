@@ -102,6 +102,33 @@ tr.me td{background:var(--soft)}.warn{background:var(--warnbg);color:var(--warn)
  table.cards td[colspan]{display:block;text-align:center}table.cards td[colspan]::before{content:none}
  table.cards select,table.cards input:not([type=checkbox]){max-width:62%}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+/* ===== ตัวเลือกราคา / จำนวน / คูปอง ===== */
+.scard.svc{cursor:default}.scard.svc:hover{transform:none}
+.opts{display:grid;gap:6px;margin-top:4px}
+.opt{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--line);border-radius:12px;background:var(--inp);cursor:pointer;min-height:42px;font-size:14px}
+.opt input{width:18px;height:18px;margin:0;flex:none}.opt span{flex:1;min-width:0;overflow-wrap:anywhere}.opt b{color:var(--ac2);white-space:nowrap}
+.opt.on{border-color:var(--ac);background:var(--soft);box-shadow:0 0 0 2px rgba(61,150,245,.18)}
+.qty{display:flex;align-items:center;gap:6px;margin-top:6px;flex-wrap:wrap}.qty button{width:42px;min-height:42px;padding:0;font-size:20px;flex:none}.qty input{width:78px;text-align:center;margin:0}
+.qh{color:#dc2626;font-size:12px}.qh:empty{display:none}
+.tiers{display:flex;flex-direction:column;gap:2px;font-size:12px;color:var(--mut);margin-top:4px}.tiers span.on{color:var(--ac2);font-weight:700}
+.srow .pr{display:inline-block}.pu{color:var(--mut);font-size:12px;font-weight:400}.pt{font-size:17px;color:var(--ac2)}
+@keyframes bump{0%{transform:scale(1)}40%{transform:scale(1.12);color:var(--ac)}100%{transform:scale(1)}}.pr.bump{animation:bump .35s ease}
+.ln{display:flex;justify-content:space-between;gap:10px;padding:5px 0;align-items:flex-start}.ln>div{min-width:0;overflow-wrap:anywhere}.ln.err b,.ln.err .mut{color:#dc2626}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin-top:12px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}.chips button{min-height:38px;padding:6px 14px;font-size:13px}
+.cp{display:flex;background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:var(--sh);min-width:0;margin-top:10px}.cgrid .cp{margin-top:0}
+.cp.dim{opacity:.6;filter:grayscale(.4)}
+.cpl{flex:none;width:96px;background:var(--cc,#3d96f5);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:12px 8px;text-align:center;border-right:2px dashed rgba(255,255,255,.75)}
+.cpl b{font-size:22px;line-height:1.1;overflow-wrap:anywhere}.cpl small{font-size:11px;opacity:.9}.cpi{font-size:22px}
+.cpr{padding:12px 14px;min-width:0;flex:1;display:flex;flex-direction:column;gap:3px}.cpn{overflow-wrap:anywhere}
+.cpchip{display:flex;justify-content:space-between;gap:10px;align-items:center;background:var(--soft);border:1px dashed var(--ac);border-radius:12px;padding:10px 12px}
+.orow{display:grid;grid-template-columns:1.4fr 1fr auto auto auto;gap:6px;align-items:center;margin-top:8px}.orow input:not([type=checkbox]):not([type=radio]){margin:0}.orow .chk{margin:0;white-space:nowrap}
+@media(max-width:600px){.orow{grid-template-columns:1fr 1fr}.orow .chk,.orow button{justify-self:start}.cgrid{grid-template-columns:1fr}.cpl{width:84px}}
+.trow{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:6px;align-items:end;margin-top:8px}.trow input{margin:0}
+.pvb{background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-top:10px;font-size:13px}.pvb div{padding:1px 0}
+.cdot{width:14px;height:14px;border-radius:50%;flex:none;border:1px solid rgba(0,0,0,.12)}
+.chkgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:2px 10px}
 </style>
 </head>
 <body>
@@ -110,7 +137,7 @@ tr.me td{background:var(--soft)}.warn{background:var(--warnbg);color:var(--warn)
 <header class="nav"><div class="wrap navin">
 <a class="logo" href="#top" onclick="closeMenu()"><svg class="star" viewBox="0 0 64 64" aria-hidden="true"><path fill="currentColor" d="M32 2c2 14 6 22 12 26 6 4 12 6 18 6-6 0-12 2-18 6-6 4-10 12-12 26-2-14-6-22-12-26C14 36 8 34 2 34c6 0 12-2 18-6C26 24 30 16 32 2z"/></svg><span>MPSHOP</span></a>
 <nav id="menu" class="menu" onclick="if(event.target.tagName==='A')closeMenu()">
-<a href="#top">หน้าหลัก</a><a href="#services">บริการทั้งหมด</a><a href="#promosec">โปรโมชั่น</a><a href="#queue">ติดตามงาน</a><a href="#reviews">รีวิว</a><a id="nav-contact" class="hide" href="#contact">ติดต่อเรา</a>
+<a href="#top">หน้าหลัก</a><a href="#services">บริการทั้งหมด</a><a id="nav-coupons" href="#coupons">คูปอง</a><a href="#promosec">โปรโมชั่น</a><a href="#queue">ติดตามงาน</a><a href="#reviews">รีวิว</a><a id="nav-contact" class="hide" href="#contact">ติดต่อเรา</a>
 <div class="menu-auth"><button id="regbtn2" onclick="closeMenu();openAuth('up')">สมัครสมาชิก</button></div>
 </nav>
 <div class="navact"><span id="who" class="mut who"></span><button id="bell" class="g hide" onclick="openNotifs()" aria-label="การแจ้งเตือน">🔔<span id="bc"></span></button><button id="authbtn" class="g" onclick="openAuth('in')">เข้าสู่ระบบ</button><button id="regbtn" class="js-reg-hdr" onclick="openAuth('up')">สมัครสมาชิก</button><button id="burger" class="g burger" onclick="toggleMenu()" aria-label="เมนู" aria-expanded="false">☰</button></div>
@@ -140,11 +167,18 @@ tr.me td{background:var(--soft)}.warn{background:var(--warnbg);color:var(--warn)
 </section>
 <aside><div id="sumcard" class="card sum"><h3 style="margin:0 0 12px">สรุปรายการจอง</h3>
 <div id="lines" style="border-bottom:1px solid var(--line);padding-bottom:10px;margin-bottom:12px"></div>
+<div id="cpsel" style="margin-bottom:8px"></div>
 <div id="promosec" style="display:flex;gap:8px"><input id="promo" placeholder="โค้ดส่วนลด" style="text-transform:uppercase;margin:0"><button class="d" onclick="applyPromo()" style="flex:none">ใช้โค้ด</button></div>
-<div id="phint" class="mut" style="margin-top:6px"></div><div class="row" style="margin-top:10px"><span class="mut">ส่วนลด</span><span id="dsc" style="color:var(--ok)">-0 ฿</span></div>
-<div class="row" style="align-items:baseline;margin-bottom:14px"><b>ราคารวม</b><span class="tot" id="total">0 ฿</span></div>
+<div id="phint" class="mut" style="margin-top:6px"></div><div class="row" style="margin-top:10px"><span class="mut">ยอดก่อนลด</span><span id="subt">0 ฿</span></div>
+<div class="row"><span class="mut">ส่วนลด</span><span id="dsc" style="color:var(--ok)">-0 ฿</span></div>
+<div class="row" style="align-items:baseline;margin-bottom:14px"><b>ยอดสุทธิ</b><span class="tot" id="total">0 ฿</span></div>
 <button id="bk" style="width:100%;padding:12px" onclick="book()">ยืนยันการจองคิว</button></div></aside>
 </div></div></div>
+<div class="band"><div class="wrap">
+<section id="coupons" class="card"><h2>🎟️ คูปองส่วนลด</h2><div class="sub">เก็บคูปองไว้ แล้วเลือกใช้เป็นส่วนลดตอนจองคิว</div>
+<div class="tabs" style="margin-top:12px;max-width:420px"><button id="ct-a" onclick="ctab('avail')">คูปองที่เก็บได้</button><button id="ct-m" class="g" onclick="ctab('mine')">คูปองของฉัน</button></div>
+<div id="cfil" class="chips"></div><div id="clist" class="cgrid"></div></section>
+</div></div>
 <div class="band alt"><div class="wrap">
 <section id="mine" class="card hide"><h2>คิวของฉัน</h2><div id="minelist"></div></section>
 <section id="queue" class="card"><h2>ตารางคิวปัจจุบัน</h2>
@@ -198,6 +232,9 @@ tr.me td{background:var(--soft)}.warn{background:var(--warnbg);color:var(--warn)
 <button style="margin-top:10px" onclick="addPromo()">สร้างโค้ด</button></div>
 <div class="card"><h3 style="margin:0 0 8px">โค้ดทั้งหมด</h3><div class="tw"><table class="cards"><thead><tr><th>โค้ด</th><th>ส่วนลด</th><th>เงื่อนไข</th><th>ใช้แล้ว</th><th>สถานะ</th><th></th></tr></thead><tbody id="prl"></tbody></table></div></div>
 <div class="card"><h3 style="margin:0 0 8px">ประวัติการใช้โค้ด (ล่าสุด)</h3><div class="tw"><table class="cards"><thead><tr><th>เวลา</th><th>โค้ด</th><th>คิว</th><th>ลูกค้า</th><th>ส่วนลด</th></tr></thead><tbody id="pul"></tbody></table></div></div></section>
+<section id="p-cpad" class="pane hide"><div class="card"><h2>จัดการคูปอง</h2><div class="sub">คูปองที่ลูกค้าเก็บไว้ในบัญชีแล้วเลือกใช้ตอนจอง (ใช้ได้ 1 คูปองต่อ 1 ออเดอร์ และใช้ร่วมกับโค้ดโปรโมชั่นไม่ได้)</div>
+<button style="margin-top:10px" onclick="openCpEd()">+ สร้างคูปองใหม่</button>
+<div class="tw" style="margin-top:12px"><table class="cards"><thead><tr><th>คูปอง</th><th>ส่วนลด</th><th>เงื่อนไข</th><th>เก็บ / ใช้</th><th>สถานะ</th><th></th></tr></thead><tbody id="cpl"></tbody></table></div></div></section>
 <section id="p-rev" class="pane hide"><div class="card"><h2>จัดการรีวิว</h2><div id="rl"></div></div></section>
 <section id="p-team" class="pane hide"><div class="card"><h2>จัดการทีมงาน</h2>
 <div class="mut">สมาชิกต้องสมัครสมาชิกในเว็บก่อน แล้วแอดมินเพิ่มด้วยอีเมล สิทธิ์ Team เห็นเฉพาะงานที่ได้รับมอบหมาย ดูการเงินและจัดการร้านไม่ได้</div>
@@ -227,6 +264,7 @@ tr.me td{background:var(--soft)}.warn{background:var(--warnbg);color:var(--warn)
 <button id="a-go" style="width:100%;margin-top:14px" onclick="doAuth()">เข้าสู่ระบบ</button>
 <button class="g" style="width:100%;margin-top:8px" onclick="closeAuth()">ปิด</button></div></div>
 <div id="od" class="modal hide" onclick="if(event.target===this)this.classList.add('hide')"><div class="card" id="odb" style="max-height:90vh;overflow:auto"></div></div>
+<div id="cpm" class="modal hide" onclick="if(event.target===this)this.classList.add('hide')"><div class="card" id="cpb"></div></div>
 <div id="toast"></div>
 
 <script>
@@ -234,7 +272,7 @@ const SB_URL='https://jhntnqqnurljeugujitu.supabase.co', SB_KEY='sb_publishable_
 const sb=supabase.createClient(SB_URL,SB_KEY);
 const DEF={gemUnit:160,gemUnitPrice:9,promos:{},services:[]};
 const ST={pending:'⏳ รอคิว',confirmed:'✅ ยืนยันแล้ว',doing:'🟡 กำลังดำเนินการ',waiting:'⏸ รอดำเนินการต่อ',done:'🟢 เสร็จสิ้น',cancelled:'🔴 ยกเลิก'};
-let cfgSig='',heroSig='',bdraft=null,brm=[],bdirty=false,bsig='',ed=null,mine=[],myRev=new Set(),cfgReady=false,booking=false,cfg=DEF,queue=[],orders=[],me=null,prof=null,sel=new Set(),discCode='',promo=null,hook=null,notifs=[],promos=[],usage=[],mode='in';
+let cfgSig='',heroSig='',bdraft=null,brm=[],bdirty=false,bsig='',ed=null,mine=[],myRev=new Set(),cfgReady=false,booking=false,cfg=DEF,queue=[],orders=[],me=null,prof=null,sel=new Set(),cs={},cpn=null,cquote=null,lastSig='',avail=[],myc=[],ctb='avail',cfl='active',couponsOn=true,qTimer=null,cpns=[],discCode='',promo=null,hook=null,notifs=[],promos=[],usage=[],mode='in';
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmt=n=>Number(n).toLocaleString()+' ฿';
@@ -267,12 +305,12 @@ async function doAuth(){
   closeAuth();toast('ยินดีต้อนรับ');
 }
 async function setUser(u){
-  me=u||null;prof=null;
+  me=u||null;prof=null;cpn=null;cquote=null;
   if(me){const{data}=await sb.from('profiles').select('*').eq('id',me.id).maybeSingle();prof=data}
   $('authbtn').textContent=me?'ออกจากระบบ':'เข้าสู่ระบบ';['regbtn','regbtn2'].forEach(i=>$(i).classList.toggle('hide',!!me));
   $('who').textContent=me?(prof&&prof.name||me.email):'';
   if(me&&prof&&prof.name&&!$('cname').value)$('cname').value=prof.name;
-  loadQueue();loadOrders();loadMine();loadNotifs();if(isAdmin())loadDash();else if(isStaff())loadMy();route();
+  loadQueue();loadOrders();loadMine();loadNotifs();loadCoupons();if(isAdmin())loadDash();else if(isStaff())loadMy();route();
 }
 sb.auth.onAuthStateChange((_e,s)=>setTimeout(()=>setUser(s&&s.user),0));
 
@@ -298,33 +336,121 @@ async function uploadImg(folder,f){
   return r.error?{error:r.error}:{path};
 }
 async function rmImg(p){if(p){try{await sb.storage.from('service-images').remove([p])}catch(e){}}}
+/* ---------- ราคา: ตัวเลือกหลายแบบ + จำนวน (กฎเดียวกับ _price_line ในฐานข้อมูล; ฐานข้อมูลเป็นผู้ตัดสินขั้นสุดท้าย) ---------- */
+const toInt=v=>/^\d{1,9}$/.test(String(v==null?'':v))?parseInt(v,10):null;
+const newId=()=>'o'+Date.now().toString(36)+Math.random().toString(36).slice(2,5);
+function svcOpts(s){return Array.isArray(s.priceOptions)&&s.priceOptions.length?s.priceOptions:[{id:'default',name:'มาตรฐาน',price:toInt(s.price)??0,active:true,default:true}]}
+function svcPricing(s){const p=s.pricing||{},mode=['package','unit','tier'].includes(p.mode)?p.mode:'package';
+  return{mode,qtyOn:mode==='package'?!!p.qtyEnabled:true,min:Math.max(1,toInt(p.min)||1),max:Math.min(100000,toInt(p.max)||100000),unit:(p.unit||'หน่วย'),unitPrice:toInt(p.unitPrice),
+    tiers:(Array.isArray(p.tiers)?p.tiers:[]).map(t=>({from:toInt(t.from)||1,to:(t.to==null||t.to==='')?null:toInt(t.to),price:toInt(t.price)})).sort((a,b)=>a.from-b.from)}}
+const activeOpts=s=>svcOpts(s).filter(o=>o.active!==false);
+const defOpt=s=>{const a=activeOpts(s);return a.find(o=>o.default)||a[0]||null};
+function svcSellable(s){if(s.active===false)return false;const p=svcPricing(s);if(p.mode==='package')return activeOpts(s).length>0;if(p.mode==='unit')return p.unitPrice!=null;return p.tiers.length>0}
+function stateOf(s){const p=svcPricing(s);let st=cs[s.id];
+  if(!st){const d=defOpt(s);st=cs[s.id]={opt:d?d.id:null,qty:p.qtyOn?String(p.min):'1'}}
+  if(p.mode==='package'&&!activeOpts(s).some(o=>o.id===st.opt)){const d=defOpt(s);st.opt=d?d.id:null}   // แพ็กเกจที่แอดมินเพิ่งปิด → กลับไปตัวเริ่มต้น
+  return st}
+function priceLine(s){
+  const p=svcPricing(s),st=stateOf(s);let qty=1;
+  if(p.qtyOn){
+    if(!/^\d{1,7}$/.test(String(st.qty)))return{ok:false,err:'กรอกจำนวนเป็นตัวเลขจำนวนเต็ม'};
+    qty=parseInt(st.qty,10);
+    if(qty<1)return{ok:false,err:'จำนวนต้องมากกว่า 0'};
+    if(qty<p.min)return{ok:false,err:`ขั้นต่ำ ${p.min.toLocaleString()} ${p.unit}`};
+    if(qty>p.max)return{ok:false,err:`สูงสุด ${p.max.toLocaleString()} ${p.unit}`};
+  }
+  let up,optName=null,optId=null;
+  if(p.mode==='package'){const o=activeOpts(s).find(x=>x.id===st.opt);if(!o)return{ok:false,err:'กรุณาเลือกแพ็กเกจ'};up=toInt(o.price);optName=o.name;optId=o.id}
+  else if(p.mode==='unit'){up=p.unitPrice;optId='unit'}
+  else{const t=p.tiers.find(t=>qty>=t.from&&(t.to==null||qty<=t.to));if(!t)return{ok:false,err:'จำนวนนี้ไม่อยู่ในช่วงราคาที่ร้านตั้งไว้'};up=t.price;optId='tier'}
+  if(up==null)return{ok:false,err:'ร้านยังตั้งราคาไม่ถูกต้อง'};
+  return{ok:true,qty,unit_price:up,total:up*qty,optName,optId,unit:p.unit,qtyOn:p.qtyOn,showOpt:p.mode==='package'&&svcOpts(s).length>1}
+}
+function optsHtml(s){
+  const p=svcPricing(s),st=stateOf(s),id=esc(s.id);let h='';
+  if(p.mode==='package'){const A=activeOpts(s);
+    if(A.length>1)h+=`<div class="opts" role="radiogroup" aria-label="แพ็กเกจของ ${esc(s.name)}">`+A.map(o=>`<label class="opt${st.opt===o.id?' on':''}"><input type="radio" name="o-${id}" ${st.opt===o.id?'checked':''} onchange="setOpt('${id}','${esc(o.id)}')"><span>${esc(o.name)}</span><b>${fmt(o.price)}</b></label>`).join('')+'</div>';
+  }else if(p.mode==='tier')h+=`<div class="tiers">`+p.tiers.map(t=>`<span>${t.from.toLocaleString()}${t.to==null?'+':'–'+t.to.toLocaleString()} ${esc(p.unit)}: <b>${fmt(t.price)}</b>/${esc(p.unit)}</span>`).join('')+`</div>`;
+  if(p.qtyOn)h+=`<div class="qty"><button type="button" class="g" aria-label="ลดจำนวน" onclick="stepQty('${id}',-1)">−</button><input id="q-${id}" inputmode="numeric" autocomplete="off" value="${esc(st.qty)}" aria-label="จำนวน (${esc(p.unit)})" oninput="setQty('${id}',this.value)" onblur="fixQty('${id}')"><button type="button" class="g" aria-label="เพิ่มจำนวน" onclick="stepQty('${id}',1)">+</button><span class="mut">${esc(p.unit)}${(p.min>1||p.max<100000)?` (${p.min.toLocaleString()}–${p.max.toLocaleString()})`:''}</span></div><div class="qh" id="qh-${id}" role="alert"></div>`;
+  return h}
+function cardHtml(s){const id=esc(s.id),on=sel.has(s.id);
+  return`<div class="scard svc${on?' sel':''}" id="sc-${id}">${imgHtml(s.image,s.icon||'✨','ar',s.name)}${s.popular?'<span class="badge">ยอดนิยม</span>':''}<div class="sbody"><b class="sname">${esc(s.name)}</b><div class="mut clamp">${esc(s.desc)}</div>${optsHtml(s)}<div class="srow"><span class="pr" id="pr-${id}"></span><label class="pick"><input type="checkbox" ${on?'checked':''} onchange="tog('${id}',this.checked,this)"><i>เลือกบริการ</i></label></div></div></div>`}
+function updSvcPrice(sid){
+  const s=cfg.services.find(x=>x.id===sid),el=$('pr-'+sid);if(!s||!el)return;
+  const r=priceLine(s),qh=$('qh-'+sid);if(qh)qh.textContent=r.ok?'':r.err;
+  const html=r.ok?(r.qtyOn?`<span class="pu">${fmt(r.unit_price)} × ${r.qty.toLocaleString()} ${esc(r.unit)} =</span> <b class="pt">${fmt(r.total)}</b>`:`<b class="pt">${fmt(r.total)}</b>`):'<span class="mut">—</span>';
+  if(el.dataset.v!==html){el.innerHTML=html;if(el.dataset.v!==undefined){el.classList.remove('bump');void el.offsetWidth;el.classList.add('bump')}el.dataset.v=html}
+  const c=$('sc-'+sid);if(c){const p=svcPricing(s),cur=(p.mode==='tier'&&r.ok)?p.tiers.find(t=>r.qty>=t.from&&(t.to==null||r.qty<=t.to)):null;c.querySelectorAll('.tiers span').forEach((e,i)=>e.classList.toggle('on',p.tiers[i]===cur))}
+}
+function setOpt(sid,o){const s=cfg.services.find(x=>x.id===sid);if(!s)return;stateOf(s).opt=o;const c=$('sc-'+sid);if(c)c.querySelectorAll('.opt').forEach(l=>l.classList.toggle('on',l.querySelector('input').checked));updSvcPrice(sid);calc()}
+function setQty(sid,v){const s=cfg.services.find(x=>x.id===sid);if(!s)return;const clean=String(v).replace(/\D/g,'').slice(0,7),i=$('q-'+sid);if(i&&i.value!==clean)i.value=clean;stateOf(s).qty=clean;updSvcPrice(sid);calc()}
+function stepQty(sid,d){const s=cfg.services.find(x=>x.id===sid);if(!s)return;const p=svcPricing(s),st=stateOf(s);let q=/^\d{1,7}$/.test(st.qty)?parseInt(st.qty,10):p.min;
+  if(q+d>p.max)toast(`จำกัดสูงสุด ${p.max.toLocaleString()} ${p.unit}`);if(q+d<p.min&&d<0)toast(`ขั้นต่ำ ${p.min.toLocaleString()} ${p.unit}`);
+  q=Math.min(p.max,Math.max(p.min,q+d));st.qty=String(q);$('q-'+sid).value=q;updSvcPrice(sid);calc()}
+function fixQty(sid){const s=cfg.services.find(x=>x.id===sid);if(!s)return;const p=svcPricing(s),st=stateOf(s);let q=/^\d{1,7}$/.test(st.qty)?parseInt(st.qty,10):NaN;
+  if(isNaN(q)||q<p.min){if(!isNaN(q)||st.qty!=='')toast(`ขั้นต่ำ ${p.min.toLocaleString()} ${p.unit}`);q=p.min}else if(q>p.max){toast(`จำกัดสูงสุด ${p.max.toLocaleString()} ${p.unit}`);q=p.max}
+  st.qty=String(q);const i=$('q-'+sid);if(i)i.value=q;updSvcPrice(sid);calc()}
 function renderServices(){
   $('gemrate').textContent='อัตราค่าบริการ: '+cfg.gemUnitPrice+' บาท ต่อ '+cfg.gemUnit.toLocaleString()+' Primogems (คิดเป็นรอบ ปัดขึ้น)';$('gem').step=cfg.gemUnit;
   $('gemimg').innerHTML=imgHtml(cfg.gemImage,'💎','ar','ฟาร์ม Primogems');
   renderHero();
-
-  const L=cfg.services.filter(s=>s.active!==false);
+  const L=cfg.services.filter(svcSellable);
   [...sel].forEach(id=>{if(!L.some(s=>s.id===id))sel.delete(id)});
-  $('svclist').innerHTML=L.length?L.map(s=>`<label class="scard${sel.has(s.id)?' sel':''}">${imgHtml(s.image,s.icon||'✨','ar',s.name)}${s.popular?'<span class="badge">ยอดนิยม</span>':''}<div class="sbody"><b class="sname">${esc(s.name)}</b><div class="mut clamp">${esc(s.desc)}</div><div class="srow"><span class="pr">${fmt(s.price)}</span><span class="pick"><input type="checkbox" ${sel.has(s.id)?'checked':''} onchange="tog('${esc(s.id)}',this.checked,this)"><i>เลือกบริการ</i></span></div></div></label>`).join(''):'<div class="card mut" style="grid-column:1/-1;margin:0">ร้านยังไม่ได้เพิ่มบริการเสริม</div>';
+  Object.keys(cs).forEach(id=>{if(!cfg.services.some(s=>s.id===id))delete cs[id]});
+  $('svclist').innerHTML=L.length?L.map(cardHtml).join(''):'<div class="card mut" style="grid-column:1/-1;margin:0">ร้านยังไม่ได้เพิ่มบริการเสริม</div>';
+  L.forEach(s=>updSvcPrice(s.id));
   calc();
 }
 function tog(id,on,el){on?sel.add(id):sel.delete(id);if(el&&el.closest)el.closest('.scard').classList.toggle('sel',on);calc()}
+/* ---------- คำนวณราคาในตะกร้า (แสดงผลทันที; ราคา/ส่วนลดจริงคำนวณใหม่ที่เซิร์ฟเวอร์ตอนจอง) ---------- */
+function cpnLocal(c,lines,sub){
+  const now=Date.now();
+  if(c.state&&c.state!=='active')return{ok:false,reason:'ใช้ไม่ได้'};
+  if(c.starts_at&&now<+new Date(c.starts_at))return{ok:false,reason:'ยังไม่ถึงเวลาเริ่มใช้'};
+  if(c.expires_at&&now>+new Date(c.expires_at))return{ok:false,reason:'คูปองหมดอายุแล้ว'};
+  let base=sub;
+  if(c.service_ids&&c.service_ids.length){base=lines.filter(l=>c.service_ids.includes(l.id)).reduce((a,l)=>a+l.total,0);if(!base)return{ok:false,reason:'ใช้กับบริการที่เลือกไม่ได้'}}
+  if(base<c.min_total)return{ok:false,reason:`ต้องมียอดขั้นต่ำ ${fmt(c.min_total)}`};
+  let d=c.kind==='percent'?Math.floor(base*c.value/100):c.value;
+  if(c.kind==='percent'&&c.max_discount)d=Math.min(d,c.max_discount);
+  d=Math.min(d,base);if(d<=0)return{ok:false,reason:'ใช้กับออเดอร์นี้ไม่ได้'};
+  return{ok:true,d}
+}
+const cqReason=q=>q.reason==='coupon_min_total'?`ต้องมียอดขั้นต่ำ ${fmt(q.min_total||0)}`:(CP_ERR[q.reason]||'คูปองใช้ไม่ได้');
 function calc(){
   const g=Math.max(0,parseInt($('gem').value)||0),gu=Math.ceil(g/cfg.gemUnit),gp=gu*cfg.gemUnitPrice;
   $('gemhint').textContent=g?`${gu.toLocaleString()} รอบ × ${cfg.gemUnitPrice} บาท`+(gu*cfg.gemUnit!==g?` (เต็มรอบที่ ${(gu*cfg.gemUnit).toLocaleString()} เจม)`:''):'';
-  let h=g?`<div class="row"><span>Primogems (${g.toLocaleString()})</span><b>${fmt(gp)}</b></div>`:'',sub=gp;
-  cfg.services.forEach(s=>{if(sel.has(s.id)){sub+=s.price;h+=`<div class="row"><span>${esc(s.name)}</span><b>${fmt(s.price)}</b></div>`}});
-  $('lines').innerHTML=sub?h:'<div class="mut">ยังไม่ได้เลือกรายการ</div>';
-  const d=promo&&sub>=promo.min_total?Math.min(sub,promo.kind==='percent'?Math.floor(sub*promo.value/100):promo.value):0;
-  $('dsc').textContent='-'+fmt(d);
-  $('phint').textContent=promo?(sub<promo.min_total?`โค้ด ${promo.code}: ต้องมียอดขั้นต่ำ ${promo.min_total} บาท`:`ใช้โค้ด ${promo.code} แล้ว`):'';$('total').textContent=fmt(Math.max(0,sub-d));$('mtot').textContent=fmt(Math.max(0,sub-d));
-  return{g,sub};
+  let h=g?`<div class="row"><span>Primogems (${g.toLocaleString()})</span><b>${fmt(gp)}</b></div>`:'',sub=gp,bad=false;const lines=[];
+  cfg.services.forEach(s=>{
+    if(!sel.has(s.id))return;
+    const r=priceLine(s);
+    if(!r.ok){bad=true;h+=`<div class="ln err"><div><b>${esc(s.name)}</b><div class="mut">${esc(r.err)}</div></div><b>—</b></div>`;return}
+    sub+=r.total;lines.push({id:s.id,opt:r.optId,qty:r.qty,total:r.total});
+    h+=`<div class="ln"><div><b>${esc(s.name)}</b>${r.showOpt&&r.optName?` <span class="mut">(${esc(r.optName)})</span>`:''}<div class="mut">${r.qtyOn?`${fmt(r.unit_price)} × ${r.qty.toLocaleString()} ${esc(r.unit)}`:`ราคา ${fmt(r.unit_price)}`}</div></div><b>${fmt(r.total)}</b></div>`;
+  });
+  $('lines').innerHTML=(sub||bad)?h:'<div class="mut">ยังไม่ได้เลือกรายการ</div>';
+  const sig=JSON.stringify([g,lines.map(l=>[l.id,l.opt,l.qty]),cpn&&cpn.id]);lastSig=sig;
+  let d=0,note='',phint='';
+  if(cpn){
+    const loc=cpnLocal(cpn,lines,sub);
+    if(cquote&&cquote.sig===sig){d=cquote.valid?cquote.discount:0;note=cquote.valid?'':cqReason(cquote)}
+    else{d=loc.ok&&!bad?loc.d:0;note=loc.ok?'':loc.reason;if(loc.ok&&!bad&&sub>0)scheduleQuote(sig,g,lines,d)}
+  }else if(promo){
+    d=sub>=promo.min_total?Math.min(sub,promo.kind==='percent'?Math.floor(sub*promo.value/100):promo.value):0;
+    phint=sub<promo.min_total?`โค้ด ${promo.code}: ต้องมียอดขั้นต่ำ ${promo.min_total} บาท`:`ใช้โค้ด ${promo.code} แล้ว`;
+  }
+  const total=Math.max(0,sub-d);
+  $('subt').textContent=fmt(sub);$('dsc').textContent='-'+fmt(d);$('phint').textContent=phint;$('total').textContent=fmt(total);$('mtot').textContent=fmt(total);
+  renderCpSel(d,note);
+  return{g,sub,d,total,bad,lines,note}
 }
 async function loadQueue(){
   const{data}=await sb.from('public_queue').select('*').order('no');queue=data||[];
   $('pq').innerHTML=queue.length?queue.map(q=>`<tr class="${q.mine?'me':''}"><td><b>#${String(q.no).padStart(3,'0')}</b></td><td>${esc(q.name)}${q.mine?' <span class="mut">(คุณ)</span>':''}</td><td>${esc(q.items)}</td><td><span class="st ${esc(q.status)}">${ST[q.status]||''}</span></td></tr>`).join(''):'<tr><td colspan="4" class="mut">ยังไม่มีคิว</td></tr>';
 }
 const ERR={promo_not_found:'ไม่พบโค้ดนี้',promo_expired:'โค้ดหมดอายุหรือยังไม่เริ่มใช้งาน',promo_used_up:'โค้ดนี้ถูกใช้ครบสิทธิ์แล้ว',promo_already_used:'คุณใช้โค้ดนี้ครบสิทธิ์แล้ว',promo_min_total:'ยอดสั่งซื้อยังไม่ถึงขั้นต่ำของโค้ดนี้',login_required:'กรุณาเข้าสู่ระบบก่อนจอง',missing_contact:'กรุณากรอกชื่อและช่องทางติดต่อ',invalid_gems:'จำนวน Primogems ไม่ถูกต้อง',empty_order:'กรุณาเลือกบริการอย่างน้อย 1 รายการ',duplicate_order:'คุณเพิ่งจองรายการเดียวกันไป กรุณารอสักครู่หรือดูในตารางคิว',too_many_active_orders:'คุณมีงานค้างครบ 5 คิวแล้ว กรุณารอให้งานเดิมเสร็จก่อน'};
+const CP_ERR={coupon_not_found:'ไม่พบคูปองนี้ หรือคูปองไม่ได้เปิดให้เก็บ',coupon_expired:'คูปองหมดอายุแล้ว',coupon_not_started:'คูปองยังไม่ถึงเวลาเริ่มใช้',coupon_sold_out:'คูปองถูกเก็บครบจำนวนแล้ว',coupon_already_claimed:'คุณเก็บคูปองนี้ครบสิทธิ์แล้ว',coupon_used:'คูปองใบนี้ถูกใช้ไปแล้ว',coupon_disabled:'คูปองนี้ถูกปิดใช้งาน',coupon_not_applicable:'คูปองนี้ใช้กับบริการที่เลือกไม่ได้',coupon_limit_reached:'คุณใช้คูปองนี้ครบสิทธิ์แล้ว',one_discount_only:'ใช้ได้ 1 ส่วนลดต่อออเดอร์ (โค้ดหรือคูปองอย่างใดอย่างหนึ่ง)'};
+Object.assign(ERR,CP_ERR,{coupon_min_total:'ยอดสั่งซื้อยังไม่ถึงขั้นต่ำของคูปอง',price_changed:'ราคาบริการมีการเปลี่ยนแปลง กรุณาตรวจยอดใหม่แล้วกดจองอีกครั้ง',option_inactive:'แพ็กเกจที่เลือกถูกปิดไปแล้ว กรุณาเลือกใหม่',option_invalid:'ไม่พบแพ็กเกจที่เลือก กรุณาเลือกใหม่',option_required:'กรุณาเลือกแพ็กเกจของบริการ',service_inactive:'บริการที่เลือกถูกปิดไปแล้ว',service_not_found:'ไม่พบบริการที่เลือก กรุณารีเฟรชหน้า',qty_invalid:'จำนวนไม่ถูกต้อง',qty_min:'จำนวนต่ำกว่าขั้นต่ำที่ร้านกำหนด',qty_max:'จำนวนเกินที่ร้านกำหนด',duplicate_service:'เลือกบริการซ้ำกัน',amount_too_large:'ยอดรวมสูงเกินกำหนด',too_many_lines:'เลือกบริการมากเกินไป',invalid_lines:'ข้อมูลรายการไม่ถูกต้อง',bad_service_config:'บริการนี้ตั้งราคาไม่สมบูรณ์ กรุณาแจ้งร้าน'});
 async function applyPromo(){
   const c=$('promo').value.trim().toUpperCase();
   if(!c){promo=null;discCode='';calc();return}
@@ -333,28 +459,108 @@ async function applyPromo(){
   const{data,error}=await sb.rpc('check_promo',{p_code:c,p_sub:sub});
   if(error||!data)return toast(ERR[error&&error.message]||'ตรวจสอบโค้ดไม่สำเร็จ');
   if(!data.valid){promo=null;discCode='';calc();return toast(data.reason==='promo_min_total'?`ต้องมียอดขั้นต่ำ ${data.min_total} บาท`:(ERR[data.reason]||'โค้ดใช้ไม่ได้'))}
-  promo={...data,code:c};discCode=c;calc();toast('ใช้โค้ดส่วนลดแล้ว');
+  promo={...data,code:c};discCode=c;if(cpn){cpn=null;cquote=null;toast('ใช้โค้ดแทนคูปอง (ใช้ได้ 1 ส่วนลดต่อออเดอร์)')}else toast('ใช้โค้ดส่วนลดแล้ว');calc();
 }
 async function book(){
   if(booking)return;
   if(!me){toast('กรุณาเข้าสู่ระบบก่อนจอง');return openAuth()}
-  const{g,sub}=calc(),name=$('cname').value.trim(),cid=$('cid').value.trim();
+  const c=calc(),{g,sub}=c,name=$('cname').value.trim(),cid=$('cid').value.trim();
+  if(c.bad)return toast('กรุณาแก้จำนวนที่ไม่ถูกต้องในรายการที่เลือกก่อน');
   if(!sub)return toast('กรุณาเลือกบริการอย่างน้อย 1 รายการ');
   if(!name||!cid)return toast('กรุณากรอกชื่อและช่องทางติดต่อ');
+  if(cpn&&!c.d)return toast(c.note?`คูปองที่เลือกใช้ไม่ได้: ${c.note}`:'คูปองที่เลือกใช้ไม่ได้ กรุณายกเลิกหรือเปลี่ยนคูปอง');
   booking=true;$('bk').disabled=true;
-  const{data,error}=await sb.rpc('place_order',{p_name:name,p_channel:$('cch').value,p_contact:cid,p_note:$('cnote').value.trim(),p_gems:g,p_services:[...sel],p_promo:discCode});
+  const lines=c.lines.map(l=>({service_id:l.id,option_id:l.opt,qty:l.qty}));
+  const{data,error}=await sb.rpc('place_order',{p_name:name,p_channel:$('cch').value,p_contact:cid,p_note:$('cnote').value.trim(),p_gems:g,p_services:[],p_promo:discCode,p_lines:lines,p_coupon:cpn?cpn.id:null,p_expected_total:c.total});
   booking=false;$('bk').disabled=false;
-  if(error)return toast(ERR[error.message]||'จองไม่สำเร็จ: '+error.message);
+  if(error){
+    if(error.code==='PGRST202'||/could not find the function/i.test(error.message||''))return toast('ระบบฐานข้อมูลยังไม่ได้อัปเดต (ต้องรัน migration 010 ก่อน)');
+    if(['price_changed','option_inactive','option_invalid','service_inactive','service_not_found'].includes(error.message)){cfgSig='';loadCfg();loadCoupons()}
+    return toast(ERR[error.message]||'จองไม่สำเร็จ: '+error.message);
+  }
   toast('จองคิว #'+String(data).padStart(3,'0')+' สำเร็จ แอดมินจะติดต่อกลับ');
-  sel.clear();$('gem').value=1600;discCode='';promo=null;$('promo').value='';renderServices();loadQueue();loadMine().then(()=>$('mine').scrollIntoView());
+  sel.clear();cs={};$('gem').value=1600;discCode='';promo=null;cpn=null;cquote=null;$('promo').value='';renderServices();loadQueue();loadCoupons();loadMine().then(()=>$('mine').scrollIntoView());
+}
+
+/* ---------- คูปอง (ลูกค้า): เก็บ / คูปองของฉัน / เลือกใช้ตอนจอง ---------- */
+const cpVal=c=>c.kind==='percent'?c.value+'%':fmt(c.value);
+function cpCond(c){const a=[];if(c.kind==='percent'&&c.max_discount)a.push('ลดสูงสุด '+fmt(c.max_discount));if(c.min_total)a.push('ขั้นต่ำ '+fmt(c.min_total));
+  a.push(c.service_ids&&c.service_ids.length?'เฉพาะ '+c.service_ids.map(id=>{const s=cfg.services.find(x=>x.id===id);return s?s.name:'บริการที่กำหนด'}).join(', '):'ใช้ได้ทุกบริการ');return a.join(' · ')}
+const cpExp=c=>c.expires_at?'หมดอายุ '+dt(c.expires_at):'ไม่มีวันหมดอายุ';
+function cpCard(c,a){const col=/^#[0-9a-fA-F]{6}$/.test(c.color)?c.color:'#3d96f5';
+  return`<div class="cp${a.dim?' dim':''}" style="--cc:${col}"><div class="cpl"><span class="cpi">${esc(c.icon||'🎟️')}</span><b>${esc(cpVal(c))}</b><small>ส่วนลด</small></div><div class="cpr"><b class="cpn">${esc(c.name)}</b>${c.description?`<div class="mut">${esc(c.description)}</div>`:''}<div class="mut">${esc(cpCond(c))}</div><div class="mut">${esc(a.line||cpExp(c))}</div>${a.btn||''}</div></div>`}
+async function loadCoupons(){
+  const a=await sb.rpc('list_coupons');
+  couponsOn=!a.error;avail=Array.isArray(a.data)?a.data:[];
+  if(me&&couponsOn){const m=await sb.rpc('my_coupons');myc=Array.isArray(m.data)?m.data:[]}else myc=[];
+  $('coupons').classList.toggle('hide',!couponsOn);$('nav-coupons').classList.toggle('hide',!couponsOn);
+  renderCoupons();
+  if(cpn){const f=myc.find(x=>x.id===cpn.id);if(!f||f.state!=='active'){cpn=null;cquote=null}else cpn=f}
+  calc();
+  if(!$('cpm').classList.contains('hide'))renderPicker();
+}
+function ctab(t){ctb=t;renderCoupons()}
+function cfil(f){cfl=f;renderCoupons()}
+function claimBtn(c){
+  if(c.my_claimed>=c.per_user_claim)return'<button class="g" style="margin-top:8px" disabled>เก็บแล้ว ✓</button>';
+  if(c.remaining===0)return'<button class="g" style="margin-top:8px" disabled>ถูกเก็บครบแล้ว</button>';
+  if(c.starts_at&&Date.now()<+new Date(c.starts_at))return`<button class="g" style="margin-top:8px" disabled>เริ่ม ${esc(dt(c.starts_at))}</button>`;
+  return`<button style="margin-top:8px" onclick="claimCp('${esc(c.id)}',this)">${me?'เก็บคูปอง':'เข้าสู่ระบบเพื่อเก็บ'}</button>`}
+function renderCoupons(){
+  if(!$('clist'))return;
+  $('ct-a').className=ctb==='avail'?'':'g';$('ct-m').className=ctb==='mine'?'':'g';
+  const box=$('clist'),fb=$('cfil');
+  if(ctb==='avail'){fb.innerHTML='';
+    box.innerHTML=avail.length?avail.map(c=>cpCard(c,{line:(c.remaining!=null?`เหลือ ${c.remaining.toLocaleString()} ใบ · `:'')+cpExp(c),btn:claimBtn(c)})).join(''):'<div class="mut">ยังไม่มีคูปองที่เปิดให้เก็บในขณะนี้</div>';return}
+  if(!me){fb.innerHTML='';box.innerHTML='<div class="mut" style="grid-column:1/-1">เข้าสู่ระบบเพื่อดูคูปองที่คุณเก็บไว้ <button style="margin-left:8px" onclick="openAuth(\'in\')">เข้าสู่ระบบ</button></div>';return}
+  const G={active:[],used:[],expired:[]};myc.forEach(x=>(x.state==='active'?G.active:x.state==='used'?G.used:G.expired).push(x));
+  fb.innerHTML=[['active','ใช้ได้'],['used','ใช้แล้ว'],['expired','หมดอายุ / ปิดแล้ว']].map(([k,l])=>`<button class="${cfl===k?'':'g'}" onclick="cfil('${k}')">${l} (${G[k].length})</button>`).join('');
+  box.innerHTML=G[cfl].length?G[cfl].map(c=>cpCard(c,{dim:cfl!=='active',line:c.state==='used'?'ใช้เมื่อ '+dt(c.used_at):c.state==='disabled'?'คูปองถูกปิดใช้งาน':cpExp(c)})).join(''):'<div class="mut" style="grid-column:1/-1">ไม่มีคูปองในหมวดนี้</div>';
+}
+async function claimCp(id,btn){
+  if(!me){toast('กรุณาเข้าสู่ระบบเพื่อเก็บคูปอง');return openAuth()}
+  if(btn)btn.disabled=true;
+  const{error}=await sb.rpc('claim_coupon',{p_coupon:id});
+  toast(error?(CP_ERR[error.message]||ERR[error.message]||'เก็บคูปองไม่สำเร็จ: '+error.message):'เก็บคูปองแล้ว 🎉 ดูได้ที่ "คูปองของฉัน"');
+  await loadCoupons();
+}
+function renderCpSel(d,note){
+  const el=$('cpsel');if(!el)return;
+  const h=!couponsOn?'':cpn?`<div class="cpchip"><div><b>🎟️ ${esc(cpn.name)}</b><div class="mut" style="${note?'color:#dc2626':''}">${esc(note||'ใช้คูปองแล้ว')}</div></div><div style="text-align:right"><b style="color:var(--ok)">-${fmt(d)}</b><br><button class="g" style="padding:2px 10px;min-height:32px;font-size:12px;margin-top:4px" onclick="clearCpn()">ยกเลิกคูปอง</button></div></div>`:`<button class="d" style="width:100%" onclick="openCpPicker()">🎟️ เลือกคูปอง</button>`;
+  if(el.dataset.h!==h){el.innerHTML=h;el.dataset.h=h}
+}
+function openCpPicker(){if(!me){toast('กรุณาเข้าสู่ระบบเพื่อใช้คูปอง');return openAuth()}renderPicker();$('cpm').classList.remove('hide');loadCoupons()}
+function renderPicker(){
+  const c=calc(),ok=[];let no=0;
+  myc.filter(x=>x.state==='active').forEach(x=>{const r=cpnLocal(x,c.lines,c.sub);if(r.ok)ok.push([x,r.d]);else no++});
+  ok.sort((a,b)=>b[1]-a[1]);
+  $('cpb').innerHTML=`<h3 style="margin:0 0 4px">เลือกคูปอง</h3><div class="mut">แสดงเฉพาะคูปองที่ใช้กับออเดอร์ปัจจุบันได้ (ยอดก่อนลด ${fmt(c.sub)})</div>`
+   +(ok.length?ok.map(([x,d])=>cpCard(x,{line:`ได้ส่วนลด ${fmt(d)} กับออเดอร์นี้ · ${cpExp(x)}`,btn:`<button style="margin-top:8px" ${cpn&&cpn.id===x.id?'class="g" disabled':''} onclick="pickCp('${esc(x.id)}')">${cpn&&cpn.id===x.id?'กำลังใช้คูปองนี้':'ใช้คูปองนี้'}</button>`})).join(''):'<div class="mut" style="padding:16px 0">ไม่มีคูปองที่ใช้ได้กับออเดอร์นี้</div>')
+   +(no?`<div class="mut" style="margin-top:10px">มีคูปองอีก ${no} ใบที่ใช้กับออเดอร์นี้ไม่ได้ (ยอดไม่ถึงขั้นต่ำ หรือไม่ตรงกับบริการที่เลือก)</div>`:'')
+   +`<button class="g" style="width:100%;margin-top:14px" onclick="$('cpm').classList.add('hide')">ปิด</button>`;
+}
+async function pickCp(id){
+  const x=myc.find(v=>v.id===id);if(!x)return;
+  cpn=x;cquote=null;promo=null;discCode='';$('promo').value='';$('cpm').classList.add('hide');calc();
+}
+function clearCpn(){cpn=null;cquote=null;calc()}
+function scheduleQuote(sig,g,lines,localD){clearTimeout(qTimer);qTimer=setTimeout(()=>runQuote(sig,g,lines,localD),300)}
+async function runQuote(sig,g,lines,localD){
+  if(!cpn||!me)return;
+  const{data,error}=await sb.rpc('quote_order',{p_gems:g,p_lines:lines.map(l=>({service_id:l.id,option_id:l.opt,qty:l.qty})),p_coupon:cpn.id});
+  if(sig!==lastSig)return;      // ตะกร้าเปลี่ยนไประหว่างรอ → ผลนี้ล้าสมัย
+  if(error||!data||!data.coupon){cquote={sig,valid:true,discount:localD};calc();return}
+  const cv=data.coupon;cquote={sig,valid:!!cv.valid,discount:cv.valid?cv.discount:0,reason:cv.reason,min_total:cv.min_total};
+  if(!cv.valid)toast(cqReason(cquote));
+  calc();
 }
 
 /* ---------- หลังบ้าน ---------- */
-const TABS=[['dash','📊 Dashboard'],['queue','📋 จัดการคิว'],['cust','👥 จัดการลูกค้า'],['svc','🛍️ จัดการบริการ'],['ban','🖼️ จัดการแบนเนอร์'],['price','💰 จัดการราคา'],['promo','🏷️ จัดการโปรโมชั่น'],['rev','⭐ จัดการรีวิว'],['team','🧑‍🤝‍🧑 จัดการทีมงาน'],['rep','📈 รายงานรายรับและกำไร'],['set','⚙️ ตั้งค่าร้าน']];
+const TABS=[['dash','📊 Dashboard'],['queue','📋 จัดการคิว'],['cust','👥 จัดการลูกค้า'],['svc','🛍️ จัดการบริการ'],['ban','🖼️ จัดการแบนเนอร์'],['price','💰 จัดการราคา'],['promo','🏷️ จัดการโปรโมชั่น'],['cpad','🎟️ จัดการคูปอง'],['rev','⭐ จัดการรีวิว'],['team','🧑‍🤝‍🧑 จัดการทีมงาน'],['rep','📈 รายงานรายรับและกำไร'],['set','⚙️ ตั้งค่าร้าน']];
 const TTABS=[['tw','📋 งานของฉัน'],['th','💵 ประวัติและค่าตอบแทน']];
 let at='dash',team=[],rp='day',rep=null,txs=[],mysum=null,tmem=[],dash=null,custs=[],revs=[];
 const bkk=v=>new Date(v).toLocaleDateString('sv-SE',{timeZone:'Asia/Bangkok'});
-function go(t){at=t;$('side').classList.remove('open');renderAdmin();({dash:loadDash,cust:loadCust,rev:loadRevs,team:loadTeamPage,rep:loadRep,th:loadMy,promo:loadPromos,set:loadHook}[t]||(()=>{}))()}
+function go(t){at=t;$('side').classList.remove('open');renderAdmin();({dash:loadDash,cust:loadCust,rev:loadRevs,team:loadTeamPage,rep:loadRep,th:loadMy,promo:loadPromos,cpad:loadCpAdm,set:loadHook}[t]||(()=>{}))()}
 async function loadOrders(){
   if(!isStaff())return;
   if(isAdmin()){
@@ -372,7 +578,7 @@ function renderAdmin(){
   $('side').innerHTML=T.map(([k,l])=>`<button class="${k===at?'on':''}" onclick="go('${k}')">${l}</button>`).join('');$('sidebtn').textContent='☰ เมนูหลังบ้าน · '+(T.find(x=>x[0]===at)||[0,''])[1];
   [...TABS,...TTABS].forEach(([k])=>{const e=$('p-'+k);if(e)e.classList.toggle('hide',k!==at)});
   if(isAdmin()&&$('fs').options.length<2)Object.keys(ST).forEach(k=>$('fs').add(new Option(ST[k],k)));
-  ({dash:renderDash,queue:renderQ,cust:renderCust,svc:renderSvc,ban:renderBan,price:renderPrice,promo:renderPromo,rev:renderRevs,set:renderSet,team:renderTeam,rep:renderRep,tw:renderTW,th:renderTH}[at]||(()=>{}))();
+  ({dash:renderDash,queue:renderQ,cust:renderCust,svc:renderSvc,ban:renderBan,price:renderPrice,promo:renderPromo,cpad:renderCpAdm,rev:renderRevs,set:renderSet,team:renderTeam,rep:renderRep,tw:renderTW,th:renderTH}[at]||(()=>{}))();
 }
 /* Dashboard */
 async function loadDash(){const{data,error}=await sb.rpc('admin_dashboard');if(error)return toast('โหลด Dashboard ไม่สำเร็จ: '+error.message);dash=data;renderDash()}
@@ -392,14 +598,23 @@ function renderQ(){
 }
 async function setSt(id,v){const{error}=await sb.from('orders').update({status:v}).eq('id',id);toast(error?error.message:'อัปเดตสถานะแล้ว');await loadOrders();loadQueue();if(at==='dash')loadDash()}
 async function setAssign(id,v){const{error}=await sb.from('orders').update({assigned_to:v||null}).eq('id',id);toast(error?error.message:'มอบหมายงานแล้ว');loadOrders()}
+async function getItems(id){const r=await sb.from('order_items').select('*').eq('order_id',id).order('position');return r.data||[]}
+function orderBreak(o,its){
+  let h='';
+  if(its.length)h+=`<div class="mut" style="margin-top:8px">รายการที่สั่ง</div>`+its.map(i=>`<div class="ln"><div><b>${esc(i.service_name)}</b>${i.option_name?` <span class="mut">(${esc(i.option_name)})</span>`:''}${(i.qty>1||i.kind==='gems')?`<div class="mut">${fmt(i.unit_price)} × ${Number(i.qty).toLocaleString()} ${esc(i.unit||'')}</div>`:''}</div><b>${fmt(i.line_total)}</b></div>`).join('');
+  else h+=`<div class="row"><span class="mut">รายการ</span><span style="text-align:right">${esc(o.items)}</span></div>`;
+  const sub=o.subtotal!=null?o.subtotal:o.total+(o.discount||0);
+  if(o.discount>0||o.subtotal!=null)h+=`<div class="row"><span class="mut">ยอดก่อนลด</span><span>${fmt(sub)}</span></div>`;
+  if(o.discount>0)h+=`<div class="row"><span class="mut">ส่วนลด${o.coupon_name?` (คูปอง: ${esc(o.coupon_name)})`:o.promo_code?` (โค้ด ${esc(o.promo_code)})`:''}</span><span style="color:var(--ok)">-${fmt(o.discount)}</span></div>`;
+  return h+`<div class="row"><span class="mut">ยอดสุทธิที่ต้องชำระ</span><b>${fmt(o.total)}</b></div>`}
 async function openAdminOd(id){
   const o=orders.find(x=>x.id===id);if(!o)return;
-  const[hs,nt]=await Promise.all([sb.from('order_history').select('*').eq('order_id',id).order('id'),sb.from('order_notes').select('note').eq('order_id',id).maybeSingle()]);
+  const[hs,nt,its]=await Promise.all([sb.from('order_history').select('*').eq('order_id',id).order('id'),sb.from('order_notes').select('note').eq('order_id',id).maybeSingle(),getItems(id)]);
   const who=u=>(team.find(m=>m.id===u)||{}).name||'ลูกค้า/ระบบ';
   $('odb').innerHTML=`<h3 style="margin:0 0 4px">คิว ${no3(o.no)} <span class="st ${esc(o.status)}">${ST[o.status]||''}</span></h3><div class="mut">จองเมื่อ ${esc(dt(o.created_at))}</div>
   <div class="row"><span class="mut">ลูกค้า</span><b>${esc(o.name)}</b></div><div class="row"><span class="mut">ติดต่อ</span><span>${esc(o.channel)}: ${esc(o.contact)}</span></div>
   ${o.note?`<div class="row"><span class="mut">หมายเหตุจากลูกค้า</span><span>${esc(o.note)}</span></div>`:''}
-  <div class="row"><span class="mut">รายการ</span><span style="text-align:right">${esc(o.items)}</span></div><div class="row"><span class="mut">ราคารวม</span><b>${fmt(o.total)}</b></div>
+  ${orderBreak(o,its)}
   <div class="mut" style="margin-top:10px">ประวัติการเปลี่ยนสถานะ</div>${(hs.data||[]).map(x=>`<div class="row"><span>${x.from_status?(ST[x.from_status]||esc(x.from_status))+' → ':''}${ST[x.to_status]||esc(x.to_status)}</span><span class="mut">${esc(who(x.changed_by))} · ${esc(dt(x.created_at))}</span></div>`).join('')}
   <div class="mut" style="margin-top:10px">สตรีมและหลักฐานงาน</div><div id="evbox"></div><label class="l">หมายเหตุภายใน (ลูกค้าไม่เห็น)</label><input id="an" maxlength="1000" value="${esc(nt.data?nt.data.note:'')}">
   <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap"><button onclick="saveNote('${id}')">บันทึกหมายเหตุ</button>${o.status==='cancelled'?'':`<button class="g" onclick="cancelO(this,'${id}')">ยกเลิกออเดอร์</button>`}<button class="g" onclick="$('od').classList.add('hide')">ปิด</button></div>`;
@@ -504,6 +719,78 @@ async function togPromo(id,on){const{error}=await sb.from('promotions').update({
 async function delPromo(b,id){
   if(!b.dataset.s){b.dataset.s=1;b.textContent='แน่ใจ?';b.className='r';return}
   const{error}=await sb.from('promotions').delete().eq('id',id);toast(error?error.message:'ลบโค้ดแล้ว (ประวัติการใช้ของโค้ดนี้ถูกลบด้วย)');loadPromos();
+}
+/* ---------- จัดการคูปอง (แอดมิน) ---------- */
+async function loadCpAdm(){const{data,error}=await sb.rpc('admin_coupons');if(error)toast(error.message==='forbidden'?'ไม่มีสิทธิ์':error.code==='PGRST202'?'ยังไม่ได้รัน migration 010':'โหลดคูปองไม่สำเร็จ: '+error.message);cpns=Array.isArray(data)?data:[];renderCpAdm()}
+function cpStatus(x){const n=Date.now();if(!x.active)return['ปิดอยู่',''];if(x.expires_at&&n>+new Date(x.expires_at))return['หมดอายุ',''];if(x.starts_at&&n<+new Date(x.starts_at))return['ยังไม่เริ่ม','doing'];if(x.max_total&&x.claimed>=x.max_total)return['เก็บครบแล้ว','doing'];return['เปิดใช้งาน','done']}
+function renderCpAdm(){
+  if(!$('cpl'))return;
+  $('cpl').innerHTML=cpns.length?cpns.map(x=>{
+    const col=/^#[0-9a-fA-F]{6}$/.test(x.color)?x.color:'#3d96f5',st=cpStatus(x);
+    const cond=[cpCond(x),x.starts_at?'เริ่ม '+dt(x.starts_at):'',x.expires_at?'หมด '+dt(x.expires_at):'',`เก็บได้ ${x.per_user_claim} / ใช้ได้ ${x.per_user_use} ครั้งต่อบัญชี`,x.distribution==='grant'?'แจกโดยแอดมิน':'ลูกค้าเก็บเอง'].filter(Boolean).join(' · ');
+    return`<tr><td><div style="display:flex;align-items:center;gap:8px"><span class="cdot" style="background:${col}"></span><div><b>${esc(x.icon||'')} ${esc(x.name)}</b><div class="mut">${esc(x.code)}</div></div></div></td><td>${esc(cpVal(x))}</td><td class="mut">${esc(cond)}</td><td>${x.claimed.toLocaleString()}${x.max_total?' / '+x.max_total.toLocaleString():''} เก็บ · ${x.used.toLocaleString()} ใช้</td><td><span class="st ${st[1]}">${st[0]}</span></td><td style="white-space:nowrap"><button class="g" onclick="openCpEd('${x.id}')">แก้ไข</button> <button class="g" onclick="togCp('${x.id}',${!x.active})">${x.active?'ปิด':'เปิด'}</button> <button class="g" onclick="openGrant('${x.id}')">แจก</button> <button class="g" onclick="delCp(this,'${x.id}')">ลบ</button></td></tr>`}).join(''):'<tr><td colspan="6" class="mut">ยังไม่มีคูปอง กด "สร้างคูปองใหม่"</td></tr>';
+}
+const toLocalDt=v=>{if(!v)return'';const d=new Date(v),p=n=>String(n).padStart(2,'0');return`${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`};
+function openCpEd(id){
+  const x=id?cpns.find(c=>c.id===id):null;if(id&&!x)return;
+  const v=x||{code:'',name:'',description:'',color:'#3d96f5',icon:'🎟️',kind:'percent',value:'',max_discount:'',min_total:0,service_ids:null,starts_at:null,expires_at:null,max_total:'',per_user_claim:1,per_user_use:1,distribution:'claim',active:true};
+  const kd=v.kind==='percent'?'percent':(v.min_total>0?'cond':'baht'),sv=v.service_ids||[];
+  $('odb').innerHTML=`<h3 style="margin:0 0 4px">${x?'แก้ไขคูปอง':'สร้างคูปองใหม่'}</h3><input type="hidden" id="ce-id" value="${esc(id||'')}">
+  <label class="l">ชื่อคูปอง *</label><input id="ce-n" maxlength="60" value="${esc(v.name)}"><label class="l">รหัสคูปอง * (A-Z 0-9 _ - ไม่เกิน 24 ตัว)</label><input id="ce-c" maxlength="24" style="text-transform:uppercase" value="${esc(v.code)}"><label class="l">คำอธิบาย</label><input id="ce-d" maxlength="200" value="${esc(v.description||'')}">
+  <div class="two"><div><label class="l">สีคูปอง</label><input id="ce-col" type="color" value="${esc(v.color)}" style="padding:4px"></div><div><label class="l">ไอคอนอีโมจิ</label><input id="ce-i" maxlength="4" value="${esc(v.icon||'')}"></div></div>
+  <label class="l">ประเภทส่วนลด *</label><select id="ce-k" onchange="cpKind()"><option value="percent" ${kd==='percent'?'selected':''}>ลดเป็นเปอร์เซ็นต์</option><option value="baht" ${kd==='baht'?'selected':''}>ลดเป็นจำนวนเงิน (บาท)</option><option value="cond" ${kd==='cond'?'selected':''}>ลดตามเงื่อนไข: ครบ X บาท ลด Y บาท</option></select>
+  <div class="two"><div><label class="l" id="ce-vl">มูลค่าส่วนลด *</label><input id="ce-v" type="number" inputmode="numeric" min="1" value="${esc(v.value)}"></div><div id="ce-mdw"><label class="l">ส่วนลดสูงสุด (บาท, ว่าง = ไม่จำกัด)</label><input id="ce-md" type="number" inputmode="numeric" min="1" value="${esc(v.max_discount??'')}"></div></div>
+  <label class="l" id="ce-ml">ยอดสั่งซื้อขั้นต่ำ (บาท)</label><input id="ce-m" type="number" inputmode="numeric" min="0" value="${esc(v.min_total)}">
+  <label class="l">ใช้กับบริการ (ไม่เลือกเลย = ทุกบริการ รวม Primogems)</label><div class="chkgrid">${cfg.services.map(s=>`<label class="chk"><input type="checkbox" class="ce-s" value="${esc(s.id)}" ${sv.includes(s.id)?'checked':''}> ${esc(s.name)}</label>`).join('')||'<span class="mut">ยังไม่มีบริการเสริม</span>'}</div>
+  <div class="two"><div><label class="l">เริ่มใช้ได้</label><input id="ce-s0" type="datetime-local" value="${toLocalDt(v.starts_at)}"></div><div><label class="l">หมดอายุ</label><input id="ce-e0" type="datetime-local" value="${toLocalDt(v.expires_at)}"></div></div>
+  <div class="two"><div><label class="l">จำนวนคูปองทั้งหมด (ว่าง = ไม่จำกัด)</label><input id="ce-t" type="number" inputmode="numeric" min="1" value="${esc(v.max_total??'')}"></div><div><label class="l">เก็บได้ต่อบัญชี (ใบ)</label><input id="ce-pc" type="number" inputmode="numeric" min="1" value="${esc(v.per_user_claim)}"></div></div>
+  <label class="l">ใช้ได้ต่อบัญชี (ครั้ง, ไม่เกินจำนวนใบที่เก็บ)</label><input id="ce-pu" type="number" inputmode="numeric" min="1" value="${esc(v.per_user_use)}">
+  <label class="l">วิธีรับคูปอง</label><select id="ce-dist"><option value="claim" ${v.distribution==='claim'?'selected':''}>ลูกค้ากดเก็บเอง</option><option value="grant" ${v.distribution==='grant'?'selected':''}>แอดมินแจกให้สมาชิก (ปุ่ม "แจก")</option></select>
+  <label class="chk"><input id="ce-a" type="checkbox" ${v.active?'checked':''}> เปิดใช้งาน</label>
+  <div class="abtns actbar"><button class="g" onclick="$('od').classList.add('hide')">ยกเลิก</button><button id="ce-sv" onclick="saveCp()">บันทึก</button></div>`;
+  cpKind();$('od').classList.remove('hide');
+}
+function cpKind(){const k=$('ce-k').value;$('ce-mdw').classList.toggle('hide',k!=='percent');$('ce-vl').textContent=k==='percent'?'เปอร์เซ็นต์ส่วนลด (1-100) *':'มูลค่าส่วนลด (บาท) *';$('ce-ml').textContent=k==='cond'?'ยอดสั่งซื้อขั้นต่ำ (บาท) * ครบเท่านี้จึงได้ลด':'ยอดสั่งซื้อขั้นต่ำ (บาท)'}
+async function saveCp(){
+  const gi=id=>$(id).value.trim(),n=id=>{const t=gi(id);return t===''?null:(/^\d{1,9}$/.test(t)?parseInt(t,10):NaN)},d=id=>$(id).value?new Date($(id).value).toISOString():null;
+  const k=gi('ce-k'),name=gi('ce-n'),code=gi('ce-c').toUpperCase(),val=n('ce-v'),min=n('ce-m')??0,md=k==='percent'?n('ce-md'):null,mt=n('ce-t'),pc=n('ce-pc'),pu=n('ce-pu'),s0=d('ce-s0'),e0=d('ce-e0');
+  if(!name)return toast('กรอกชื่อคูปอง');
+  if(!/^[A-Z0-9_-]{2,24}$/.test(code))return toast('รหัสคูปองใช้ได้เฉพาะ A-Z 0-9 _ - (2-24 ตัว)');
+  if(!(val>0)||(k==='percent'&&val>100))return toast(k==='percent'?'เปอร์เซ็นต์ต้องอยู่ระหว่าง 1-100':'ใส่มูลค่าส่วนลดเป็นจำนวนเต็มมากกว่า 0');
+  if(Number.isNaN(min))return toast('ยอดขั้นต่ำต้องเป็นตัวเลขตั้งแต่ 0');
+  if(k==='cond'&&!(min>0))return toast('ลดตามเงื่อนไข ต้องกำหนดยอดขั้นต่ำมากกว่า 0');
+  if(Number.isNaN(md)||(md!=null&&md<1))return toast('ส่วนลดสูงสุดต้องเป็นตัวเลขมากกว่า 0');
+  if(Number.isNaN(mt)||(mt!=null&&mt<1))return toast('จำนวนคูปองทั้งหมดต้องมากกว่า 0');
+  if(!(pc>=1)||!(pu>=1))return toast('จำนวนที่เก็บ/ใช้ได้ต่อบัญชีต้องเป็นจำนวนเต็มตั้งแต่ 1');
+  if(s0&&e0&&e0<=s0)return toast('วันหมดอายุต้องหลังวันเริ่มใช้');
+  const svcs=[...document.querySelectorAll('.ce-s:checked')].map(e=>e.value);
+  const row={code,name,description:gi('ce-d')||null,color:$('ce-col').value,icon:gi('ce-i')||null,kind:k==='percent'?'percent':'baht',value:val,max_discount:md,min_total:min,service_ids:svcs.length?svcs:null,starts_at:s0,expires_at:e0,max_total:mt,per_user_claim:pc,per_user_use:pu,distribution:$('ce-dist').value,active:$('ce-a').checked};
+  const id=$('ce-id').value;$('ce-sv').disabled=true;
+  const{error}=id?await sb.from('coupons').update(row).eq('id',id):await sb.from('coupons').insert(row);
+  $('ce-sv').disabled=false;
+  if(error)return toast(error.code==='23505'?'มีรหัสคูปองนี้อยู่แล้ว':error.message);
+  toast(id?'บันทึกคูปองแล้ว':'สร้างคูปองแล้ว');$('od').classList.add('hide');loadCpAdm();loadCoupons();
+}
+async function togCp(id,on){const{error}=await sb.from('coupons').update({active:on}).eq('id',id);toast(error?error.message:'อัปเดตแล้ว');loadCpAdm();loadCoupons()}
+async function delCp(b,id){
+  if(!b.dataset.s){b.dataset.s=1;b.textContent='ลบจริง?';b.className='r';toast('การลบจะทำให้คูปองที่สมาชิกเก็บไว้หายไปด้วย (ประวัติออเดอร์เดิมไม่เปลี่ยน) กดอีกครั้งเพื่อยืนยัน');return}
+  const{error}=await sb.from('coupons').delete().eq('id',id);toast(error?error.message:'ลบคูปองแล้ว');loadCpAdm();loadCoupons();
+}
+function openGrant(id){
+  const x=cpns.find(c=>c.id===id);if(!x)return;
+  $('odb').innerHTML=`<h3 style="margin:0 0 4px">แจกคูปอง: ${esc(x.name)}</h3><div class="mut">แจกเข้าบัญชีสมาชิก (ไม่เกินสิทธิ์ ${x.per_user_claim} ใบต่อบัญชี และไม่เกินจำนวนคูปองทั้งหมด)</div>
+  <label class="l">อีเมลสมาชิก (เว้นว่าง = แจกสมาชิกทุกคน)</label><input id="gr-e" type="email" placeholder="member@example.com">
+  <div class="abtns actbar"><button class="g" onclick="$('od').classList.add('hide')">ปิด</button><button id="gr-b" onclick="doGrant('${esc(id)}')">แจกคูปอง</button></div>`;
+  $('od').classList.remove('hide');
+}
+async function doGrant(id){
+  const e=$('gr-e').value.trim().toLowerCase();
+  if(!e&&!$('gr-b').dataset.s){$('gr-b').dataset.s=1;$('gr-b').textContent='ยืนยันแจกทุกคน?';return toast('จะแจกให้สมาชิกทุกคน กดอีกครั้งเพื่อยืนยัน')}
+  $('gr-b').disabled=true;
+  const{data,error}=await sb.rpc('admin_grant_coupon',{p_coupon:id,p_email:e||null});
+  $('gr-b').disabled=false;
+  if(error)return toast({user_not_found:'ไม่พบสมาชิกอีเมลนี้',coupon_expired:'คูปองหมดอายุแล้ว',coupon_disabled:'คูปองถูกปิดอยู่ เปิดใช้งานก่อนแจก'}[error.message]||error.message);
+  toast(`แจกคูปองให้ ${Number(data).toLocaleString()} บัญชี`);$('od').classList.add('hide');loadCpAdm();
 }
 /* แจ้งเตือน Discord (แอดมิน) */
 async function loadHook(){const{data}=await sb.from('integrations').select('discord_webhook,discord_enabled').eq('id',1).maybeSingle();hook=data;renderHook()}
@@ -621,16 +908,22 @@ async function bnPublish(){
 }
 addEventListener('beforeunload',e=>{if(bdirty){e.preventDefault();e.returnValue=''}});
 /* บริการ + รูปภาพ (แอดมิน) */
+function svcSummary(s){
+  const p=svcPricing(s);
+  if(p.mode==='unit')return`${p.unitPrice==null?'—':fmt(p.unitPrice)} / ${esc(p.unit)} · กรอกจำนวน ${p.min.toLocaleString()}–${p.max.toLocaleString()}`;
+  if(p.mode==='tier'){const pr=p.tiers.map(t=>t.price).filter(x=>x!=null);return`ขั้นบันได ${p.tiers.length} ช่วง${pr.length?` · ${fmt(Math.min(...pr))}–${fmt(Math.max(...pr))} / ${esc(p.unit)}`:''}`}
+  const A=activeOpts(s),all=svcOpts(s),pr=A.map(o=>toInt(o.price)).filter(x=>x!=null);
+  return(all.length>1?`${A.length}/${all.length} แพ็กเกจ · `:'')+(pr.length?(Math.min(...pr)===Math.max(...pr)?fmt(pr[0]):`${fmt(Math.min(...pr))}–${fmt(Math.max(...pr))}`):'ไม่มีแพ็กเกจที่เปิด')+(p.qtyOn?` · × จำนวน (${p.min.toLocaleString()}–${p.max.toLocaleString()} ${esc(p.unit)})`:'')}
 function renderSvc(){
   const row=(img,icon,name,sub,btns)=>`<div class="arow">${imgHtml(img,icon,'thumb')}<div class="ainfo"><b>${name}</b><div class="mut">${sub}</div></div><div class="abtns">${btns}</div></div>`;
   $('svcadm').innerHTML=row(cfg.gemImage,'💎','ฟาร์ม Primogems',`${cfg.gemUnitPrice} บาท ต่อ ${cfg.gemUnit} เจม (แก้ราคาที่เมนูจัดการราคา)`,`<button class="g" onclick="openSvcEd('__gem')">รูปภาพ</button>`)
-   +(cfg.services.map(s=>row(s.image,s.icon||'✨',esc(s.name)+(s.popular?' ⭐':''),`${fmt(s.price)} · <span class="st ${s.active!==false?'done':''}">${s.active!==false?'เปิดอยู่':'ปิดอยู่'}</span>`,`<button class="g" onclick="openSvcEd('${esc(s.id)}')">แก้ไข</button><button class="g" onclick="togSvc('${esc(s.id)}')">${s.active!==false?'ปิด':'เปิด'}</button><button class="g" onclick="delSvc(this,'${esc(s.id)}')">ลบ</button>`)).join('')||'<div class="mut" style="padding:10px 0">ยังไม่มีบริการเสริม กด "เพิ่มบริการใหม่" เพื่อเริ่มต้น</div>');
+   +(cfg.services.map(s=>row(s.image,s.icon||'✨',esc(s.name)+(s.popular?' ⭐':''),`${svcSummary(s)} · <span class="st ${s.active!==false?'done':''}">${s.active!==false?'เปิดอยู่':'ปิดอยู่'}</span>`,`<button class="g" onclick="openSvcEd('${esc(s.id)}')">แก้ไข</button><button class="g" onclick="togSvc('${esc(s.id)}')">${s.active!==false?'ปิด':'เปิด'}</button><button class="g" onclick="delSvc(this,'${esc(s.id)}')">ลบ</button>`)).join('')||'<div class="mut" style="padding:10px 0">ยังไม่มีบริการเสริม กด "เพิ่มบริการใหม่" เพื่อเริ่มต้น</div>');
 
 }
 function togSvc(id){cfg={...cfg,services:cfg.services.map(s=>s.id===id?{...s,active:s.active===false}:s)};saveCfg('อัปเดตสถานะแล้ว')}
 async function delSvc(b,id){
   if(!b.dataset.s){b.dataset.s=1;b.textContent='ยืนยันลบ?';b.className='r';return}
-  const s=cfg.services.find(x=>x.id===id);cfg={...cfg,services:cfg.services.filter(x=>x.id!==id)};sel.delete(id);
+  const s=cfg.services.find(x=>x.id===id);cfg={...cfg,services:cfg.services.filter(x=>x.id!==id)};sel.delete(id);delete cs[id];
   const ok=await saveCfg('ลบบริการแล้ว');if(ok&&s&&s.image)await rmImg(s.image);
 }
 function openSvcEd(id){
@@ -638,11 +931,89 @@ function openSvcEd(id){
   if(id&&!gem&&!hero&&!s)return;
   ed={id:id||'s'+Date.now(),gem,hero,isNew:!id,file:null,remove:false,prev:null,old:gem?cfg.gemImage:hero?cfg.heroImage:(s&&s.image)||null};
   const v=s||{name:'',desc:'',price:'',icon:'',popular:false,active:true};
-  const fields=(gem||hero)?'':`<label class="l">ชื่อบริการ *</label><input id="ed-n" maxlength="60" value="${esc(v.name)}"><label class="l">รายละเอียด</label><input id="ed-d" maxlength="200" value="${esc(v.desc)}"><div class="two"><div><label class="l">ราคา (บาท) *</label><input id="ed-p" type="number" inputmode="numeric" min="0" value="${esc(v.price)}"></div><div><label class="l">ไอคอนอีโมจิ (ใช้เมื่อไม่มีรูป)</label><input id="ed-i" maxlength="4" value="${esc(v.icon)}" oninput="edPrev()"></div></div><label class="chk"><input id="ed-a" type="checkbox" ${v.active!==false?'checked':''}> เปิดใช้งาน (แสดงบนหน้าร้าน)</label><label class="chk"><input id="ed-o" type="checkbox" ${v.popular?'checked':''}> ติดป้าย "ยอดนิยม"</label>`;
+  const fields=(gem||hero)?'':`<label class="l">ชื่อบริการ *</label><input id="ed-n" maxlength="60" value="${esc(v.name)}"><label class="l">รายละเอียด</label><input id="ed-d" maxlength="200" value="${esc(v.desc)}"><label class="l">ไอคอนอีโมจิ (ใช้เมื่อไม่มีรูป)</label><input id="ed-i" maxlength="4" value="${esc(v.icon)}" oninput="edPrev()"><label class="l">รูปแบบราคา *</label><select id="ed-m" onchange="edMode(this.value)"><option value="package">แพ็กเกจ — ลูกค้าเลือก 1 แพ็กเกจ (มีได้หลายราคา)</option><option value="unit">ราคาต่อหน่วย — ลูกค้ากรอกจำนวน</option><option value="tier">ราคาขั้นบันได — ราคาต่อหน่วยลดตามจำนวน</option></select><div id="ed-px"></div><div id="ed-pv"></div><label class="chk"><input id="ed-a" type="checkbox" ${v.active!==false?'checked':''}> เปิดใช้งาน (แสดงบนหน้าร้าน)</label><label class="chk"><input id="ed-o" type="checkbox" ${v.popular?'checked':''}> ติดป้าย "ยอดนิยม"</label>`;
   $('odb').innerHTML=`<h3 style="margin:0 0 4px">${gem?'รูปภาพบริการ Primogems':hero?'ภาพแบนเนอร์หน้าร้าน':ed.isNew?'เพิ่มบริการใหม่':'แก้ไขบริการ'}</h3>${fields}<label class="l">รูปภาพ (JPG/PNG/WebP ไม่เกิน 5MB)</label><div id="ed-prev"></div>
   <div class="abtns" style="margin-top:8px"><label class="btnlike g" for="ed-f">เลือกรูป${ed.old?'ใหม่':''}</label><input id="ed-f" type="file" accept="image/jpeg,image/png,image/webp" hidden onchange="edPick(this)"><button class="g" id="ed-rm" onclick="edRemove()">ลบรูป</button></div>
   <div class="abtns actbar"><button class="g" onclick="edClose()">ยกเลิก</button><button id="ed-s" onclick="edSave()">บันทึก</button></div>`;
-  edPrev();$('od').classList.remove('hide');
+  if(!gem&&!hero){
+    const P=svcPricing(v),has=s&&s.pricing;
+    ed.mode=P.mode;ed.qtyEnabled=P.mode==='package'?P.qtyOn:true;
+    ed.opts=s?svcOpts(v).map(o=>({id:o.id,name:o.name,price:String(o.price),active:o.active!==false,default:!!o.default})):[{id:newId(),name:'',price:'',active:true,default:true}];
+    if(ed.opts.length&&!ed.opts.some(o=>o.default))ed.opts[0].default=true;
+    ed.unitPrice=P.unitPrice==null?'':String(P.unitPrice);
+    ed.tiers=(P.tiers.length?P.tiers:[{from:1,to:10,price:null},{from:11,to:null,price:null}]).map(t=>({from:String(t.from),to:t.to==null?'':String(t.to),price:t.price==null?'':String(t.price)}));
+    ed.min=String(P.min);ed.max=has&&s.pricing.max!=null?String(P.max):'100';ed.unit=has&&s.pricing.unit?P.unit:'ชิ้น';
+  }
+  edPrev();if(!gem&&!hero)edPx();$('od').classList.remove('hide');
+}
+function edPx(){
+  const box=$('ed-px');if(!box||!ed)return;$('ed-m').value=ed.mode;let h='';
+  if(ed.mode==='package'){
+    h+=`<div class="mut" style="margin-top:8px">ตัวเลือกราคา (เพิ่มได้ไม่จำกัด · ชื่อแพ็กเกจห้ามว่าง · ราคาเป็นบาท ตั้งแต่ 0 ขึ้นไป)</div>`+ed.opts.map((o,i)=>`<div class="orow"><input placeholder="ชื่อแพ็กเกจ เช่น 100%" maxlength="40" value="${esc(o.name)}" oninput="edO(${i},'name',this.value)" aria-label="ชื่อแพ็กเกจ"><input type="number" inputmode="numeric" min="0" placeholder="ราคา (บาท)" value="${esc(o.price)}" oninput="edO(${i},'price',this.value)" aria-label="ราคา"><label class="chk"><input type="checkbox" ${o.active?'checked':''} onchange="edO(${i},'active',this.checked)"> เปิด</label><label class="chk"><input type="radio" name="ed-def" ${o.default?'checked':''} onchange="edDef(${i})"> เริ่มต้น</label><button type="button" class="g" onclick="edDel(${i})" aria-label="ลบตัวเลือก">🗑</button></div>`).join('')
+      +`<button type="button" class="d" style="margin-top:8px" onclick="edAdd()">+ เพิ่มตัวเลือกราคา</button><label class="chk"><input id="ed-qe" type="checkbox" ${ed.qtyEnabled?'checked':''} onchange="edQE(this.checked)"> ให้ลูกค้ากรอกจำนวน (ราคา = ราคาแพ็กเกจ × จำนวน)</label>`;
+  }else if(ed.mode==='unit'){
+    h+=`<label class="l">ราคาต่อหน่วย (บาท) *</label><input type="number" inputmode="numeric" min="0" value="${esc(ed.unitPrice)}" oninput="ed.unitPrice=this.value;edPv()">`;
+  }else{
+    h+=`<div class="mut" style="margin-top:8px">ช่วงจำนวนและราคาต่อหน่วย (จำนวนที่อยู่ในช่วงไหน ใช้ราคาของช่วงนั้นกับทุกหน่วย · ช่อง "ถึง" ว่าง = ไม่จำกัด ใช้ได้เฉพาะช่วงสุดท้าย)</div>`+ed.tiers.map((t,i)=>`<div class="trow"><div><label class="l" style="margin-top:0">ตั้งแต่</label><input type="number" inputmode="numeric" min="1" value="${esc(t.from)}" oninput="edT(${i},'from',this.value)"></div><div><label class="l" style="margin-top:0">ถึง</label><input type="number" inputmode="numeric" min="1" value="${esc(t.to)}" oninput="edT(${i},'to',this.value)"></div><div><label class="l" style="margin-top:0">บาท/หน่วย</label><input type="number" inputmode="numeric" min="0" value="${esc(t.price)}" oninput="edT(${i},'price',this.value)"></div><button type="button" class="g" onclick="edTDel(${i})" aria-label="ลบช่วง">🗑</button></div>`).join('')+`<button type="button" class="d" style="margin-top:8px" onclick="edTAdd()">+ เพิ่มช่วงราคา</button>`;
+  }
+  if(ed.mode!=='package'||ed.qtyEnabled)h+=`<div class="two"><div><label class="l">จำนวนขั้นต่ำ</label><input type="number" inputmode="numeric" min="1" value="${esc(ed.min)}" oninput="ed.min=this.value;edPv()"></div><div><label class="l">จำนวนสูงสุด</label><input type="number" inputmode="numeric" min="1" value="${esc(ed.max)}" oninput="ed.max=this.value;edPv()"></div></div><label class="l">หน่วยเรียก (เช่น ชิ้น, รอบ, ชั่วโมง)</label><input maxlength="20" value="${esc(ed.unit)}" oninput="ed.unit=this.value;edPv()">`;
+  box.innerHTML=h;edPv();
+}
+function edMode(v){ed.mode=v;if(v!=='package')ed.qtyEnabled=true;edPx()}
+function edQE(b){ed.qtyEnabled=b;edPx()}
+function edO(i,k,v){ed.opts[i][k]=v;edPv()}
+function edDef(i){ed.opts.forEach((o,j)=>o.default=j===i)}
+function edAdd(){ed.opts.push({id:newId(),name:'',price:'',active:true,default:!ed.opts.length});edPx()}
+function edDel(i){if(ed.opts.length<=1)return toast('ต้องมีตัวเลือกราคาอย่างน้อย 1 รายการ');const w=ed.opts[i].default;ed.opts.splice(i,1);if(w)ed.opts[0].default=true;edPx()}
+function edT(i,k,v){ed.tiers[i][k]=v;edPv()}
+function edTAdd(){const l=ed.tiers[ed.tiers.length-1],n=l&&/^\d+$/.test(l.to)?parseInt(l.to)+1:'';ed.tiers.push({from:String(n),to:'',price:''});edPx()}
+function edTDel(i){if(ed.tiers.length<=1)return toast('ต้องมีอย่างน้อย 1 ช่วงราคา');ed.tiers.splice(i,1);edPx()}
+function edPv(){
+  const b=$('ed-pv');if(!b||!ed)return;const f=v=>/^\d{1,9}$/.test(String(v).trim())?fmt(v):'—',u=esc(ed.unit||'หน่วย');let L=[];
+  if(ed.mode==='package')L=ed.opts.map(o=>`${esc(o.name)||'(ยังไม่ตั้งชื่อ)'} — ${f(o.price)}${ed.qtyEnabled?' × จำนวน':''}${o.active?'':' <span class="mut">(ปิดอยู่ ลูกค้าไม่เห็น)</span>'}${o.default?' ★ค่าเริ่มต้น':''}`);
+  else if(ed.mode==='unit')L=[`1 ${u} = ${f(ed.unitPrice)}`,`10 ${u} = ${/^\d+$/.test(ed.unitPrice)?fmt(10*ed.unitPrice):'—'}`];
+  else L=ed.tiers.map(t=>`${esc(t.from)}–${esc(t.to)||'ขึ้นไป'} ${u}: ${f(t.price)}/${u}`);
+  b.innerHTML=`<div class="pvb"><b>ตัวอย่างที่ลูกค้าเห็น</b>${L.map(x=>`<div>${x}</div>`).join('')}</div>`;
+}
+function edCollect(){
+  const int=v=>/^\d{1,9}$/.test(String(v).trim())?parseInt(v,10):null,mode=ed.mode,pr={mode};let price=0,opts=[];
+  if(mode==='package'){
+    if(!ed.opts.length)return{err:'เพิ่มตัวเลือกราคาอย่างน้อย 1 รายการ'};
+    for(const [i,o] of ed.opts.entries()){
+      if(!String(o.name).trim())return{err:`ตัวเลือกที่ ${i+1}: ชื่อแพ็กเกจห้ามว่าง`};
+      if(int(o.price)==null)return{err:`แพ็กเกจ "${String(o.name).trim()}": ราคาต้องเป็นตัวเลขจำนวนเต็มตั้งแต่ 0 ขึ้นไป`};
+    }
+    const nm=ed.opts.map(o=>String(o.name).trim().toLowerCase());if(new Set(nm).size!==nm.length)return{err:'ชื่อแพ็กเกจซ้ำกัน'};
+    if(!ed.opts.some(o=>o.active))return{err:'ต้องเปิดตัวเลือกราคาอย่างน้อย 1 รายการ'};
+    const def=ed.opts.find(o=>o.default&&o.active)||ed.opts.find(o=>o.active);
+    opts=ed.opts.map(o=>({id:o.id,name:String(o.name).trim(),price:int(o.price),active:!!o.active,...(o===def?{default:true}:{})}));
+    price=int(def.price);pr.qtyEnabled=!!ed.qtyEnabled;
+  }
+  if(mode!=='package'||ed.qtyEnabled){
+    const mn=int(ed.min),mx=int(ed.max);
+    if(mn==null||mn<1)return{err:'จำนวนขั้นต่ำต้องเป็นจำนวนเต็มตั้งแต่ 1 ขึ้นไป'};
+    if(mx==null||mx<mn)return{err:'จำนวนสูงสุดต้องไม่น้อยกว่าจำนวนขั้นต่ำ'};
+    if(mx>100000)return{err:'จำนวนสูงสุดต้องไม่เกิน 100,000'};
+    pr.min=mn;pr.max=mx;pr.unit=String(ed.unit).trim().slice(0,20)||'หน่วย';
+  }
+  if(mode==='unit'){const up=int(ed.unitPrice);if(up==null)return{err:'ราคาต่อหน่วยต้องเป็นตัวเลขจำนวนเต็มตั้งแต่ 0 ขึ้นไป'};pr.unitPrice=up;price=up}
+  if(mode==='tier'){
+    const T=[];
+    for(const [i,t] of ed.tiers.entries()){
+      const raw=String(t.to).trim(),from=int(t.from),to=raw===''?null:int(raw),p=int(t.price);
+      if(from==null||from<1)return{err:`ช่วงที่ ${i+1}: "ตั้งแต่" ต้องเป็นจำนวนเต็มตั้งแต่ 1`};
+      if(raw!==''&&(to==null||to<from))return{err:`ช่วงที่ ${i+1}: "ถึง" ต้องไม่น้อยกว่า "ตั้งแต่"`};
+      if(p==null)return{err:`ช่วงที่ ${i+1}: ราคา/หน่วยต้องเป็นตัวเลขตั้งแต่ 0 ขึ้นไป`};
+      T.push({from,to,price:p});
+    }
+    T.sort((a,b)=>a.from-b.from);
+    if(T[0].from>pr.min)return{err:`ช่วงแรกต้องเริ่มที่ ${pr.min.toLocaleString()} หรือต่ำกว่า (ตามจำนวนขั้นต่ำ)`};
+    for(let i=0;i<T.length-1;i++){if(T[i].to==null)return{err:'เฉพาะช่วงสุดท้ายเท่านั้นที่เว้น "ถึง" ว่างได้'};if(T[i+1].from!==T[i].to+1)return{err:`ช่วงราคาต้องต่อเนื่องกัน (ช่วง ${T[i].from}–${T[i].to} ตามด้วย ${T[i+1].from})`}}
+    const last=T[T.length-1];if(last.to!=null&&last.to<pr.max)return{err:'ช่วงสุดท้ายต้องครอบคลุมจำนวนสูงสุด (เว้นช่อง "ถึง" ว่าง = ไม่จำกัด)'};
+    pr.tiers=T.map(t=>t.to==null?{from:t.from,price:t.price}:t);price=T[0].price;
+  }
+  if(mode!=='package')opts=[{id:'default',name:'มาตรฐาน',price,active:true,default:true}];
+  return{priceOptions:opts,pricing:pr,price}
 }
 function edPrev(){
   if(!ed||!$('ed-prev'))return;
@@ -661,10 +1032,11 @@ function edClose(){if(ed&&ed.prev)URL.revokeObjectURL(ed.prev);ed=null;$('od').c
 async function edSave(){
   if(!ed)return;const btn=$('ed-s');let rec=null;
   if(!ed.gem&&!ed.hero){
-    const n=$('ed-n').value.trim(),pr=parseInt($('ed-p').value);
-    if(!n)return toast('กรอกชื่อบริการ');if(!(pr>=0))return toast('กรอกราคาให้ถูกต้อง');
+    const n=$('ed-n').value.trim();
+    if(!n)return toast('กรอกชื่อบริการ');
+    const pc=edCollect();if(pc.err)return toast(pc.err);
     const old=cfg.services.find(x=>x.id===ed.id)||{};
-    rec={...old,id:ed.id,name:n,desc:$('ed-d').value.trim(),price:pr,icon:$('ed-i').value.trim()||'✨',active:$('ed-a').checked,popular:$('ed-o').checked};
+    rec={...old,id:ed.id,name:n,desc:$('ed-d').value.trim(),price:pc.price,priceOptions:pc.priceOptions,pricing:pc.pricing,icon:$('ed-i').value.trim()||'✨',active:$('ed-a').checked,popular:$('ed-o').checked};
   }
   btn.disabled=true;let newPath=ed.old,uploaded=null;
   if(ed.file){
@@ -711,6 +1083,7 @@ function renderMine(){
 async function openOd(id){
   const o=mine.find(x=>x.id===id);if(!o)return;
   const hs=(await sb.from('order_history').select('to_status,created_at').eq('order_id',id).order('id')).data||[];
+  const its=await getItems(id);
   const i=STEPS.indexOf(o.status==='waiting'?'doing':o.status);
   const tl=o.status==='cancelled'?'<span class="st cancelled">🔴 ยกเลิก</span>':STEPS.map((k,j)=>`<span class="st ${j<=i?(k==='done'?'done':'doing'):''}" style="${j>i?'opacity:.5':''}">${ST[k]}</span>`).join(' → ');
   let rv='';
@@ -719,8 +1092,7 @@ async function openOd(id){
   }
   $('odb').innerHTML=`<h3 style="margin:0 0 4px">คิว ${no3(o.no)}</h3><div class="mut">จองเมื่อ ${esc(dt(o.created_at))}</div>
   <div style="margin:12px 0">${tl}</div>
-  <div class="row"><span class="mut">รายการ</span><span style="text-align:right">${esc(o.items)}</span></div>
-  <div class="row"><span class="mut">ราคารวม</span><b>${fmt(o.total)}</b></div>
+  ${orderBreak(o,its)}
   <div class="row"><span class="mut">ช่องทางติดต่อ</span><span>${esc(o.channel)}: ${esc(o.contact)}</span></div>
   ${o.note?`<div class="row"><span class="mut">หมายเหตุ</span><span>${esc(o.note)}</span></div>`:''}<div class="mut" style="margin-top:10px">ประวัติสถานะ</div>${hs.map(x=>`<div class="row"><span>${ST[x.to_status]||esc(x.to_status)}</span><span class="mut">${esc(dt(x.created_at))}</span></div>`).join('')}<div class="mut" style="margin-top:10px">สตรีมและหลักฐานงาน</div><div id="odev"></div>${rv}
   <button class="g" style="width:100%;margin-top:14px" onclick="$('od').classList.add('hide')">ปิด</button>`;
@@ -811,7 +1183,8 @@ function saveShop(){
 /* ---------- เริ่มต้น ---------- */
 const lbl=t=>{const th=[...t.querySelectorAll('thead th')].map(x=>x.textContent.trim());t.querySelectorAll('tbody tr').forEach(r=>{if(r.children.length<2)return;[...r.children].forEach((c,i)=>{if(th[i]&&!c.dataset.label)c.dataset.label=th[i]})})};
 new MutationObserver(ms=>{const s=new Set();ms.forEach(m=>{const t=m.target.closest&&m.target.closest('table');if(t)s.add(t)});s.forEach(lbl)}).observe(document.body,{childList:true,subtree:true});
-renderServices();route();loadCfg();loadQueue();loadReviews();
+renderServices();route();loadCfg();loadQueue();loadReviews();loadCoupons();
+setInterval(()=>{if(!document.hidden)loadCoupons()},30000);
 setInterval(()=>{if(!document.hidden){loadCfg();loadQueue();loadOrders();loadMine();loadNotifs();if(isAdmin()&&at==='dash')loadDash()}},8000);
 </script>
 </body>
