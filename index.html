@@ -207,10 +207,10 @@ tr.me td{background:var(--soft)}.warn{background:var(--warnbg);color:var(--warn)
 <div class="two" style="grid-template-columns:repeat(auto-fit,minmax(130px,1fr))"><input id="fq" placeholder="ค้นหาคิว/ชื่อ" oninput="renderQ()"><select id="fs" onchange="renderQ()"><option value="">ทุกสถานะ</option></select><input id="ff" type="date" onchange="renderQ()" title="ตั้งแต่วันที่"><input id="ft" type="date" onchange="renderQ()" title="ถึงวันที่"></div>
 <div class="tw" style="margin-top:10px"><table class="cards"><thead><tr><th>คิว</th><th>ลูกค้า / ติดต่อ</th><th>รายการ</th><th>ราคา</th><th>สถานะ</th><th>ผู้รับผิดชอบ</th><th></th></tr></thead><tbody id="aq"></tbody></table></div></div></section>
 <section id="p-cust" class="pane hide"><div class="card"><h2>จัดการลูกค้า</h2><div class="tw"><table class="cards"><thead><tr><th>ชื่อ</th><th>อีเมล</th><th>ออเดอร์</th><th>ยอดรวม (ไม่นับที่ยกเลิก)</th><th>จองล่าสุด</th></tr></thead><tbody id="cl"></tbody></table></div></div></section>
-<section id="p-svc" class="pane hide"><div class="card"><h2>จัดการบริการ</h2><div class="sub">รูปภาพแสดงในการ์ดบริการหน้าร้านอัตโนมัติหลังบันทึก (JPG/PNG/WebP ไม่เกิน 5MB)</div><div id="svcadm" style="margin:10px 0"></div><button onclick="openSvcEd('')">+ เพิ่มบริการใหม่</button></div>
+<section id="p-svc" class="pane hide"><div class="card"><h2>จัดการบริการ</h2><div class="sub">รูปภาพแสดงในการ์ดบริการหน้าร้านอัตโนมัติหลังบันทึก (JPG/PNG/WebP ไม่เกิน 20MB)</div><div id="svcadm" style="margin:10px 0"></div><button onclick="openSvcEd('')">+ เพิ่มบริการใหม่</button></div>
 </section>
 <section id="p-ban" class="pane hide"><div class="card"><h2>จัดการแบนเนอร์</h2>
-<div class="sub">แบนเนอร์หน้าแรกสไลด์อัตโนมัติทุก 4.5 วินาที ใช้ได้สูงสุด 10 รูป แนะนำรูปอัตราส่วน 16:9 เช่น 1600×900px (JPG/PNG/WebP ไม่เกิน 5MB) ภาพจะแสดงครบทั้งรูปโดยไม่ถูกยืดหรือตัด การเปลี่ยนแปลงจะยังไม่ขึ้นหน้าร้านจนกว่าจะกด "เผยแพร่"</div>
+<div class="sub">แบนเนอร์หน้าแรกสไลด์อัตโนมัติทุก 4.5 วินาที ใช้ได้สูงสุด 10 รูป แนะนำรูปอัตราส่วน 16:9 เช่น 1600×900px (JPG/PNG/WebP ไม่เกิน 20MB) ภาพจะแสดงครบทั้งรูปโดยไม่ถูกยืดหรือตัด การเปลี่ยนแปลงจะยังไม่ขึ้นหน้าร้านจนกว่าจะกด "เผยแพร่"</div>
 <div id="bn-status" style="margin:10px 0"></div>
 <div class="abtns" style="margin-bottom:6px"><label class="btnlike" for="bn-add">+ เพิ่มรูปแบนเนอร์</label><input id="bn-add" type="file" multiple accept="image/jpeg,image/png,image/webp" hidden onchange="bnAdd(this)"></div>
 <div id="bn-list"></div>
@@ -329,7 +329,7 @@ const STARSVG='<svg viewBox="0 0 64 64" aria-hidden="true"><path fill="currentCo
 function imgUrl(p){try{return p&&/^[\w\/.-]+$/.test(p)?sb.storage.from('service-images').getPublicUrl(p).data.publicUrl:''}catch(e){return ''}}
 function imgFail(el){const b=el.closest('.imgbox');if(b){b.classList.add('noimg');const g=b.querySelector('.sf-bg');if(g)g.remove()}el.remove()}
 function imgHtml(path,icon,cls,alt){const u=imgUrl(path);return`<div class="imgbox ${cls||''}${u?'':' noimg'}">${u?`<div class="sf-bg" style="background-image:url('${esc(u)}')"></div><img src="${esc(u)}" alt="${esc(alt||'')}" loading="lazy" decoding="async" onerror="imgFail(this)">`:''}<span class="ph">${esc(icon)}</span></div>`}
-function checkImg(f){if(!f)return'เลือกรูปก่อน';if(!IMG_OK[f.type])return'รองรับเฉพาะไฟล์ JPG, PNG, WebP';if(f.size>5*1024*1024)return'รูปต้องมีขนาดไม่เกิน 5MB';return''}
+function checkImg(f){if(!f)return'เลือกรูปก่อน';if(!IMG_OK[f.type])return'รองรับเฉพาะไฟล์ JPG, PNG, WebP';if(f.size>20*1024*1024)return'รูปต้องมีขนาดไม่เกิน 20MB';return''}
 async function uploadImg(folder,f){
   const path=`${folder}/${Date.now()}-${Math.random().toString(36).slice(2,10)}.${IMG_OK[f.type]}`;
   const r=await sb.storage.from('service-images').upload(path,f,{contentType:f.type,cacheControl:'3600'});
@@ -932,7 +932,7 @@ function openSvcEd(id){
   ed={id:id||'s'+Date.now(),gem,hero,isNew:!id,file:null,remove:false,prev:null,old:gem?cfg.gemImage:hero?cfg.heroImage:(s&&s.image)||null};
   const v=s||{name:'',desc:'',price:'',icon:'',popular:false,active:true};
   const fields=(gem||hero)?'':`<label class="l">ชื่อบริการ *</label><input id="ed-n" maxlength="60" value="${esc(v.name)}"><label class="l">รายละเอียด</label><input id="ed-d" maxlength="200" value="${esc(v.desc)}"><label class="l">ไอคอนอีโมจิ (ใช้เมื่อไม่มีรูป)</label><input id="ed-i" maxlength="4" value="${esc(v.icon)}" oninput="edPrev()"><label class="l">รูปแบบราคา *</label><select id="ed-m" onchange="edMode(this.value)"><option value="package">แพ็กเกจ — ลูกค้าเลือก 1 แพ็กเกจ (มีได้หลายราคา)</option><option value="unit">ราคาต่อหน่วย — ลูกค้ากรอกจำนวน</option><option value="tier">ราคาขั้นบันได — ราคาต่อหน่วยลดตามจำนวน</option></select><div id="ed-px"></div><div id="ed-pv"></div><label class="chk"><input id="ed-a" type="checkbox" ${v.active!==false?'checked':''}> เปิดใช้งาน (แสดงบนหน้าร้าน)</label><label class="chk"><input id="ed-o" type="checkbox" ${v.popular?'checked':''}> ติดป้าย "ยอดนิยม"</label>`;
-  $('odb').innerHTML=`<h3 style="margin:0 0 4px">${gem?'รูปภาพบริการ Primogems':hero?'ภาพแบนเนอร์หน้าร้าน':ed.isNew?'เพิ่มบริการใหม่':'แก้ไขบริการ'}</h3>${fields}<label class="l">รูปภาพ (JPG/PNG/WebP ไม่เกิน 5MB)</label><div id="ed-prev"></div>
+  $('odb').innerHTML=`<h3 style="margin:0 0 4px">${gem?'รูปภาพบริการ Primogems':hero?'ภาพแบนเนอร์หน้าร้าน':ed.isNew?'เพิ่มบริการใหม่':'แก้ไขบริการ'}</h3>${fields}<label class="l">รูปภาพ (JPG/PNG/WebP ไม่เกิน 20MB)</label><div id="ed-prev"></div>
   <div class="abtns" style="margin-top:8px"><label class="btnlike g" for="ed-f">เลือกรูป${ed.old?'ใหม่':''}</label><input id="ed-f" type="file" accept="image/jpeg,image/png,image/webp" hidden onchange="edPick(this)"><button class="g" id="ed-rm" onclick="edRemove()">ลบรูป</button></div>
   <div class="abtns actbar"><button class="g" onclick="edClose()">ยกเลิก</button><button id="ed-s" onclick="edSave()">บันทึก</button></div>`;
   if(!gem&&!hero){
@@ -1120,7 +1120,7 @@ async function loadEv(id,box,edit){
   const item=x=>{
     const body=x.kind==='image'?(x.u?`<a href="${esc(x.u)}" target="_blank" rel="noopener noreferrer"><img src="${esc(x.u)}" alt="หลักฐาน" style="max-width:160px;border-radius:8px"></a>`:'<span class="mut">เปิดรูปไม่ได้</span>'):(okUrl(x.u)?`<a href="${esc(x.u)}" target="_blank" rel="noopener noreferrer">${EVL[x.kind]}</a>`:'<span class="mut">ลิงก์ไม่ถูกต้อง</span>');
     return`<div class="row" style="border-bottom:1px solid var(--line);align-items:flex-start"><div style="min-width:0">${body}${x.caption?`<div class="mut">${esc(x.caption)}</div>`:''}</div>${edit?`<button class="g" onclick="delEv(this,'${x.id}','${esc(x.path||'')}','${id}','${box}')">ลบ</button>`:''}</div>`};
-  el.innerHTML=(L.length?L.map(item).join(''):'<div class="mut">ยังไม่มีหลักฐาน</div>')+(edit?`<div style="margin-top:8px"><div style="display:flex;gap:6px;flex-wrap:wrap"><select id="ev-k" style="width:auto;margin:0"><option value="stream">ถ่ายทอดสด</option><option value="replay">คลิปย้อนหลัง</option></select><input id="ev-u" placeholder="ลิงก์ YouTube (https://...)" style="margin:0;flex:1;min-width:160px"><button onclick="addEvLink('${id}','${box}')">เพิ่มลิงก์</button></div><div style="display:flex;gap:6px;margin-top:6px;align-items:center;flex-wrap:wrap"><input id="ev-f" type="file" accept="image/jpeg,image/png,image/webp" style="margin:0;flex:1"><button onclick="addEvImg('${id}','${box}')">อัปโหลดรูป</button></div><div class="mut">รูปไม่เกิน 5MB (JPG/PNG/WebP) ลูกค้าเปิดดูหลักฐานของออเดอร์ตัวเองได้</div></div>`:'');
+  el.innerHTML=(L.length?L.map(item).join(''):'<div class="mut">ยังไม่มีหลักฐาน</div>')+(edit?`<div style="margin-top:8px"><div style="display:flex;gap:6px;flex-wrap:wrap"><select id="ev-k" style="width:auto;margin:0"><option value="stream">ถ่ายทอดสด</option><option value="replay">คลิปย้อนหลัง</option></select><input id="ev-u" placeholder="ลิงก์ YouTube (https://...)" style="margin:0;flex:1;min-width:160px"><button onclick="addEvLink('${id}','${box}')">เพิ่มลิงก์</button></div><div style="display:flex;gap:6px;margin-top:6px;align-items:center;flex-wrap:wrap"><input id="ev-f" type="file" accept="image/jpeg,image/png,image/webp" style="margin:0;flex:1"><button onclick="addEvImg('${id}','${box}')">อัปโหลดรูป</button></div><div class="mut">รูปไม่เกิน 20MB (JPG/PNG/WebP) ลูกค้าเปิดดูหลักฐานของออเดอร์ตัวเองได้</div></div>`:'');
 }
 async function addEvLink(id,box){
   const u=$('ev-u').value.trim();if(!okUrl(u))return toast('ใส่ลิงก์ YouTube ที่ขึ้นต้นด้วย https:// เท่านั้น');
@@ -1130,7 +1130,7 @@ async function addEvLink(id,box){
 async function addEvImg(id,box){
   const f=$('ev-f').files[0];if(!f)return toast('เลือกรูปก่อน');
   const ext={'image/jpeg':'jpg','image/png':'png','image/webp':'webp'}[f.type];
-  if(!ext)return toast('รองรับเฉพาะ JPG, PNG, WebP');if(f.size>5*1024*1024)return toast('รูปต้องไม่เกิน 5MB');
+  if(!ext)return toast('รองรับเฉพาะ JPG, PNG, WebP');if(f.size>20*1024*1024)return toast('รูปต้องไม่เกิน 20MB');
   const path=`${id}/${Date.now()}-${Math.random().toString(36).slice(2,10)}.${ext}`;
   const up=await sb.storage.from('evidence').upload(path,f,{contentType:f.type});
   if(up.error)return toast('อัปโหลดไม่สำเร็จ: '+up.error.message);
