@@ -222,8 +222,8 @@ tr.me td{background:var(--soft)}.warn{background:var(--warnbg);color:var(--warn)
 <section id="p-promo" class="pane hide"><div class="card"><h2>จัดการโปรโมชั่น</h2>
 <div class="two" style="grid-template-columns:repeat(auto-fit,minmax(160px,1fr))">
 <div><label class="l" style="margin-top:0">โค้ด (A-Z 0-9 _ -)</label><input id="pr-c" maxlength="20" style="text-transform:uppercase"></div>
-<div><label class="l" style="margin-top:0">ประเภทส่วนลด</label><select id="pr-k"><option value="baht">บาท</option><option value="percent">เปอร์เซ็นต์</option></select></div>
-<div><label class="l" style="margin-top:0">มูลค่าส่วนลด</label><input id="pr-v" type="number" min="1"></div>
+<div><label class="l" style="margin-top:0">ประเภทส่วนลด</label><select id="pr-k" onchange="discWarn('pr-k','pr-v','pr-w')"><option value="baht">บาท</option><option value="percent">เปอร์เซ็นต์</option></select></div>
+<div><label class="l" style="margin-top:0">มูลค่าส่วนลด</label><input id="pr-v" type="number" min="1" oninput="discWarn('pr-k','pr-v','pr-w')"><div id="pr-w" class="mut" style="color:#dc2626;margin-top:4px"></div></div>
 <div><label class="l" style="margin-top:0">ยอดขั้นต่ำ (บาท)</label><input id="pr-m" type="number" min="0" value="0"></div>
 <div><label class="l">จำกัดสิทธิ์รวม (ว่าง = ไม่จำกัด)</label><input id="pr-x" type="number" min="1"></div>
 <div><label class="l">ต่อผู้ใช้ (ครั้ง, ว่าง = ไม่จำกัด)</label><input id="pr-u" type="number" min="1" value="1"></div>
@@ -241,10 +241,10 @@ tr.me td{background:var(--soft)}.warn{background:var(--warnbg);color:var(--warn)
 <div style="display:flex;gap:8px;max-width:460px;margin:10px 0"><input id="te" type="email" placeholder="อีเมลของสมาชิก" style="margin:0"><button onclick="addTeam()" style="white-space:nowrap">เพิ่มเข้าทีม</button></div>
 <div class="tw"><table class="cards"><thead><tr><th>ชื่อ</th><th>อีเมล</th><th>สิทธิ์</th><th>งานค้าง</th><th>งานสำเร็จ</th><th>ค่าตอบแทนรวม</th><th>ค้างจ่าย</th><th></th></tr></thead><tbody id="tl"></tbody></table></div></div></section>
 <section id="p-rep" class="pane hide"><div class="card"><h2>รายงานรายรับและกำไร</h2><div id="rpb" style="display:flex;gap:6px;flex-wrap:wrap"></div>
-<div class="mut" style="margin:8px 0">นับเฉพาะออเดอร์ที่เสร็จสิ้น ไม่นับที่ยกเลิก · กำไรสุทธิ = รายรับ − ต้นทุน − ค่าตอบแทนทีมงาน</div><div id="rps" class="stats"></div>
-<div class="tw"><table class="cards"><thead><tr><th>ช่วงเวลา</th><th>ออเดอร์</th><th>รายรับ</th><th>ส่วนลดที่ให้</th><th>ต้นทุน</th><th>ค่าตอบแทน</th><th>กำไรสุทธิ</th></tr></thead><tbody id="rpt"></tbody></table></div></div>
-<div class="card"><h3 style="margin:0 0 4px">บันทึกต้นทุนและค่าตอบแทนรายออเดอร์</h3><div class="mut" style="margin-bottom:8px">ระบบสร้างรายการอัตโนมัติเมื่องานเสร็จสิ้น กรอกต้นทุนและค่าตอบแทนได้ที่นี่ (50 รายการล่าสุด)</div>
-<div class="tw"><table class="cards"><thead><tr><th>คิว</th><th>รายรับ</th><th>ต้นทุน</th><th>ค่าตอบแทน</th><th>ผู้ทำงาน</th><th>จ่ายแล้ว</th><th>กำไร</th></tr></thead><tbody id="txl"></tbody></table></div></div></section>
+<div class="mut" style="margin:8px 0">นับเฉพาะออเดอร์ที่ <b>เสร็จสิ้นและยืนยันรับเงินแล้ว</b> ไม่นับที่ยกเลิก/คืนเงิน · ทีมได้จากราคาปกติก่อนลด ส่วนลดร้านรับภาระ · กำไรเจ้าของ = ลูกค้าจ่าย − ค่าตอบแทนทีม − ต้นทุน</div><div id="rps" class="stats"></div>
+<div class="tw"><table class="cards"><thead><tr><th>ช่วงเวลา</th><th>ออเดอร์</th><th>ราคาปกติ</th><th>ส่วนลดที่ร้านรับ</th><th>ลูกค้าจ่าย</th><th>ทีมงาน</th><th>ต้นทุน</th><th>กำไรเจ้าของ</th></tr></thead><tbody id="rpt"></tbody></table></div></div>
+<div class="card"><h3 style="margin:0 0 4px">การเงินรายออเดอร์: ต้นทุน จ่ายทีม และเรียกคืน</h3><div class="mut" style="margin-bottom:8px">ค่าตอบแทนทีมคำนวณโดยระบบจากราคาปกติ ณ เวลาสั่ง (แก้เองไม่ได้) · จ่ายได้เมื่อออเดอร์เสร็จและยืนยันรับเงินแล้ว · จ่ายแบบบางส่วนได้ · 100 รายการล่าสุด</div><label class="l">เหตุผล (ใช้กับการแก้ต้นทุน เปลี่ยนผู้ทำงาน และยกเลิกรายการจ่าย) *</label><input id="tx-r" maxlength="200" style="max-width:480px">
+<div class="tw"><table class="cards"><thead><tr><th>คิว</th><th>ยอดเงิน</th><th>ทีมงาน</th><th>ต้นทุน</th><th>จ่ายทีม</th><th>กำไรเจ้าของ</th></tr></thead><tbody id="txl"></tbody></table></div></div></section>
 <section id="p-tw" class="pane hide"><h2>งานที่ได้รับมอบหมาย</h2><div id="twl"></div></section>
 <section id="p-th" class="pane hide"><div class="card"><h2>ประวัติและค่าตอบแทนของฉัน</h2><div id="ths" class="stats"></div><div class="tw"><table class="cards"><thead><tr><th>คิว</th><th>รายการ</th><th>เสร็จเมื่อ</th><th>ค่าตอบแทน</th><th>สถานะ</th></tr></thead><tbody id="thl"></tbody></table></div></div></section>
 <section id="p-set" class="pane hide"><div class="card"><h2>ตั้งค่าร้าน: ช่องทางติดต่อ</h2><div class="mut">แสดงในหน้าร้านเฉพาะช่องที่กรอก (ลิงก์ต้องขึ้นต้นด้วย https://)</div>
@@ -253,6 +253,23 @@ tr.me td{background:var(--soft)}.warn{background:var(--warnbg);color:var(--warn)
 <label class="l">Webhook URL <span id="dw-st" class="mut"></span></label><input id="dw" type="password" autocomplete="off" placeholder="https://discord.com/api/webhooks/...">
 <label style="display:flex;gap:8px;align-items:center;margin-top:10px"><input id="dw-on" type="checkbox" style="width:auto;margin:0"> เปิดใช้งาน</label>
 <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"><button onclick="saveHook()">บันทึก</button><button class="g" onclick="testHook()">ส่งข้อความทดสอบ</button><button class="g" onclick="clearHook(this)">ลบ Webhook</button></div></div>
+</section>
+<section id="p-sec" class="pane hide">
+<div class="card"><h2>ตั้งค่าการเงิน (เจ้าของเท่านั้น)</h2>
+<div class="mut">เก็บในตารางส่วนตัว ลูกค้าและแอดมินคนอื่นอ่านไม่ได้ · <b>ใช้กับออเดอร์ใหม่เท่านั้น</b> ออเดอร์ที่สั่งไปแล้วเก็บอัตราเดิมไว้ไม่เปลี่ยน · เพดานส่วนลดบังคับที่ฐานข้อมูลกับโปรโมชั่น/คูปองทุกชนิด · ทุกการแก้ไขถูกบันทึกใน Audit Log</div>
+<div class="two"><div><label class="l">ส่วนแบ่งทีมงาน (%)</label><input id="fn-t" type="number" min="0" max="100" inputmode="numeric" oninput="finPv()"></div><div><label class="l">ส่วนแบ่งเจ้าของ (%) คำนวณอัตโนมัติ</label><input id="fn-o" disabled></div></div>
+<label class="l">เพดานส่วนลดสูงสุดต่อออเดอร์ (%) ตั้งได้ 0–20</label><input id="fn-d" type="number" min="0" max="20" inputmode="numeric">
+<label class="l">ผู้รับภาระส่วนลด</label><input value="ร้านรับภาระทั้งหมด (OWNER FUNDED DISCOUNT) ทีมงานไม่ได้รับผลกระทบ" disabled>
+<label class="l">เหตุผลที่แก้ไข *</label><input id="fn-r" maxlength="200" placeholder="เช่น ปรับเพดานส่วนลดช่วงโปรโมชั่น">
+<div id="fn-info" class="mut" style="margin-top:6px"></div>
+<button id="fn-sv" style="margin-top:10px" onclick="saveFin()">บันทึกการตั้งค่าการเงิน</button></div>
+<div class="card"><h2>สมาชิกและสิทธิ์</h2><div class="mut">OWNER ควบคุมทุกอย่าง · ADMIN จัดการร้านแต่ไม่เห็นการเงิน · MANAGER เห็นเฉพาะงานที่ได้รับมอบหมายตอนนี้ (สิทธิ์จัดการคิวเพิ่มเติมจะทำใน Phase ถัดไป) · TEAM ดูงานของตัวเอง · การเปลี่ยนสิทธิ์ต้องใส่เหตุผลและถูกบันทึกใน Audit Log</div>
+<div style="display:flex;gap:8px;max-width:520px;margin:10px 0"><input id="mb-q" placeholder="ค้นหาด้วยอีเมลหรือชื่อ" style="margin:0" onkeydown="if(event.key==='Enter')loadMembers()"><button onclick="loadMembers()">ค้นหา</button></div>
+<label class="l">เหตุผลการเปลี่ยนสิทธิ์ (ใช้กับปุ่ม "บันทึก" ในตาราง) *</label><input id="mb-r" maxlength="200">
+<div class="tw"><table class="cards"><thead><tr><th>ชื่อ</th><th>อีเมล</th><th>สิทธิ์</th><th></th></tr></thead><tbody id="mbl"></tbody></table></div></div>
+<div class="card"><h2>ประวัติการแก้ไข (Audit Log)</h2><div class="mut">บันทึกอัตโนมัติ แก้ไขหรือลบไม่ได้ เห็นเฉพาะ OWNER (แสดง 200 รายการล่าสุด)</div>
+<select id="au-e" onchange="loadAudit()" style="max-width:260px;margin-top:8px"><option value="">ทุกประเภท</option><option value="service">บริการ / ราคา</option><option value="gem_price">ราคาเจม</option><option value="promotion">โปรโมชั่น</option><option value="coupon">คูปอง</option><option value="transaction">ธุรกรรม / ต้นทุน / จ่ายทีม</option><option value="finance_config">ตั้งค่าการเงิน</option><option value="profile_role">สิทธิ์สมาชิก</option></select>
+<div class="tw" style="margin-top:8px"><table class="cards"><thead><tr><th>เวลา</th><th>ผู้ทำ</th><th>การกระทำ</th><th>รายการ</th><th>การเปลี่ยนแปลง</th><th>เหตุผล</th></tr></thead><tbody id="aul"></tbody></table></div></div>
 </section>
 </div></div></main></div>
 
@@ -430,14 +447,15 @@ function calc(){
   });
   $('lines').innerHTML=(sub||bad)?h:'<div class="mut">ยังไม่ได้เลือกรายการ</div>';
   const sig=JSON.stringify([g,lines.map(l=>[l.id,l.opt,l.qty]),cpn&&cpn.id]);lastSig=sig;
-  let d=0,note='',phint='';
+  let d=0,note='',phint='',raw=0;const mx=Math.floor(sub*discountCap/100),capMsg=discountCap<=0?'ขณะนี้ร้านปิดการใช้ส่วนลด':`ส่วนลดสูงสุด ${discountCap}% ของยอดสั่งซื้อ (เพดานของร้าน)`;
   if(cpn){
-    const loc=cpnLocal(cpn,lines,sub);
+    const loc=cpnLocal(cpn,lines,sub);raw=loc.ok&&!bad?loc.d:0;
     if(cquote&&cquote.sig===sig){d=cquote.valid?cquote.discount:0;note=cquote.valid?'':cqReason(cquote)}
-    else{d=loc.ok&&!bad?loc.d:0;note=loc.ok?'':loc.reason;if(loc.ok&&!bad&&sub>0)scheduleQuote(sig,g,lines,d)}
+    else{d=Math.min(raw,mx);note=loc.ok?'':loc.reason;if(loc.ok&&!bad&&sub>0)scheduleQuote(sig,g,lines,d)}
+    if(raw>mx&&!note)note=capMsg;
   }else if(promo){
-    d=sub>=promo.min_total?Math.min(sub,promo.kind==='percent'?Math.floor(sub*promo.value/100):promo.value):0;
-    phint=sub<promo.min_total?`โค้ด ${promo.code}: ต้องมียอดขั้นต่ำ ${promo.min_total} บาท`:`ใช้โค้ด ${promo.code} แล้ว`;
+    raw=sub>=promo.min_total?Math.min(sub,promo.kind==='percent'?Math.floor(sub*promo.value/100):promo.value):0;d=Math.min(raw,mx);
+    phint=sub<promo.min_total?`โค้ด ${promo.code}: ต้องมียอดขั้นต่ำ ${promo.min_total} บาท`:`ใช้โค้ด ${promo.code} แล้ว`+(raw>mx?` · ${capMsg}`:'');
   }
   const total=Math.max(0,sub-d);
   $('subt').textContent=fmt(sub);$('dsc').textContent='-'+fmt(d);$('phint').textContent=phint;$('total').textContent=fmt(total);$('mtot').textContent=fmt(total);
@@ -449,7 +467,7 @@ async function loadQueue(){
   $('pq').innerHTML=queue.length?queue.map(q=>`<tr class="${q.mine?'me':''}"><td><b>#${String(q.no).padStart(3,'0')}</b></td><td>${esc(q.name)}${q.mine?' <span class="mut">(คุณ)</span>':''}</td><td>${esc(q.items)}</td><td><span class="st ${esc(q.status)}">${ST[q.status]||''}</span></td></tr>`).join(''):'<tr><td colspan="4" class="mut">ยังไม่มีคิว</td></tr>';
 }
 const ERR={promo_not_found:'ไม่พบโค้ดนี้',promo_expired:'โค้ดหมดอายุหรือยังไม่เริ่มใช้งาน',promo_used_up:'โค้ดนี้ถูกใช้ครบสิทธิ์แล้ว',promo_already_used:'คุณใช้โค้ดนี้ครบสิทธิ์แล้ว',promo_min_total:'ยอดสั่งซื้อยังไม่ถึงขั้นต่ำของโค้ดนี้',login_required:'กรุณาเข้าสู่ระบบก่อนจอง',missing_contact:'กรุณากรอกชื่อและช่องทางติดต่อ',invalid_gems:'จำนวน Primogems ไม่ถูกต้อง',empty_order:'กรุณาเลือกบริการอย่างน้อย 1 รายการ',duplicate_order:'คุณเพิ่งจองรายการเดียวกันไป กรุณารอสักครู่หรือดูในตารางคิว',too_many_active_orders:'คุณมีงานค้างครบ 5 คิวแล้ว กรุณารอให้งานเดิมเสร็จก่อน'};
-const CP_ERR={coupon_not_found:'ไม่พบคูปองนี้ หรือคูปองไม่ได้เปิดให้เก็บ',coupon_expired:'คูปองหมดอายุแล้ว',coupon_not_started:'คูปองยังไม่ถึงเวลาเริ่มใช้',coupon_sold_out:'คูปองถูกเก็บครบจำนวนแล้ว',coupon_already_claimed:'คุณเก็บคูปองนี้ครบสิทธิ์แล้ว',coupon_used:'คูปองใบนี้ถูกใช้ไปแล้ว',coupon_disabled:'คูปองนี้ถูกปิดใช้งาน',coupon_not_applicable:'คูปองนี้ใช้กับบริการที่เลือกไม่ได้',coupon_limit_reached:'คุณใช้คูปองนี้ครบสิทธิ์แล้ว',one_discount_only:'ใช้ได้ 1 ส่วนลดต่อออเดอร์ (โค้ดหรือคูปองอย่างใดอย่างหนึ่ง)'};
+const CP_ERR={discount_not_allowed:'ขณะนี้ร้านปิดการใช้ส่วนลด',coupon_not_found:'ไม่พบคูปองนี้ หรือคูปองไม่ได้เปิดให้เก็บ',coupon_expired:'คูปองหมดอายุแล้ว',coupon_not_started:'คูปองยังไม่ถึงเวลาเริ่มใช้',coupon_sold_out:'คูปองถูกเก็บครบจำนวนแล้ว',coupon_already_claimed:'คุณเก็บคูปองนี้ครบสิทธิ์แล้ว',coupon_used:'คูปองใบนี้ถูกใช้ไปแล้ว',coupon_disabled:'คูปองนี้ถูกปิดใช้งาน',coupon_not_applicable:'คูปองนี้ใช้กับบริการที่เลือกไม่ได้',coupon_limit_reached:'คุณใช้คูปองนี้ครบสิทธิ์แล้ว',one_discount_only:'ใช้ได้ 1 ส่วนลดต่อออเดอร์ (โค้ดหรือคูปองอย่างใดอย่างหนึ่ง)'};
 Object.assign(ERR,CP_ERR,{coupon_min_total:'ยอดสั่งซื้อยังไม่ถึงขั้นต่ำของคูปอง',price_changed:'ราคาบริการมีการเปลี่ยนแปลง กรุณาตรวจยอดใหม่แล้วกดจองอีกครั้ง',option_inactive:'แพ็กเกจที่เลือกถูกปิดไปแล้ว กรุณาเลือกใหม่',option_invalid:'ไม่พบแพ็กเกจที่เลือก กรุณาเลือกใหม่',option_required:'กรุณาเลือกแพ็กเกจของบริการ',service_inactive:'บริการที่เลือกถูกปิดไปแล้ว',service_not_found:'ไม่พบบริการที่เลือก กรุณารีเฟรชหน้า',qty_invalid:'จำนวนไม่ถูกต้อง',qty_min:'จำนวนต่ำกว่าขั้นต่ำที่ร้านกำหนด',qty_max:'จำนวนเกินที่ร้านกำหนด',duplicate_service:'เลือกบริการซ้ำกัน',amount_too_large:'ยอดรวมสูงเกินกำหนด',too_many_lines:'เลือกบริการมากเกินไป',invalid_lines:'ข้อมูลรายการไม่ถูกต้อง',bad_service_config:'บริการนี้ตั้งราคาไม่สมบูรณ์ กรุณาแจ้งร้าน'});
 async function applyPromo(){
   const c=$('promo').value.trim().toUpperCase();
@@ -491,6 +509,7 @@ function cpCard(c,a){const col=/^#[0-9a-fA-F]{6}$/.test(c.color)?c.color:'#3d96f
   return`<div class="cp${a.dim?' dim':''}" style="--cc:${col}"><div class="cpl"><span class="cpi">${esc(c.icon||'🎟️')}</span><b>${esc(cpVal(c))}</b><small>ส่วนลด</small></div><div class="cpr"><b class="cpn">${esc(c.name)}</b>${c.description?`<div class="mut">${esc(c.description)}</div>`:''}<div class="mut">${esc(cpCond(c))}</div><div class="mut">${esc(a.line||cpExp(c))}</div>${a.btn||''}</div></div>`}
 async function loadCoupons(){
   const a=await sb.rpc('list_coupons');
+  {const c=await sb.rpc('get_discount_cap');if(!c.error&&typeof c.data==='number')discountCap=c.data}
   couponsOn=!a.error;avail=Array.isArray(a.data)?a.data:[];
   if(me&&couponsOn){const m=await sb.rpc('my_coupons');myc=Array.isArray(m.data)?m.data:[]}else myc=[];
   $('coupons').classList.toggle('hide',!couponsOn);$('nav-coupons').classList.toggle('hide',!couponsOn);
@@ -556,11 +575,11 @@ async function runQuote(sig,g,lines,localD){
 }
 
 /* ---------- หลังบ้าน ---------- */
-const TABS=[['dash','📊 Dashboard'],['queue','📋 จัดการคิว'],['cust','👥 จัดการลูกค้า'],['svc','🛍️ จัดการบริการ'],['ban','🖼️ จัดการแบนเนอร์'],['price','💰 จัดการราคา'],['promo','🏷️ จัดการโปรโมชั่น'],['cpad','🎟️ จัดการคูปอง'],['rev','⭐ จัดการรีวิว'],['team','🧑‍🤝‍🧑 จัดการทีมงาน'],['rep','📈 รายงานรายรับและกำไร'],['set','⚙️ ตั้งค่าร้าน']];
+const TABS=[['dash','📊 Dashboard'],['queue','📋 จัดการคิว'],['cust','👥 จัดการลูกค้า'],['svc','🛍️ จัดการบริการ'],['ban','🖼️ จัดการแบนเนอร์'],['price','💰 จัดการราคา'],['promo','🏷️ จัดการโปรโมชั่น'],['cpad','🎟️ จัดการคูปอง'],['rev','⭐ จัดการรีวิว'],['team','🧑‍🤝‍🧑 จัดการทีมงาน'],['rep','📈 รายงานรายรับและกำไร'],['set','⚙️ ตั้งค่าร้าน'],['sec','🔒 สิทธิ์ · การเงิน · Audit']];
 const TTABS=[['tw','📋 งานของฉัน'],['th','💵 ประวัติและค่าตอบแทน']];
 let at='dash',team=[],rp='day',rep=null,txs=[],mysum=null,tmem=[],dash=null,custs=[],revs=[];
 const bkk=v=>new Date(v).toLocaleDateString('sv-SE',{timeZone:'Asia/Bangkok'});
-function go(t){at=t;$('side').classList.remove('open');renderAdmin();({dash:loadDash,cust:loadCust,rev:loadRevs,team:loadTeamPage,rep:loadRep,th:loadMy,promo:loadPromos,cpad:loadCpAdm,set:loadHook}[t]||(()=>{}))()}
+function go(t){at=t;$('side').classList.remove('open');renderAdmin();({dash:loadDash,cust:loadCust,rev:loadRevs,team:loadTeamPage,rep:loadRep,th:loadMy,promo:loadPromos,cpad:loadCpAdm,set:loadHook,sec:loadSec}[t]||(()=>{}))()}
 async function loadOrders(){
   if(!isStaff())return;
   if(isAdmin()){
@@ -574,18 +593,18 @@ async function loadOrders(){
 function renderAdmin(){
   $('deny').classList.toggle('hide',isStaff());$('adm').classList.toggle('hide',!isStaff());
   if(!isStaff())return;
-  const T=isAdmin()?TABS:TTABS;if(!T.some(x=>x[0]===at))at=T[0][0];
+  const T=isAdmin()?TABS.filter(([k])=>isOwner()||!['rep','sec'].includes(k)):TTABS;if(!T.some(x=>x[0]===at))at=T[0][0];
   $('side').innerHTML=T.map(([k,l])=>`<button class="${k===at?'on':''}" onclick="go('${k}')">${l}</button>`).join('');$('sidebtn').textContent='☰ เมนูหลังบ้าน · '+(T.find(x=>x[0]===at)||[0,''])[1];
   [...TABS,...TTABS].forEach(([k])=>{const e=$('p-'+k);if(e)e.classList.toggle('hide',k!==at)});
   if(isAdmin()&&$('fs').options.length<2)Object.keys(ST).forEach(k=>$('fs').add(new Option(ST[k],k)));
-  ({dash:renderDash,queue:renderQ,cust:renderCust,svc:renderSvc,ban:renderBan,price:renderPrice,promo:renderPromo,cpad:renderCpAdm,rev:renderRevs,set:renderSet,team:renderTeam,rep:renderRep,tw:renderTW,th:renderTH}[at]||(()=>{}))();
+  ({dash:renderDash,queue:renderQ,cust:renderCust,svc:renderSvc,ban:renderBan,price:renderPrice,promo:renderPromo,cpad:renderCpAdm,sec:renderSec,rev:renderRevs,set:renderSet,team:renderTeam,rep:renderRep,tw:renderTW,th:renderTH}[at]||(()=>{}))();
 }
 /* Dashboard */
 async function loadDash(){const{data,error}=await sb.rpc('admin_dashboard');if(error)return toast('โหลด Dashboard ไม่สำเร็จ: '+error.message);dash=data;renderDash()}
 function renderDash(){
   const d=dash;if(!d){$('stats').innerHTML='<div class="mut">กำลังโหลด...</div>';return}
   const C=(l,v)=>`<div class="card stat"><div class="mut">${l}</div><div class="tot" style="font-size:22px">${v}</div></div>`;
-  $('stats').innerHTML=[C('ออเดอร์วันนี้',d.orders_today),C('ออเดอร์ทั้งหมด',d.orders_total),C('รอดำเนินการ',d.waiting),C('กำลังดำเนินการ',d.doing),C('เสร็จสิ้น',d.done),C('ยกเลิก',d.cancelled),C('ยอดขายวันนี้',fmt(d.sales_today)),C('ยอดขายเดือนนี้',fmt(d.sales_month)),C('รายรับจริงเดือนนี้',fmt(d.real_revenue_month)),C('กำไรสุทธิเดือนนี้',fmt(d.profit_month))].join('');
+  $('stats').innerHTML=[C('ออเดอร์วันนี้',d.orders_today),C('ออเดอร์ทั้งหมด',d.orders_total),C('รอดำเนินการ',d.waiting),C('กำลังดำเนินการ',d.doing),C('เสร็จสิ้น',d.done),C('ยกเลิก',d.cancelled),C('ยอดขายวันนี้',fmtN(d.sales_today)),C('ยอดขายเดือนนี้',fmtN(d.sales_month)),C('รายรับจริงเดือนนี้',fmtN(d.real_revenue_month)),C('กำไรสุทธิเดือนนี้',fmtN(d.profit_month)),C('ค้างชำระจากลูกค้า',d.unpaid),C('ส่วนลดที่ร้านรับภาระ (เดือนนี้)',fmtN(d.discount_month)),C('ค้างจ่ายทีมงาน',fmtN(d.team_owed)),C('จ่ายทีมงานแล้ว (สะสม)',fmtN(d.team_paid))].join('');
   const v=d.daily||[],mx=Math.max(1,...v.map(x=>x.v)),W=560,H=150,bw=W/Math.max(1,v.length);
   $('chart').innerHTML=`<svg viewBox="0 0 ${W} ${H+22}" style="width:100%;min-width:480px">`+v.map((x,i)=>{const hh=Math.round(x.v/mx*H);return`<rect x="${i*bw+4}" y="${H-hh}" width="${bw-8}" height="${hh}" rx="4" fill="var(--ac)"><title>${esc(x.d)}: ${fmt(x.v)}</title></rect><text x="${i*bw+bw/2}" y="${H+15}" font-size="10" text-anchor="middle" fill="var(--mut)">${esc(x.d)}</text>`}).join('')+'</svg>';
   $('recent').innerHTML=orders.slice(0,5).map(o=>`<div class="row" style="border-bottom:1px solid var(--line)"><span><b>${no3(o.no)}</b> ${esc(o.name)} · ${esc(o.items)}</span><span><b>${fmt(o.total)}</b> <span class="st ${esc(o.status)}">${ST[o.status]||esc(o.status)}</span></span></div>`).join('')||'<div class="mut">ยังไม่มีออเดอร์</div>';
@@ -594,7 +613,7 @@ function renderDash(){
 function renderQ(){
   const q=$('fq').value.trim().toLowerCase().replace('#',''),s=$('fs').value,f=$('ff').value,t=$('ft').value;
   const L=orders.filter(o=>(!s||o.status===s)&&(!f||bkk(o.created_at)>=f)&&(!t||bkk(o.created_at)<=t)&&(!q||String(o.no).padStart(3,'0').includes(q)||String(o.name).toLowerCase().includes(q)));
-  $('aq').innerHTML=L.length?L.map(o=>`<tr><td><b>${no3(o.no)}</b><div class="mut">${esc(dt(o.created_at))}</div></td><td><b>${esc(o.name)}</b><div class="mut">${esc(o.channel)}: ${esc(o.contact)}</div></td><td>${esc(o.items)}</td><td><b>${fmt(o.total)}</b></td><td><select style="width:auto;margin:0" onchange="setSt('${o.id}',this.value)">${Object.keys(ST).map(k=>`<option value="${k}" ${o.status===k?'selected':''}>${ST[k]}</option>`).join('')}</select></td><td><select style="width:auto;margin:0" onchange="setAssign('${o.id}',this.value)"><option value="">-</option>${team.map(m=>`<option value="${m.id}" ${o.assigned_to===m.id?'selected':''}>${esc(m.name||'ไม่มีชื่อ')}</option>`).join('')}</select></td><td style="white-space:nowrap"><button class="g" onclick="openAdminOd('${o.id}')">รายละเอียด</button> <button class="g" onclick="delQ(this,'${o.id}')">ลบ</button></td></tr>`).join(''):'<tr><td colspan="7" class="mut">ไม่พบคิว</td></tr>';
+  $('aq').innerHTML=L.length?L.map(o=>`<tr><td><b>${no3(o.no)}</b><div class="mut">${esc(dt(o.created_at))}</div></td><td><b>${esc(o.name)}</b><div class="mut">${esc(o.channel)}: ${esc(o.contact)}</div></td><td>${esc(o.items)}</td><td><b>${fmt(o.total)}</b><div>${payBadge(o)}</div></td><td><select style="width:auto;margin:0" onchange="setSt('${o.id}',this.value)">${Object.keys(ST).map(k=>`<option value="${k}" ${o.status===k?'selected':''}>${ST[k]}</option>`).join('')}</select></td><td><select style="width:auto;margin:0" onchange="setAssign('${o.id}',this.value)"><option value="">-</option>${team.map(m=>`<option value="${m.id}" ${o.assigned_to===m.id?'selected':''}>${esc(m.name||'ไม่มีชื่อ')}</option>`).join('')}</select></td><td style="white-space:nowrap"><button class="g" onclick="openAdminOd('${o.id}')">รายละเอียด</button> <button class="g" onclick="delQ(this,'${o.id}')">ลบ</button></td></tr>`).join(''):'<tr><td colspan="7" class="mut">ไม่พบคิว</td></tr>';
 }
 async function setSt(id,v){const{error}=await sb.from('orders').update({status:v}).eq('id',id);toast(error?error.message:'อัปเดตสถานะแล้ว');await loadOrders();loadQueue();if(at==='dash')loadDash()}
 async function setAssign(id,v){const{error}=await sb.from('orders').update({assigned_to:v||null}).eq('id',id);toast(error?error.message:'มอบหมายงานแล้ว');loadOrders()}
@@ -609,12 +628,13 @@ function orderBreak(o,its){
   return h+`<div class="row"><span class="mut">ยอดสุทธิที่ต้องชำระ</span><b>${fmt(o.total)}</b></div>`}
 async function openAdminOd(id){
   const o=orders.find(x=>x.id===id);if(!o)return;
-  const[hs,nt,its]=await Promise.all([sb.from('order_history').select('*').eq('order_id',id).order('id'),sb.from('order_notes').select('note').eq('order_id',id).maybeSingle(),getItems(id)]);
+  const[hs,nt,its,fi]=await Promise.all([sb.from('order_history').select('*').eq('order_id',id).order('id'),sb.from('order_notes').select('note').eq('order_id',id).maybeSingle(),getItems(id),isOwner()?sb.from('order_finance').select('*').eq('order_id',id).maybeSingle():Promise.resolve({data:null})]);
   const who=u=>(team.find(m=>m.id===u)||{}).name||'ลูกค้า/ระบบ';
   $('odb').innerHTML=`<h3 style="margin:0 0 4px">คิว ${no3(o.no)} <span class="st ${esc(o.status)}">${ST[o.status]||''}</span></h3><div class="mut">จองเมื่อ ${esc(dt(o.created_at))}</div>
   <div class="row"><span class="mut">ลูกค้า</span><b>${esc(o.name)}</b></div><div class="row"><span class="mut">ติดต่อ</span><span>${esc(o.channel)}: ${esc(o.contact)}</span></div>
   ${o.note?`<div class="row"><span class="mut">หมายเหตุจากลูกค้า</span><span>${esc(o.note)}</span></div>`:''}
   ${orderBreak(o,its)}
+  ${payActs(o,id)}${finBlock(fi&&fi.data)}
   <div class="mut" style="margin-top:10px">ประวัติการเปลี่ยนสถานะ</div>${(hs.data||[]).map(x=>`<div class="row"><span>${x.from_status?(ST[x.from_status]||esc(x.from_status))+' → ':''}${ST[x.to_status]||esc(x.to_status)}</span><span class="mut">${esc(who(x.changed_by))} · ${esc(dt(x.created_at))}</span></div>`).join('')}
   <div class="mut" style="margin-top:10px">สตรีมและหลักฐานงาน</div><div id="evbox"></div><label class="l">หมายเหตุภายใน (ลูกค้าไม่เห็น)</label><input id="an" maxlength="1000" value="${esc(nt.data?nt.data.note:'')}">
   <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap"><button onclick="saveNote('${id}')">บันทึกหมายเหตุ</button>${o.status==='cancelled'?'':`<button class="g" onclick="cancelO(this,'${id}')">ยกเลิกออเดอร์</button>`}<button class="g" onclick="$('od').classList.add('hide')">ปิด</button></div>`;
@@ -643,7 +663,7 @@ function renderSet(){const sh=cfg.shop||{};[['d','discord'],['f','facebook'],['l
 function savePrice(){const u=parseInt($('gu').value),p=parseInt($('gp').value);if(!(u>=1&&u<=1000000)||!(p>=0))return toast('กรอกจำนวนเจมและราคาให้ถูกต้อง');const{gemPrice,...rest}=cfg;cfg={...rest,gemUnit:u,gemUnitPrice:p};saveCfg('บันทึกราคาแล้ว')}
 /* ทีมงาน (แอดมิน) */
 async function loadTeamPage(){const{data,error}=await sb.rpc('admin_team');if(error)toast(error.message);tmem=data||[];team=tmem.filter(m=>m.is_team||m.is_admin);renderTeam()}
-function renderTeam(){$('tl').innerHTML=tmem.length?tmem.map(m=>`<tr><td><b>${esc(m.name||'-')}</b></td><td>${esc(m.email)}</td><td>${m.is_admin?'แอดมิน':'Team'}</td><td>${m.open_orders}</td><td>${m.done_orders}</td><td>${fmt(m.pay_total)}</td><td>${fmt(m.pay_unpaid)}</td><td style="white-space:nowrap"><button class="g" onclick="openMember('${m.id}')">ดูงาน</button>${m.is_admin?'':` <button class="g" onclick="rmTeam(this,'${m.id}')">ถอดออก</button>`}</td></tr>`).join(''):'<tr><td colspan="8" class="mut">ยังไม่มีสมาชิกทีม</td></tr>'}
+function renderTeam(){$('tl').innerHTML=tmem.length?tmem.map(m=>`<tr><td><b>${esc(m.name||'-')}</b></td><td>${esc(m.email)}</td><td>${m.is_admin?'แอดมิน':'Team'}</td><td>${m.open_orders}</td><td>${m.done_orders}</td><td>${fmtN(m.pay_total)}</td><td>${fmtN(m.pay_unpaid)}</td><td style="white-space:nowrap"><button class="g" onclick="openMember('${m.id}')">ดูงาน</button>${m.is_admin?'':` <button class="g" onclick="rmTeam(this,'${m.id}')">ถอดออก</button>`}</td></tr>`).join(''):'<tr><td colspan="8" class="mut">ยังไม่มีสมาชิกทีม</td></tr>'}
 async function addTeam(){
   const e=$('te').value.trim();if(!e)return toast('กรอกอีเมลของสมาชิก');
   const{error}=await sb.rpc('admin_add_team',{p_email:e});
@@ -662,21 +682,87 @@ function openMember(id){
 /* รายงานการเงิน (แอดมิน) */
 const PL={day:'รายวัน',week:'รายสัปดาห์',month:'รายเดือน',year:'รายปี'};
 async function loadRep(){
-  const[r,t]=await Promise.all([sb.rpc('admin_report',{p_period:rp}),sb.from('transactions').select('*, orders(no,status)').order('created_at',{ascending:false}).limit(50)]);
-  if(r.error)toast(r.error.message);rep=r.data;txs=(t.data||[]).filter(x=>x.orders&&x.orders.status==='done');renderRep();
+  const[r,t]=await Promise.all([sb.rpc('admin_report',{p_period:rp}),sb.rpc('owner_tx_list',{p_limit:100})]);
+  if(r.error)toast(ERR[r.error.message]||r.error.message);if(t.error)toast(t.error.code==='PGRST202'?'ยังไม่ได้รัน migration 013':(ERR[t.error.message]||t.error.message));
+  rep=r.data;txs=Array.isArray(t.data)?t.data:[];renderRep();
 }
 function setRp(k){rp=k;loadRep()}
+const payBadge=o=>o.pay_status==='paid'?'<span class="st done">💰 ชำระแล้ว</span>':o.pay_status==='refunded'?'<span class="st cancelled">↩️ คืนเงินแล้ว</span>':'<span class="st pending">⌛ ยังไม่ชำระ</span>';
 function renderRep(){
   $('rpb').innerHTML=Object.keys(PL).map(k=>`<button class="${k===rp?'':'g'}" onclick="setRp('${k}')">${PL[k]}</button>`).join('');
   const t=rep&&rep.totals;if(!t){$('rps').innerHTML='<div class="mut">กำลังโหลด...</div>';return}
   const C=(l,v)=>`<div class="card stat"><div class="mut">${l}</div><div class="tot" style="font-size:20px">${v}</div></div>`;
-  $('rps').innerHTML=[C('ออเดอร์ที่เสร็จ',t.orders),C('รายรับ',fmt(t.revenue)),C('ส่วนลดที่ให้',fmt(t.discount)),C('ต้นทุน',fmt(t.cost)),C('ค่าตอบแทนทีม',fmt(t.team_pay)),C('กำไรสุทธิ',fmt(t.profit))].join('');
-  $('rpt').innerHTML=rep.rows.length?rep.rows.map(x=>`<tr><td><b>${esc(x.period)}</b></td><td>${x.orders}</td><td>${fmt(x.revenue)}</td><td>${fmt(x.discount)}</td><td>${fmt(x.cost)}</td><td>${fmt(x.team_pay)}</td><td><b>${fmt(x.profit)}</b></td></tr>`).join(''):'<tr><td colspan="7" class="mut">ยังไม่มีรายการที่เสร็จสิ้นในช่วงนี้</td></tr>';
-  $('txl').innerHTML=txs.length?txs.map(x=>`<tr><td><b>${no3(x.orders.no)}</b></td><td>${fmt(x.revenue)}</td><td><input type="number" min="0" value="${x.cost}" style="width:90px;margin:0" onchange="saveTx('${x.id}','cost',this.value)"></td><td><input type="number" min="0" value="${x.team_pay}" style="width:90px;margin:0" onchange="saveTx('${x.id}','team_pay',this.value)"></td><td><select style="width:auto;margin:0" onchange="saveTx('${x.id}','team_member',this.value)"><option value="">-</option>${team.map(m=>`<option value="${m.id}" ${x.team_member===m.id?'selected':''}>${esc(m.name||'ไม่มีชื่อ')}</option>`).join('')}</select></td><td><input type="checkbox" ${x.paid_out?'checked':''} onchange="saveTx('${x.id}','paid_out',this.checked)" style="width:auto"></td><td><b>${fmt(x.revenue-x.cost-x.team_pay)}</b></td></tr>`).join(''):'<tr><td colspan="7" class="mut">ยังไม่มีรายการ</td></tr>';
+  $('rps').innerHTML=[C('ออเดอร์ที่เสร็จและรับเงินแล้ว',t.orders),C('ราคาปกติรวม',fmt(t.gross)),C('ส่วนลดที่ร้านรับภาระ',fmt(t.discount)),C('ลูกค้าจ่ายจริง',fmt(t.revenue)),C('ค่าตอบแทนทีม',fmt(t.team_pay)),C('ต้นทุน',fmt(t.cost)),C('กำไรเจ้าของ',fmt(t.profit))].join('');
+  $('rpt').innerHTML=rep.rows.length?rep.rows.map(x=>`<tr><td><b>${esc(x.period)}</b></td><td>${x.orders}</td><td>${fmt(x.gross)}</td><td>${fmt(x.discount)}</td><td>${fmt(x.revenue)}</td><td>${fmt(x.team_pay)}</td><td>${fmt(x.cost)}</td><td><b>${fmt(x.profit)}</b></td></tr>`).join(''):'<tr><td colspan="8" class="mut">ยังไม่มีรายการที่เสร็จสิ้นและยืนยันรับเงินในช่วงนี้</td></tr>';
+  $('txl').innerHTML=txs.length?txs.map(txRow).join(''):'<tr><td colspan="6" class="mut">ยังไม่มีรายการการเงิน</td></tr>';
 }
-async function saveTx(id,f,v){
-  if(f==='cost'||f==='team_pay')v=Math.max(0,parseInt(v)||0);if(f==='team_member')v=v||null;
-  const{error}=await sb.from('transactions').update({[f]:v}).eq('id',id);toast(error?error.message:'บันทึกแล้ว');loadRep();
+function txRow(x){
+  const oid=esc(x.order_id),payable=x.status==='done'&&x.pay_status==='paid',hasTx=x.team_pay!=null;
+  const tm=(team||[]).filter(m=>m.is_team||m.is_admin);
+  const pays=(x.payouts||[]).map(p=>`<div class="mut" style="${p.voided?'text-decoration:line-through':''}">${esc(dt(p.at))} · ${fmt(p.amount)}${p.note?' · '+esc(p.note):''}${p.voided?` (ยกเลิก: ${esc(p.void_reason||'')})`:` <button class="g" style="padding:0 8px;min-height:26px;font-size:11px" onclick="voidPay(this,${p.id})">ยกเลิก</button>`}</div>`).join('');
+  const payForm=!hasTx?'<div class="mut">รอออเดอร์เสร็จสิ้น</div>':payable?(x.team_owed>0?(x.team_member?`<div style="display:flex;gap:6px;margin-top:4px"><input id="pa-${oid}" type="number" min="1" max="${x.team_owed}" value="${x.team_owed}" style="width:90px;margin:0" aria-label="จำนวนที่จ่าย"><button onclick="payTeam(this,'${oid}')">จ่ายทีม</button></div>`:'<div class="mut" style="color:#dc2626">ยังไม่ได้กำหนดผู้ทำงาน</div>'):'<div class="mut">✅ จ่ายครบแล้ว</div>'):'<div class="mut">จ่ายได้เมื่อเสร็จและยืนยันรับเงินแล้ว</div>';
+  return`<tr><td><b>${no3(x.no)}</b><div class="mut">${esc(x.customer||'')}</div><div class="mut">${ST[x.status]||esc(x.status)}</div>${payBadge(x)}</td>
+  <td>ราคาปกติ ${fmt(x.gross)}<div class="mut">ส่วนลด ${fmt(x.discount)} (ร้านรับภาระ)</div><b>ลูกค้าจ่าย ${fmt(x.revenue)}</b></td>
+  <td>${hasTx?`<b>${fmt(x.team_pay)}</b><div class="mut">${x.team_pct}% ของราคาปกติ</div><select style="width:auto;margin:4px 0 0" aria-label="ผู้ทำงาน" onchange="setTxMember('${oid}',this.value)"><option value="">- ผู้ทำงาน -</option>${tm.map(m=>`<option value="${esc(m.id)}" ${x.team_member===m.id?'selected':''}>${esc(m.name||'ไม่มีชื่อ')}</option>`).join('')}</select>`:(x.team_share!=null?`<span class="mut">${fmt(x.team_share)} (${x.team_pct}%)</span>`:'-')}</td>
+  <td>${hasTx?`<div style="display:flex;gap:6px"><input id="co-${oid}" type="number" min="0" value="${x.cost}" style="width:84px;margin:0" aria-label="ต้นทุน"><button class="g" onclick="saveCost('${oid}')">บันทึก</button></div>`:'-'}</td>
+  <td>จ่ายแล้ว ${fmt(x.team_paid)}${payable?` · ค้าง <b>${fmt(x.team_owed)}</b>`:''}${x.team_reclaim>0?`<div style="color:#dc2626"><b>ต้องเรียกคืนจากทีม ${fmt(x.team_reclaim)}</b> (ยกเลิกรายการจ่ายเมื่อได้รับคืนแล้ว)</div>`:''}${pays}${payForm}</td>
+  <td>${x.profit!=null?`<b>${fmt(x.profit)}</b>`:'<span class="mut">-</span>'}</td></tr>`;
+}
+const txReason=()=>($('tx-r')?$('tx-r').value:'').trim();
+async function txCall(fn,args,ok){const{data,error}=await sb.rpc(fn,args);if(error){toast(ERR[error.message]||error.message);return null}toast(ok);await loadRep();if(at==='dash')loadDash();return data===null?true:data}
+async function saveCost(oid){const v=parseInt($('co-'+oid).value),r=txReason();if(!(v>=0))return toast('ต้นทุนต้องเป็นจำนวนเต็มตั้งแต่ 0');if(r.length<3)return toast('กรุณาใส่เหตุผลในช่องด้านบนตารางก่อน');await txCall('owner_set_tx_cost',{p_order:oid,p_cost:v,p_reason:r},'บันทึกต้นทุนแล้ว')}
+async function setTxMember(oid,v){const r=txReason();if(!v)return;if(r.length<3){toast('กรุณาใส่เหตุผลในช่องด้านบนตารางก่อน');return loadRep()}await txCall('owner_set_tx_member',{p_order:oid,p_member:v,p_reason:r},'กำหนดผู้ทำงานแล้ว')||loadRep()}
+async function payTeam(b,oid){
+  const v=parseInt($('pa-'+oid).value);if(!(v>0))return toast('ใส่จำนวนเงินที่จะจ่าย');
+  if(!b.dataset.s){b.dataset.s=1;b.textContent=`ยืนยันจ่าย ${fmt(v)}?`;return}
+  b.disabled=true;await txCall('owner_pay_team',{p_order:oid,p_amount:v,p_note:null},'บันทึกการจ่ายเงินทีมแล้ว');loadRep();
+}
+async function voidPay(b,pid){const r=txReason();if(r.length<3)return toast('กรุณาใส่เหตุผลในช่องด้านบนตารางก่อน');if(!b.dataset.s){b.dataset.s=1;b.textContent='ยืนยัน?';return}await txCall('owner_void_payout',{p_payout:pid,p_reason:r},'ยกเลิกรายการจ่ายแล้ว')}
+/* ชำระเงิน / คืนเงิน (รายละเอียดออเดอร์) */
+function payActs(o,id){
+  let h=`<div class="row"><span class="mut">การชำระเงิน</span><span>${payBadge(o)}${o.paid_at?` <span class="mut">${esc(dt(o.paid_at))}</span>`:''}</span></div>`;
+  if(o.pay_status==='paid'&&o.status==='cancelled')h+='<div class="mut" style="color:#dc2626">ออเดอร์นี้ถูกยกเลิกแต่ลูกค้าชำระเงินแล้ว เจ้าของต้องกด "คืนเงินลูกค้า"</div>';
+  const b=[];
+  if(o.pay_status==='unpaid'&&o.status!=='cancelled')b.push(`<button onclick="confirmPay(this,'${id}')">ยืนยันรับเงิน ${fmt(o.total)}</button>`);
+  if(isOwner()&&o.pay_status==='paid'){h+='<label class="l">เหตุผล (ใช้กับการย้อนยืนยัน/คืนเงิน)</label><input id="od-r" maxlength="200">';b.push(`<button class="g" onclick="revertPay(this,'${id}')">ย้อนการยืนยันรับเงิน</button>`,`<button class="g" onclick="refundOrd(this,'${id}')">คืนเงินลูกค้า</button>`)}
+  return h+(b.length?`<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px">${b.join('')}</div>`:'');
+}
+function finBlock(f){
+  if(!f)return'';
+  return`<div class="mut" style="margin-top:10px">การแบ่งเงิน (เห็นเฉพาะเจ้าของ · เก็บ ณ เวลาสั่ง)</div>
+  <div class="row"><span class="mut">ราคาปกติก่อนลด</span><span>${fmt(f.gross)}</span></div>
+  <div class="row"><span class="mut">ส่วนแบ่งทีมงาน ${f.team_pct}%</span><span>${fmt(f.team_share)}</span></div>
+  <div class="row"><span class="mut">ส่วนแบ่งเจ้าของ ${f.owner_pct}% (ก่อนรับภาระส่วนลด)</span><span>${fmt(f.owner_share)}</span></div>
+  <div class="row"><span class="mut">ส่วนลดที่ร้านรับภาระ${f.discount_clamped?` (ถูกจำกัดตามเพดาน ${f.cap_pct}%)`:''}</span><span style="color:#dc2626">-${fmt(f.discount)}</span></div>
+  <div class="row"><span class="mut">เจ้าของเหลือก่อนต้นทุน</span><b>${fmt(f.owner_share-f.discount)}</b></div>`;
+}
+async function afterPay(id){await loadOrders();openAdminOd(id);if(at==='dash')loadDash()}
+async function confirmPay(b,id){
+  if(!b.dataset.s){b.dataset.s=1;b.textContent='กดอีกครั้งเพื่อยืนยันว่าได้รับเงินแล้ว';return}
+  b.disabled=true;const{error}=await sb.rpc('admin_confirm_payment',{p_order:id,p_note:null});
+  if(error){b.disabled=false;return toast(ERR[error.message]||error.message)}
+  toast('ยืนยันรับเงินแล้ว');afterPay(id);
+}
+async function revertPay(b,id){
+  const r=(($('od-r')||{}).value||'').trim();if(r.length<3)return toast('กรุณาใส่เหตุผล');
+  if(!b.dataset.s){b.dataset.s=1;b.textContent='ยืนยัน?';return}
+  const{error}=await sb.rpc('owner_revert_payment',{p_order:id,p_reason:r});if(error)return toast(ERR[error.message]||error.message);toast('ย้อนการยืนยันรับเงินแล้ว');afterPay(id);
+}
+async function refundOrd(b,id){
+  const r=(($('od-r')||{}).value||'').trim();if(r.length<3)return toast('กรุณาใส่เหตุผลการคืนเงิน');
+  if(!b.dataset.s){b.dataset.s=1;b.textContent='ยืนยันคืนเงิน?';b.className='r';return}
+  const{data,error}=await sb.rpc('owner_refund_order',{p_order:id,p_reason:r});if(error)return toast(ERR[error.message]||error.message);
+  toast(`คืนเงิน ${fmt(data.refund_amount)} แล้ว`+(data.team_reclaim>0?` · ต้องเรียกคืนจากทีม ${fmt(data.team_reclaim)}`:''));afterPay(id);
+}
+/* คำเตือนส่วนลดสูงเกิน (หน้าสร้างโปรโมชั่น/คูปอง) */
+async function loadGuard(){const{data}=await sb.rpc('discount_guard');if(data)guard=data}
+function discWarn(kId,vId,wId){
+  const k=$(kId).value,v=parseInt($(vId).value),w=$(wId);if(!w)return;const m=[];
+  if(k==='percent'&&v>0){
+    if(v>guard.cap_pct)m.push(`เพดานส่วนลดของร้านคือ ${guard.cap_pct}% ส่วนลดจะถูกจำกัดเหลือ ${guard.cap_pct}% ของยอดสั่งซื้อ`);
+    if(guard.owner_pct!=null&&Math.min(v,guard.cap_pct)>=guard.owner_pct)m.push(`ส่วนลด ${Math.min(v,guard.cap_pct)}% สูงกว่าหรือเท่ากับส่วนแบ่งเจ้าของ ${guard.owner_pct}% ร้านจะไม่เหลือกำไรก่อนหักต้นทุน`);
+  }else if(v>0)m.push(`ส่วนลดเป็นบาทจะถูกจำกัดไม่เกิน ${guard.cap_pct}% ของยอดสั่งซื้อในแต่ละออเดอร์`);
+  w.textContent=m.join(' · ');
 }
 /* มุมมองสมาชิก Team */
 const TS=['confirmed','doing','waiting','done'];
@@ -689,11 +775,12 @@ async function loadMy(){const{data,error}=await sb.rpc('team_my_summary');if(err
 function renderTH(){
   const d=mysum;if(!d){$('ths').innerHTML='<div class="mut">กำลังโหลด...</div>';return}
   const C=(l,v)=>`<div class="card stat"><div class="mut">${l}</div><div class="tot" style="font-size:20px">${v}</div></div>`;
-  $('ths').innerHTML=[C('งานที่ทำสำเร็จ',d.done_count),C('ค่าตอบแทนรวม',fmt(d.pay_total)),C('ค้างจ่าย',fmt(d.pay_unpaid))].join('');
-  $('thl').innerHTML=(d.history||[]).length?d.history.map(x=>`<tr><td><b>${no3(x.no)}</b></td><td>${esc(x.items)}</td><td>${esc(dt(x.done_at))}</td><td>${fmt(x.team_pay)}</td><td>${x.paid_out?'✅ จ่ายแล้ว':'⏳ ค้างจ่าย'}</td></tr>`).join(''):'<tr><td colspan="5" class="mut">ยังไม่มีประวัติ</td></tr>';
+  $('ths').innerHTML=[C('งานที่ทำสำเร็จ',d.done_count),C('ค่าตอบแทนรวม',fmt(d.pay_total)),C('ได้รับแล้ว',fmt(d.pay_paid)),C('ค้างจ่าย',fmt(d.pay_unpaid))].join('');
+  $('thl').innerHTML=(d.history||[]).length?d.history.map(x=>`<tr><td><b>${no3(x.no)}</b></td><td>${esc(x.items)}</td><td>${esc(dt(x.done_at))}</td><td>${fmt(x.team_pay)}</td><td>${x.paid_out?'✅ จ่ายแล้ว':!x.order_paid?'⏳ รอลูกค้าชำระเงิน':x.paid>0?`⏳ จ่ายแล้ว ${fmt(x.paid)} · ค้าง ${fmt(x.team_pay-x.paid)}`:'⏳ ค้างจ่าย'}</td></tr>`).join(''):'<tr><td colspan="5" class="mut">ยังไม่มีประวัติ</td></tr>';
 }
 /* โปรโมชั่น (แอดมิน) */
 async function loadPromos(){
+  loadGuard();
   const[p,u]=await Promise.all([sb.from('promotions').select('*').order('created_at',{ascending:false}),sb.from('promotion_usage').select('*, promotions(code), orders(no,name,status)').order('created_at',{ascending:false}).limit(500)]);
   if(p.error)toast(p.error.message);promos=p.data||[];usage=u.data||[];renderPromo();
 }
@@ -720,8 +807,66 @@ async function delPromo(b,id){
   if(!b.dataset.s){b.dataset.s=1;b.textContent='แน่ใจ?';b.className='r';return}
   const{error}=await sb.from('promotions').delete().eq('id',id);toast(error?error.message:'ลบโค้ดแล้ว (ประวัติการใช้ของโค้ดนี้ถูกลบด้วย)');loadPromos();
 }
+/* ---------- สิทธิ์ การเงิน และ Audit (OWNER) ---------- */
+const isOwner=()=>!!(prof&&prof.role==='owner');
+const fmtN=v=>v==null?'—':fmt(v);
+const ROLE_TH={owner:'OWNER (เจ้าของ)',admin:'ADMIN',manager:'MANAGER',team:'TEAM (ทีมงาน)',customer:'สมาชิกทั่วไป'};
+const ENT_TH={service:'บริการ',gem_price:'ราคาเจม',promotion:'โปรโมชั่น',coupon:'คูปอง',transaction:'ธุรกรรม',finance_config:'ตั้งค่าการเงิน',profile_role:'สิทธิ์สมาชิก'};
+const ACT_TH={insert:'เพิ่ม',update:'แก้ไข',delete:'ลบ',role_change:'เปลี่ยนสิทธิ์'};
+Object.assign(ERR,{discount_not_allowed:'ขณะนี้ร้านปิดการใช้ส่วนลด (เพดานส่วนลด 0%)',order_not_paid:'ออเดอร์นี้ยังไม่ได้ยืนยันรับเงินจากลูกค้า',order_not_done:'ออเดอร์ยังไม่เสร็จสิ้น',no_transaction:'ยังไม่มีรายการการเงิน (ออเดอร์ต้องเสร็จสิ้นก่อน)',no_team_member:'ยังไม่ได้กำหนดผู้ทำงานของออเดอร์นี้',amount_exceeds_owed:'จำนวนเงินเกินยอดค้างจ่ายของทีม',invalid_amount:'จำนวนเงินไม่ถูกต้อง',already_paid:'ออเดอร์นี้ยืนยันรับเงินไปแล้ว',already_refunded:'ออเดอร์นี้คืนเงินไปแล้ว',order_cancelled:'ออเดอร์นี้ถูกยกเลิกแล้ว',not_paid:'ออเดอร์นี้ยังไม่ได้ชำระเงิน (ใช้การยกเลิกปกติ)',has_active_payouts:'มีการจ่ายเงินทีมแล้ว ต้องยกเลิกรายการจ่ายก่อน',already_voided:'รายการจ่ายนี้ถูกยกเลิกไปแล้ว',payout_not_found:'ไม่พบรายการจ่าย',order_locked_finance:'ลบไม่ได้ ออเดอร์นี้ผูกกับการชำระเงินหรือการจ่ายทีมแล้ว',order_not_found:'ไม่พบออเดอร์',reason_required:'กรุณาใส่เหตุผลอย่างน้อย 3 ตัวอักษร',cannot_change_self:'เปลี่ยนสิทธิ์ของบัญชีตัวเองไม่ได้',invalid_role:'สิทธิ์ไม่ถูกต้อง',invalid_team_pct:'ส่วนแบ่งทีมต้องอยู่ระหว่าง 0–100',invalid_discount_cap:'เพดานส่วนลดต้องอยู่ระหว่าง 0–20%',forbidden:'ไม่มีสิทธิ์ทำรายการนี้ (เฉพาะ OWNER)'});
+let finCfg=null,mbrs=[],audits=[],discountCap=20,guard={cap:20,owner_pct:null};
+async function loadSec(){
+  if(!isOwner())return;
+  const{data,error}=await sb.rpc('owner_get_finance_config');
+  if(error){toast(error.code==='PGRST202'?'ยังไม่ได้รัน migration 012':'โหลดการตั้งค่าการเงินไม่สำเร็จ: '+error.message);return}
+  finCfg=data;renderSec();loadMembers();loadAudit();
+}
+function renderSec(){
+  if(!finCfg||!$('fn-t'))return;
+  if(document.activeElement!==$('fn-t')&&document.activeElement!==$('fn-d')){$('fn-t').value=finCfg.team_pct;$('fn-d').value=finCfg.max_discount_pct}
+  finPv();$('fn-info').textContent=`ค่าปัจจุบัน: ทีม ${finCfg.team_pct}% · เจ้าของ ${finCfg.owner_pct}% · เพดานส่วนลด ${finCfg.max_discount_pct}%`;
+}
+function finPv(){const t=parseInt($('fn-t').value);$('fn-o').value=(t>=0&&t<=100)?(100-t)+'%':'—'}
+async function saveFin(){
+  const t=parseInt($('fn-t').value),d=parseInt($('fn-d').value),r=$('fn-r').value.trim(),b=$('fn-sv');
+  if(!(t>=0&&t<=100))return toast('ส่วนแบ่งทีมต้องอยู่ระหว่าง 0–100');
+  if(!(d>=0&&d<=20))return toast('เพดานส่วนลดต้องอยู่ระหว่าง 0–20%');
+  if(r.length<3)return toast('กรุณาใส่เหตุผลการแก้ไข');
+  if(finCfg&&t===finCfg.team_pct&&d===finCfg.max_discount_pct)return toast('ค่าไม่เปลี่ยนแปลง');
+  if(!b.dataset.s){b.dataset.s=1;b.textContent='กดอีกครั้งเพื่อยืนยันการเปลี่ยน';setTimeout(()=>{delete b.dataset.s;b.textContent='บันทึกการตั้งค่าการเงิน'},6000);return}
+  delete b.dataset.s;b.textContent='บันทึกการตั้งค่าการเงิน';b.disabled=true;
+  const{data,error}=await sb.rpc('owner_set_finance_config',{p_team_pct:t,p_max_discount_pct:d,p_reason:r});
+  b.disabled=false;
+  if(error)return toast(ERR[error.message]||error.message);
+  finCfg=data;$('fn-r').value='';toast('บันทึกการตั้งค่าการเงินแล้ว');renderSec();loadAudit();
+}
+async function loadMembers(){const{data,error}=await sb.rpc('owner_members',{p_q:$('mb-q').value.trim()||null});if(error)return toast(ERR[error.message]||error.message);mbrs=data||[];renderMembers()}
+function renderMembers(){
+  $('mbl').innerHTML=mbrs.length?mbrs.map(m=>{const self=me&&m.id===me.id;return`<tr><td><b>${esc(m.name||'-')}</b></td><td>${esc(m.email)}</td><td><select id="rl-${esc(m.id)}" style="margin:0;width:auto" ${self?'disabled':''}>${Object.keys(ROLE_TH).map(k=>`<option value="${k}" ${m.role===k?'selected':''}>${ROLE_TH[k]}</option>`).join('')}</select></td><td>${self?'<span class="mut">บัญชีของคุณ</span>':`<button class="g" onclick="setRole(this,'${esc(m.id)}','${esc(m.role)}')">บันทึก</button>`}</td></tr>`}).join(''):'<tr><td colspan="4" class="mut">ไม่พบสมาชิก</td></tr>';
+}
+async function setRole(b,id,cur){
+  const v=$('rl-'+id).value,r=$('mb-r').value.trim();
+  if(v===cur)return toast('สิทธิ์ไม่เปลี่ยนแปลง');
+  if(r.length<3)return toast('กรุณาใส่เหตุผลการเปลี่ยนสิทธิ์ (ช่องด้านบนตาราง) ก่อน');
+  if(!b.dataset.s){b.dataset.s=1;b.textContent='ยืนยัน?';return}
+  b.disabled=true;
+  const{error}=await sb.rpc('owner_set_role',{p_user:id,p_role:v,p_reason:r});
+  if(error){b.disabled=false;delete b.dataset.s;b.textContent='บันทึก';return toast(ERR[error.message]||error.message)}
+  toast('เปลี่ยนสิทธิ์แล้ว');$('mb-r').value='';loadMembers();loadAudit();
+}
+const shortJ=v=>{let x=typeof v==='string'?v:JSON.stringify(v);if(x===undefined)x='—';return x.length>60?x.slice(0,57)+'…':x};
+function auDiff(o,n){
+  if(!o)return'สร้างใหม่: '+shortJ((n&&(n.name||n.code||n.revenue))??n);
+  if(!n)return'ลบ: '+shortJ(o.name||o.code||o);
+  const ks=[...new Set([...Object.keys(o),...Object.keys(n)])].filter(k=>k!=='updated_at'&&JSON.stringify(o[k])!==JSON.stringify(n[k]));
+  return ks.slice(0,5).map(k=>`${k}: ${shortJ(o[k])} → ${shortJ(n[k])}`).join(' · ')+(ks.length>5?` (+${ks.length-5})`:'');
+}
+async function loadAudit(){const{data,error}=await sb.rpc('owner_audit',{p_limit:200,p_entity:$('au-e').value||null});if(error)return toast(ERR[error.message]||error.message);audits=data||[];renderAudit()}
+function renderAudit(){
+  $('aul').innerHTML=audits.length?audits.map(a=>`<tr><td>${esc(dt(a.at))}</td><td>${esc(a.actor_name||'ระบบ')} <span class="mut">(${esc(a.actor_role||'-')})</span></td><td>${esc(ACT_TH[a.action]||a.action)}</td><td>${esc(ENT_TH[a.entity]||a.entity)}<div class="mut">${esc(a.entity_id||'')}</div></td><td class="mut" style="overflow-wrap:anywhere">${esc(auDiff(a.old_value,a.new_value))}</td><td>${esc(a.reason||'—')}</td></tr>`).join(''):'<tr><td colspan="6" class="mut">ยังไม่มีรายการ</td></tr>';
+}
 /* ---------- จัดการคูปอง (แอดมิน) ---------- */
-async function loadCpAdm(){const{data,error}=await sb.rpc('admin_coupons');if(error)toast(error.message==='forbidden'?'ไม่มีสิทธิ์':error.code==='PGRST202'?'ยังไม่ได้รัน migration 010':'โหลดคูปองไม่สำเร็จ: '+error.message);cpns=Array.isArray(data)?data:[];renderCpAdm()}
+async function loadCpAdm(){loadGuard();const{data,error}=await sb.rpc('admin_coupons');if(error)toast(error.message==='forbidden'?'ไม่มีสิทธิ์':error.code==='PGRST202'?'ยังไม่ได้รัน migration 010':'โหลดคูปองไม่สำเร็จ: '+error.message);cpns=Array.isArray(data)?data:[];renderCpAdm()}
 function cpStatus(x){const n=Date.now();if(!x.active)return['ปิดอยู่',''];if(x.expires_at&&n>+new Date(x.expires_at))return['หมดอายุ',''];if(x.starts_at&&n<+new Date(x.starts_at))return['ยังไม่เริ่ม','doing'];if(x.max_total&&x.claimed>=x.max_total)return['เก็บครบแล้ว','doing'];return['เปิดใช้งาน','done']}
 function renderCpAdm(){
   if(!$('cpl'))return;
@@ -738,8 +883,8 @@ function openCpEd(id){
   $('odb').innerHTML=`<h3 style="margin:0 0 4px">${x?'แก้ไขคูปอง':'สร้างคูปองใหม่'}</h3><input type="hidden" id="ce-id" value="${esc(id||'')}">
   <label class="l">ชื่อคูปอง *</label><input id="ce-n" maxlength="60" value="${esc(v.name)}"><label class="l">รหัสคูปอง * (A-Z 0-9 _ - ไม่เกิน 24 ตัว)</label><input id="ce-c" maxlength="24" style="text-transform:uppercase" value="${esc(v.code)}"><label class="l">คำอธิบาย</label><input id="ce-d" maxlength="200" value="${esc(v.description||'')}">
   <div class="two"><div><label class="l">สีคูปอง</label><input id="ce-col" type="color" value="${esc(v.color)}" style="padding:4px"></div><div><label class="l">ไอคอนอีโมจิ</label><input id="ce-i" maxlength="4" value="${esc(v.icon||'')}"></div></div>
-  <label class="l">ประเภทส่วนลด *</label><select id="ce-k" onchange="cpKind()"><option value="percent" ${kd==='percent'?'selected':''}>ลดเป็นเปอร์เซ็นต์</option><option value="baht" ${kd==='baht'?'selected':''}>ลดเป็นจำนวนเงิน (บาท)</option><option value="cond" ${kd==='cond'?'selected':''}>ลดตามเงื่อนไข: ครบ X บาท ลด Y บาท</option></select>
-  <div class="two"><div><label class="l" id="ce-vl">มูลค่าส่วนลด *</label><input id="ce-v" type="number" inputmode="numeric" min="1" value="${esc(v.value)}"></div><div id="ce-mdw"><label class="l">ส่วนลดสูงสุด (บาท, ว่าง = ไม่จำกัด)</label><input id="ce-md" type="number" inputmode="numeric" min="1" value="${esc(v.max_discount??'')}"></div></div>
+  <label class="l">ประเภทส่วนลด *</label><select id="ce-k" onchange="cpKind();discWarn('ce-k','ce-v','ce-w')"><option value="percent" ${kd==='percent'?'selected':''}>ลดเป็นเปอร์เซ็นต์</option><option value="baht" ${kd==='baht'?'selected':''}>ลดเป็นจำนวนเงิน (บาท)</option><option value="cond" ${kd==='cond'?'selected':''}>ลดตามเงื่อนไข: ครบ X บาท ลด Y บาท</option></select>
+  <div class="two"><div><label class="l" id="ce-vl">มูลค่าส่วนลด *</label><input id="ce-v" type="number" inputmode="numeric" min="1" value="${esc(v.value)}" oninput="discWarn('ce-k','ce-v','ce-w')"><div id="ce-w" class="mut" style="color:#dc2626;margin-top:4px"></div></div><div id="ce-mdw"><label class="l">ส่วนลดสูงสุด (บาท, ว่าง = ไม่จำกัด)</label><input id="ce-md" type="number" inputmode="numeric" min="1" value="${esc(v.max_discount??'')}"></div></div>
   <label class="l" id="ce-ml">ยอดสั่งซื้อขั้นต่ำ (บาท)</label><input id="ce-m" type="number" inputmode="numeric" min="0" value="${esc(v.min_total)}">
   <label class="l">ใช้กับบริการ (ไม่เลือกเลย = ทุกบริการ รวม Primogems)</label><div class="chkgrid">${cfg.services.map(s=>`<label class="chk"><input type="checkbox" class="ce-s" value="${esc(s.id)}" ${sv.includes(s.id)?'checked':''}> ${esc(s.name)}</label>`).join('')||'<span class="mut">ยังไม่มีบริการเสริม</span>'}</div>
   <div class="two"><div><label class="l">เริ่มใช้ได้</label><input id="ce-s0" type="datetime-local" value="${toLocalDt(v.starts_at)}"></div><div><label class="l">หมดอายุ</label><input id="ce-e0" type="datetime-local" value="${toLocalDt(v.expires_at)}"></div></div>
@@ -748,7 +893,7 @@ function openCpEd(id){
   <label class="l">วิธีรับคูปอง</label><select id="ce-dist"><option value="claim" ${v.distribution==='claim'?'selected':''}>ลูกค้ากดเก็บเอง</option><option value="grant" ${v.distribution==='grant'?'selected':''}>แอดมินแจกให้สมาชิก (ปุ่ม "แจก")</option></select>
   <label class="chk"><input id="ce-a" type="checkbox" ${v.active?'checked':''}> เปิดใช้งาน</label>
   <div class="abtns actbar"><button class="g" onclick="$('od').classList.add('hide')">ยกเลิก</button><button id="ce-sv" onclick="saveCp()">บันทึก</button></div>`;
-  cpKind();$('od').classList.remove('hide');
+  cpKind();discWarn('ce-k','ce-v','ce-w');$('od').classList.remove('hide');
 }
 function cpKind(){const k=$('ce-k').value;$('ce-mdw').classList.toggle('hide',k!=='percent');$('ce-vl').textContent=k==='percent'?'เปอร์เซ็นต์ส่วนลด (1-100) *':'มูลค่าส่วนลด (บาท) *';$('ce-ml').textContent=k==='cond'?'ยอดสั่งซื้อขั้นต่ำ (บาท) * ครบเท่านี้จึงได้ลด':'ยอดสั่งซื้อขั้นต่ำ (บาท)'}
 async function saveCp(){
@@ -1093,6 +1238,7 @@ async function openOd(id){
   $('odb').innerHTML=`<h3 style="margin:0 0 4px">คิว ${no3(o.no)}</h3><div class="mut">จองเมื่อ ${esc(dt(o.created_at))}</div>
   <div style="margin:12px 0">${tl}</div>
   ${orderBreak(o,its)}
+  <div class="row"><span class="mut">การชำระเงิน</span><span>${payBadge(o)}</span></div>
   <div class="row"><span class="mut">ช่องทางติดต่อ</span><span>${esc(o.channel)}: ${esc(o.contact)}</span></div>
   ${o.note?`<div class="row"><span class="mut">หมายเหตุ</span><span>${esc(o.note)}</span></div>`:''}<div class="mut" style="margin-top:10px">ประวัติสถานะ</div>${hs.map(x=>`<div class="row"><span>${ST[x.to_status]||esc(x.to_status)}</span><span class="mut">${esc(dt(x.created_at))}</span></div>`).join('')}<div class="mut" style="margin-top:10px">สตรีมและหลักฐานงาน</div><div id="odev"></div>${rv}
   <button class="g" style="width:100%;margin-top:14px" onclick="$('od').classList.add('hide')">ปิด</button>`;
