@@ -129,6 +129,16 @@ tr.me td{background:var(--soft)}.warn{background:var(--warnbg);color:var(--warn)
 .pvb{background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-top:10px;font-size:13px}.pvb div{padding:1px 0}
 .cdot{width:14px;height:14px;border-radius:50%;flex:none;border:1px solid rgba(0,0,0,.12)}
 .chkgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:2px 10px}
+
+/* ===== VIP / แต้ม ===== */
+.mtabs{display:flex;gap:6px;flex-wrap:wrap;margin:14px 0}.mtabs button{min-height:40px}
+.tcard{border:2px solid var(--tc,#4aa8ff);border-radius:20px;padding:18px;background:linear-gradient(135deg,#fff,var(--soft));box-shadow:var(--sh);display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.tcard .ti{font-size:44px;line-height:1;width:72px;height:72px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#fff;border:3px solid var(--tc,#4aa8ff);overflow:hidden;flex:none}.tcard .ti img{width:100%;height:100%;object-fit:cover}
+.tcard h2{margin:0;color:var(--tc,#1f2b3a)}.pbar{height:12px;border-radius:99px;background:#e6eef8;overflow:hidden;margin:8px 0 4px}.pbar i{display:block;height:100%;background:linear-gradient(90deg,var(--tc,#4aa8ff),#7cc4ff);border-radius:99px;transition:width .8s ease}
+@keyframes levelup{0%{transform:scale(.96);box-shadow:0 0 0 0 rgba(74,168,255,.6)}50%{transform:scale(1.03);box-shadow:0 0 0 18px rgba(74,168,255,0)}100%{transform:scale(1)}}.tcard.up{animation:levelup 1.1s ease}
+.mgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:14px 0}.mstat{background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px 14px}.mstat b{display:block;font-size:22px;color:var(--ac2)}
+.ladder{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}.lcard{border:2px solid var(--line);border-top:6px solid var(--tc,#4aa8ff);border-radius:16px;padding:14px;background:#fff}.lcard.cur{box-shadow:0 0 0 3px rgba(74,168,255,.35);border-color:var(--tc,#4aa8ff)}
+.rcard{border:1px solid var(--line);border-left:6px solid var(--cc,#ff9a3d);border-radius:14px;padding:12px 14px;background:#fff;display:flex;flex-direction:column;gap:4px}
 </style>
 </head>
 <body>
@@ -137,7 +147,7 @@ tr.me td{background:var(--soft)}.warn{background:var(--warnbg);color:var(--warn)
 <header class="nav"><div class="wrap navin">
 <a class="logo" href="#top" onclick="closeMenu()"><svg class="star" viewBox="0 0 64 64" aria-hidden="true"><path fill="currentColor" d="M32 2c2 14 6 22 12 26 6 4 12 6 18 6-6 0-12 2-18 6-6 4-10 12-12 26-2-14-6-22-12-26C14 36 8 34 2 34c6 0 12-2 18-6C26 24 30 16 32 2z"/></svg><span>MPSHOP</span></a>
 <nav id="menu" class="menu" onclick="if(event.target.tagName==='A')closeMenu()">
-<a href="#top">หน้าหลัก</a><a href="#services">บริการทั้งหมด</a><a id="nav-coupons" href="#coupons">คูปอง</a><a href="#promosec">โปรโมชั่น</a><a href="#queue">ติดตามงาน</a><a href="#reviews">รีวิว</a><a id="nav-contact" class="hide" href="#contact">ติดต่อเรา</a>
+<a href="#top">หน้าหลัก</a><a href="#services">บริการทั้งหมด</a><a id="nav-coupons" href="#coupons">คูปอง</a><a id="nav-member" class="hide" href="#member">สมาชิก VIP</a><a href="#promosec">โปรโมชั่น</a><a href="#queue">ติดตามงาน</a><a href="#reviews">รีวิว</a><a id="nav-contact" class="hide" href="#contact">ติดต่อเรา</a>
 <div class="menu-auth"><button id="regbtn2" onclick="closeMenu();openAuth('up')">สมัครสมาชิก</button></div>
 </nav>
 <div class="navact"><span id="who" class="mut who"></span><button id="bell" class="g hide" onclick="openNotifs()" aria-label="การแจ้งเตือน">🔔<span id="bc"></span></button><button id="authbtn" class="g" onclick="openAuth('in')">เข้าสู่ระบบ</button><button id="regbtn" class="js-reg-hdr" onclick="openAuth('up')">สมัครสมาชิก</button><button id="burger" class="g burger" onclick="toggleMenu()" aria-label="เมนู" aria-expanded="false">☰</button></div>
@@ -170,7 +180,8 @@ tr.me td{background:var(--soft)}.warn{background:var(--warnbg);color:var(--warn)
 <div id="cpsel" style="margin-bottom:8px"></div>
 <div id="promosec" style="display:flex;gap:8px"><input id="promo" placeholder="โค้ดส่วนลด" style="text-transform:uppercase;margin:0"><button class="d" onclick="applyPromo()" style="flex:none">ใช้โค้ด</button></div>
 <div id="phint" class="mut" style="margin-top:6px"></div><div class="row" style="margin-top:10px"><span class="mut">ยอดก่อนลด</span><span id="subt">0 ฿</span></div>
-<div class="row"><span class="mut">ส่วนลด</span><span id="dsc" style="color:var(--ok)">-0 ฿</span></div>
+<div class="row hide" id="vipr"><span class="mut" id="vipt">ส่วนลดสมาชิก VIP</span><span id="vipv" style="color:var(--ok)"></span></div>
+<div class="row"><span class="mut">ส่วนลดรวม</span><span id="dsc" style="color:var(--ok)">-0 ฿</span></div>
 <div class="row" style="align-items:baseline;margin-bottom:14px"><b>ยอดสุทธิ</b><span class="tot" id="total">0 ฿</span></div>
 <button id="bk" style="width:100%;padding:12px" onclick="book()">ยืนยันการจองคิว</button></div></aside>
 </div></div></div>
@@ -195,6 +206,11 @@ tr.me td{background:var(--soft)}.warn{background:var(--warnbg);color:var(--warn)
 <div id="mbar"><div><div class="mut">ราคารวม</div><b class="tot" id="mtot" style="font-size:20px">0 ฿</b></div><button onclick="document.getElementById('sumcard').scrollIntoView({behavior:'smooth'})">สรุปและจอง</button></div>
 </div>
 
+<div id="mview" class="hide">
+<header class="nav"><div class="wrap navin"><a class="logo" href="#top"><svg class="star" viewBox="0 0 64 64" aria-hidden="true"><path fill="currentColor" d="M32 2c2 14 6 22 12 26 6 4 12 6 18 6-6 0-12 2-18 6-6 4-10 12-12 26-2-14-6-22-12-26C14 36 8 34 2 34c6 0 12-2 18-6C26 24 30 16 32 2z"/></svg><span>MPSHOP</span></a><div class="navact"><span id="mwho" class="mut who"></span><button class="g" onclick="location.hash='#top'">← กลับหน้าร้าน</button></div></div></header>
+<main class="wrap" style="padding:20px 16px 60px"><h1 style="margin:0">สมาชิกของฉัน</h1>
+<div class="mtabs" role="tablist"><button id="mt-profile" onclick="mtab('profile')">👤 โปรไฟล์</button><button id="mt-club" class="g" onclick="mtab('club')">👑 VIP Club</button><button id="mt-wallet" class="g" onclick="mtab('wallet')">💎 กระเป๋าแต้ม</button></div>
+<div id="mbody"></div></main></div>
 <div id="back" class="hide">
 <div class="top"><div class="wrap"><div style="display:flex;align-items:center;gap:8px"><svg class="star" viewBox="0 0 64 64" aria-hidden="true" style="width:24px;height:24px;color:var(--ac)"><path fill="currentColor" d="M32 2c2 14 6 22 12 26 6 4 12 6 18 6-6 0-12 2-18 6-6 4-10 12-12 26-2-14-6-22-12-26C14 36 8 34 2 34c6 0 12-2 18-6C26 24 30 16 32 2z"/></svg><b>MPSHOP</b><span class="mut">Admin Panel</span></div><a href="#services">← กลับหน้าร้าน</a></div></div>
 <main class="wrap" style="padding-top:20px">
@@ -254,6 +270,17 @@ tr.me td{background:var(--soft)}.warn{background:var(--warnbg);color:var(--warn)
 <label style="display:flex;gap:8px;align-items:center;margin-top:10px"><input id="dw-on" type="checkbox" style="width:auto;margin:0"> เปิดใช้งาน</label>
 <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"><button onclick="saveHook()">บันทึก</button><button class="g" onclick="testHook()">ส่งข้อความทดสอบ</button><button class="g" onclick="clearHook(this)">ลบ Webhook</button></div></div>
 </section>
+<section id="p-vip" class="pane hide">
+<div class="card"><h2>ตั้งค่าระบบสมาชิก VIP และแต้ม</h2><div class="mut">เฉพาะเจ้าของ · ทุกการเปลี่ยนแปลงบันทึกใน Audit Log พร้อมเหตุผล · ส่วนลดของ VIP/คูปองจากแต้ม ถูกจำกัดด้วยเพดานส่วนลดของร้านเสมอ และร้านรับภาระ (ทีมได้เท่าเดิม)</div>
+<div class="chkgrid" style="margin-top:8px"><label class="chk"><input type="checkbox" id="lc-en"> เปิดระบบทั้งหมด</label><label class="chk"><input type="checkbox" id="lc-vip"> ระดับ VIP / ส่วนลด VIP</label><label class="chk"><input type="checkbox" id="lc-pt"> ระบบแต้ม</label><label class="chk"><input type="checkbox" id="lc-rw"> แลกของรางวัล</label><label class="chk"><input type="checkbox" id="lc-lb"> Leaderboard</label></div>
+<div class="two"><div><label class="l">กี่บาทต่อ 1 แต้ม (คิดจากยอดที่จ่ายจริงหลังหักส่วนลด)</label><input id="lc-bp" type="number" min="1" inputmode="numeric"></div><div><label class="l">แต้มขั้นต่ำที่ต้องมีก่อนแลกของรางวัล</label><input id="lc-mr" type="number" min="0" inputmode="numeric"></div></div>
+<div class="two"><div><label class="l">แต้มหมดอายุ (วัน) เว้นว่าง = ไม่หมดอายุ</label><input id="lc-pe" type="number" min="1" inputmode="numeric"></div><div><label class="l">ระดับ VIP นับยอดย้อนหลัง (วัน) เว้นว่าง = ระดับถาวร</label><input id="lc-ve" type="number" min="1" inputmode="numeric"></div></div>
+<label class="l">เหตุผลที่แก้ไข *</label><input id="lc-r" maxlength="200"><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"><button id="lc-sv" onclick="saveLoyCfg()">บันทึกการตั้งค่า</button><button class="g" onclick="vipRecalc(this)">คำนวณระดับสมาชิกทุกคนใหม่</button><button class="g" onclick="vipBackfill(this)">นำออเดอร์เก่าที่เสร็จและรับเงินแล้วมานับ</button></div></div>
+<div class="card"><h2>ระดับ VIP</h2><button onclick="openTierEd()">+ เพิ่มระดับ</button><div class="tw" style="margin-top:10px"><table class="cards"><thead><tr><th>ระดับ</th><th>ยอดสะสมขั้นต่ำ</th><th>ส่วนลด</th><th>โบนัสแต้ม</th><th>สถานะ</th><th></th></tr></thead><tbody id="vtl"></tbody></table></div></div>
+<div class="card"><h2>ของรางวัล (แลกแต้มเป็นคูปอง)</h2><button onclick="openRewardEd()">+ เพิ่มของรางวัล</button><div class="tw" style="margin-top:10px"><table class="cards"><thead><tr><th>ของรางวัล</th><th>แต้มที่ใช้</th><th>ส่วนลด</th><th>สต็อก</th><th>สถานะ</th><th></th></tr></thead><tbody id="rwl"></tbody></table></div></div>
+<div class="card"><h2>สมาชิก</h2><div style="display:flex;gap:8px;max-width:520px;margin:6px 0"><input id="vm-q" placeholder="ค้นหาด้วยอีเมลหรือชื่อ" style="margin:0" onkeydown="if(event.key==='Enter')vipMembers()"><button onclick="vipMembers()">ค้นหา</button></div>
+<div class="tw"><table class="cards"><thead><tr><th>สมาชิก</th><th>ระดับ</th><th>ยอดสะสม</th><th>แต้ม</th><th></th></tr></thead><tbody id="vml"></tbody></table></div></div>
+</section>
 <section id="p-sec" class="pane hide">
 <div class="card"><h2>ตั้งค่าการเงิน (เจ้าของเท่านั้น)</h2>
 <div class="mut">เก็บในตารางส่วนตัว ลูกค้าและแอดมินคนอื่นอ่านไม่ได้ · <b>ใช้กับออเดอร์ใหม่เท่านั้น</b> ออเดอร์ที่สั่งไปแล้วเก็บอัตราเดิมไว้ไม่เปลี่ยน · เพดานส่วนลดบังคับที่ฐานข้อมูลกับโปรโมชั่น/คูปองทุกชนิด · ทุกการแก้ไขถูกบันทึกใน Audit Log</div>
@@ -298,7 +325,7 @@ const isStaff=()=>!!(prof&&(prof.is_admin||prof.is_team));
 function toast(m){const t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('on'),3200)}
 
 /* ---------- เส้นทาง ---------- */
-function route(){const a=location.hash==='#admin';$('front').classList.toggle('hide',a);$('back').classList.toggle('hide',!a);if(a)renderAdmin()}
+function route(){const a=location.hash==='#admin',m=location.hash==='#member';$('front').classList.toggle('hide',a||m);$('back').classList.toggle('hide',!a);$('mview').classList.toggle('hide',!m);if(a)renderAdmin();if(m){renderMember();if(me)loadLoyalty()}}
 addEventListener('hashchange',route);
 
 /* ---------- สมาชิก ---------- */
@@ -322,7 +349,7 @@ async function doAuth(){
   closeAuth();toast('ยินดีต้อนรับ');
 }
 async function setUser(u){
-  me=u||null;prof=null;cpn=null;cquote=null;
+  me=u||null;prof=null;cpn=null;cquote=null;LY=null;lastTier=null;
   if(me){const{data}=await sb.from('profiles').select('*').eq('id',me.id).maybeSingle();prof=data}
   $('authbtn').textContent=me?'ออกจากระบบ':'เข้าสู่ระบบ';['regbtn','regbtn2'].forEach(i=>$(i).classList.toggle('hide',!!me));
   $('who').textContent=me?(prof&&prof.name||me.email):'';
@@ -448,19 +475,21 @@ function calc(){
   $('lines').innerHTML=(sub||bad)?h:'<div class="mut">ยังไม่ได้เลือกรายการ</div>';
   const sig=JSON.stringify([g,lines.map(l=>[l.id,l.opt,l.qty]),cpn&&cpn.id]);lastSig=sig;
   let d=0,note='',phint='',raw=0;const mx=Math.floor(sub*discountCap/100),capMsg=discountCap<=0?'ขณะนี้ร้านปิดการใช้ส่วนลด':`ส่วนลดสูงสุด ${discountCap}% ของยอดสั่งซื้อ (เพดานของร้าน)`;
+  const vp=(me&&LY&&LY.enabled&&LY.vip_enabled&&LY.tier)?LY.tier.discount_pct:0,vd=Math.min(Math.floor(sub*vp/100),mx),mxc=Math.max(0,mx-vd);   // VIP ได้ก่อน ที่เหลือเป็นของโปรโมชั่น/คูปอง (กฎเดียวกับเซิร์ฟเวอร์)
   if(cpn){
     const loc=cpnLocal(cpn,lines,sub);raw=loc.ok&&!bad?loc.d:0;
     if(cquote&&cquote.sig===sig){d=cquote.valid?cquote.discount:0;note=cquote.valid?'':cqReason(cquote)}
-    else{d=Math.min(raw,mx);note=loc.ok?'':loc.reason;if(loc.ok&&!bad&&sub>0)scheduleQuote(sig,g,lines,d)}
-    if(raw>mx&&!note)note=capMsg;
+    else{d=Math.min(raw,mxc);note=loc.ok?'':loc.reason;if(loc.ok&&!bad&&sub>0)scheduleQuote(sig,g,lines,d)}
+    if(raw>mxc&&!note)note=capMsg;
   }else if(promo){
-    raw=sub>=promo.min_total?Math.min(sub,promo.kind==='percent'?Math.floor(sub*promo.value/100):promo.value):0;d=Math.min(raw,mx);
-    phint=sub<promo.min_total?`โค้ด ${promo.code}: ต้องมียอดขั้นต่ำ ${promo.min_total} บาท`:`ใช้โค้ด ${promo.code} แล้ว`+(raw>mx?` · ${capMsg}`:'');
+    raw=sub>=promo.min_total?Math.min(sub,promo.kind==='percent'?Math.floor(sub*promo.value/100):promo.value):0;d=Math.min(raw,mxc);
+    phint=sub<promo.min_total?`โค้ด ${promo.code}: ต้องมียอดขั้นต่ำ ${promo.min_total} บาท`:`ใช้โค้ด ${promo.code} แล้ว`+(raw>mxc?` · ${capMsg}`:'');
   }
-  const total=Math.max(0,sub-d);
-  $('subt').textContent=fmt(sub);$('dsc').textContent='-'+fmt(d);$('phint').textContent=phint;$('total').textContent=fmt(total);$('mtot').textContent=fmt(total);
-  renderCpSel(d,note);
-  return{g,sub,d,total,bad,lines,note}
+  const cd=d,dt2=vd+cd,total=Math.max(0,sub-dt2);
+  $('vipr').classList.toggle('hide',!(vd>0));if(vd>0){$('vipt').textContent=`ส่วนลดสมาชิก ${LY.tier.name} ${vp}%`;$('vipv').textContent='-'+fmt(vd)}
+  $('subt').textContent=fmt(sub);$('dsc').textContent='-'+fmt(dt2);$('phint').textContent=phint;$('total').textContent=fmt(total);$('mtot').textContent=fmt(total);
+  renderCpSel(cd,note);
+  return{g,sub,d:dt2,cd,vd,total,bad,lines,note}
 }
 async function loadQueue(){
   const{data}=await sb.from('public_queue').select('*').order('no');queue=data||[];
@@ -486,7 +515,7 @@ async function book(){
   if(c.bad)return toast('กรุณาแก้จำนวนที่ไม่ถูกต้องในรายการที่เลือกก่อน');
   if(!sub)return toast('กรุณาเลือกบริการอย่างน้อย 1 รายการ');
   if(!name||!cid)return toast('กรุณากรอกชื่อและช่องทางติดต่อ');
-  if(cpn&&!c.d)return toast(c.note?`คูปองที่เลือกใช้ไม่ได้: ${c.note}`:'คูปองที่เลือกใช้ไม่ได้ กรุณายกเลิกหรือเปลี่ยนคูปอง');
+  if(cpn&&!c.cd)return toast(c.note?`คูปองที่เลือกใช้ไม่ได้: ${c.note}`:'คูปองที่เลือกใช้ไม่ได้ กรุณายกเลิกหรือเปลี่ยนคูปอง');
   booking=true;$('bk').disabled=true;
   const lines=c.lines.map(l=>({service_id:l.id,option_id:l.opt,qty:l.qty}));
   const{data,error}=await sb.rpc('place_order',{p_name:name,p_channel:$('cch').value,p_contact:cid,p_note:$('cnote').value.trim(),p_gems:g,p_services:[],p_promo:discCode,p_lines:lines,p_coupon:cpn?cpn.id:null,p_expected_total:c.total});
@@ -517,6 +546,7 @@ async function loadCoupons(){
   if(cpn){const f=myc.find(x=>x.id===cpn.id);if(!f||f.state!=='active'){cpn=null;cquote=null}else cpn=f}
   calc();
   if(!$('cpm').classList.contains('hide'))renderPicker();
+  loadLoyalty();
 }
 function ctab(t){ctb=t;renderCoupons()}
 function cfil(f){cfl=f;renderCoupons()}
@@ -575,11 +605,11 @@ async function runQuote(sig,g,lines,localD){
 }
 
 /* ---------- หลังบ้าน ---------- */
-const TABS=[['dash','📊 Dashboard'],['queue','📋 จัดการคิว'],['cust','👥 จัดการลูกค้า'],['svc','🛍️ จัดการบริการ'],['ban','🖼️ จัดการแบนเนอร์'],['price','💰 จัดการราคา'],['promo','🏷️ จัดการโปรโมชั่น'],['cpad','🎟️ จัดการคูปอง'],['rev','⭐ จัดการรีวิว'],['team','🧑‍🤝‍🧑 จัดการทีมงาน'],['rep','📈 รายงานรายรับและกำไร'],['set','⚙️ ตั้งค่าร้าน'],['sec','🔒 สิทธิ์ · การเงิน · Audit']];
+const TABS=[['dash','📊 Dashboard'],['queue','📋 จัดการคิว'],['cust','👥 จัดการลูกค้า'],['svc','🛍️ จัดการบริการ'],['ban','🖼️ จัดการแบนเนอร์'],['price','💰 จัดการราคา'],['promo','🏷️ จัดการโปรโมชั่น'],['cpad','🎟️ จัดการคูปอง'],['rev','⭐ จัดการรีวิว'],['team','🧑‍🤝‍🧑 จัดการทีมงาน'],['rep','📈 รายงานรายรับและกำไร'],['set','⚙️ ตั้งค่าร้าน'],['sec','🔒 สิทธิ์ · การเงิน · Audit'],['vip','👑 VIP & แต้ม']];
 const TTABS=[['tw','📋 งานของฉัน'],['th','💵 ประวัติและค่าตอบแทน']];
 let at='dash',team=[],rp='day',rep=null,txs=[],mysum=null,tmem=[],dash=null,custs=[],revs=[];
 const bkk=v=>new Date(v).toLocaleDateString('sv-SE',{timeZone:'Asia/Bangkok'});
-function go(t){at=t;$('side').classList.remove('open');renderAdmin();({dash:loadDash,cust:loadCust,rev:loadRevs,team:loadTeamPage,rep:loadRep,th:loadMy,promo:loadPromos,cpad:loadCpAdm,set:loadHook,sec:loadSec}[t]||(()=>{}))()}
+function go(t){at=t;$('side').classList.remove('open');renderAdmin();({dash:loadDash,cust:loadCust,rev:loadRevs,team:loadTeamPage,rep:loadRep,th:loadMy,promo:loadPromos,cpad:loadCpAdm,set:loadHook,sec:loadSec,vip:loadVip}[t]||(()=>{}))()}
 async function loadOrders(){
   if(!isStaff())return;
   if(isAdmin()){
@@ -593,11 +623,11 @@ async function loadOrders(){
 function renderAdmin(){
   $('deny').classList.toggle('hide',isStaff());$('adm').classList.toggle('hide',!isStaff());
   if(!isStaff())return;
-  const T=isAdmin()?TABS.filter(([k])=>isOwner()||!['rep','sec'].includes(k)):TTABS;if(!T.some(x=>x[0]===at))at=T[0][0];
+  const T=isAdmin()?TABS.filter(([k])=>isOwner()||!['rep','sec','vip'].includes(k)):TTABS;if(!T.some(x=>x[0]===at))at=T[0][0];
   $('side').innerHTML=T.map(([k,l])=>`<button class="${k===at?'on':''}" onclick="go('${k}')">${l}</button>`).join('');$('sidebtn').textContent='☰ เมนูหลังบ้าน · '+(T.find(x=>x[0]===at)||[0,''])[1];
   [...TABS,...TTABS].forEach(([k])=>{const e=$('p-'+k);if(e)e.classList.toggle('hide',k!==at)});
   if(isAdmin()&&$('fs').options.length<2)Object.keys(ST).forEach(k=>$('fs').add(new Option(ST[k],k)));
-  ({dash:renderDash,queue:renderQ,cust:renderCust,svc:renderSvc,ban:renderBan,price:renderPrice,promo:renderPromo,cpad:renderCpAdm,sec:renderSec,rev:renderRevs,set:renderSet,team:renderTeam,rep:renderRep,tw:renderTW,th:renderTH}[at]||(()=>{}))();
+  ({dash:renderDash,queue:renderQ,cust:renderCust,svc:renderSvc,ban:renderBan,price:renderPrice,promo:renderPromo,cpad:renderCpAdm,sec:renderSec,vip:renderVip,rev:renderRevs,set:renderSet,team:renderTeam,rep:renderRep,tw:renderTW,th:renderTH}[at]||(()=>{}))();
 }
 /* Dashboard */
 async function loadDash(){const{data,error}=await sb.rpc('admin_dashboard');if(error)return toast('โหลด Dashboard ไม่สำเร็จ: '+error.message);dash=data;renderDash()}
@@ -624,7 +654,9 @@ function orderBreak(o,its){
   else h+=`<div class="row"><span class="mut">รายการ</span><span style="text-align:right">${esc(o.items)}</span></div>`;
   const sub=o.subtotal!=null?o.subtotal:o.total+(o.discount||0);
   if(o.discount>0||o.subtotal!=null)h+=`<div class="row"><span class="mut">ยอดก่อนลด</span><span>${fmt(sub)}</span></div>`;
-  if(o.discount>0)h+=`<div class="row"><span class="mut">ส่วนลด${o.coupon_name?` (คูปอง: ${esc(o.coupon_name)})`:o.promo_code?` (โค้ด ${esc(o.promo_code)})`:''}</span><span style="color:var(--ok)">-${fmt(o.discount)}</span></div>`;
+  const vdv=o.vip_discount||0,rest=(o.discount||0)-vdv;
+  if(vdv>0)h+=`<div class="row"><span class="mut">ส่วนลดสมาชิก VIP${o.vip_tier_name?` (${esc(o.vip_tier_name)})`:''}</span><span style="color:var(--ok)">-${fmt(vdv)}</span></div>`;
+  if(rest>0)h+=`<div class="row"><span class="mut">ส่วนลด${o.coupon_name?` (คูปอง: ${esc(o.coupon_name)})`:o.promo_code?` (โค้ด ${esc(o.promo_code)})`:''}</span><span style="color:var(--ok)">-${fmt(rest)}</span></div>`;
   return h+`<div class="row"><span class="mut">ยอดสุทธิที่ต้องชำระ</span><b>${fmt(o.total)}</b></div>`}
 async function openAdminOd(id){
   const o=orders.find(x=>x.id===id);if(!o)return;
@@ -813,8 +845,8 @@ const fmtN=v=>v==null?'—':fmt(v);
 const ROLE_TH={owner:'OWNER (เจ้าของ)',admin:'ADMIN',manager:'MANAGER',team:'TEAM (ทีมงาน)',customer:'สมาชิกทั่วไป'};
 const ENT_TH={service:'บริการ',gem_price:'ราคาเจม',promotion:'โปรโมชั่น',coupon:'คูปอง',transaction:'ธุรกรรม',finance_config:'ตั้งค่าการเงิน',profile_role:'สิทธิ์สมาชิก'};
 const ACT_TH={insert:'เพิ่ม',update:'แก้ไข',delete:'ลบ',role_change:'เปลี่ยนสิทธิ์'};
-Object.assign(ERR,{discount_not_allowed:'ขณะนี้ร้านปิดการใช้ส่วนลด (เพดานส่วนลด 0%)',order_not_paid:'ออเดอร์นี้ยังไม่ได้ยืนยันรับเงินจากลูกค้า',order_not_done:'ออเดอร์ยังไม่เสร็จสิ้น',no_transaction:'ยังไม่มีรายการการเงิน (ออเดอร์ต้องเสร็จสิ้นก่อน)',no_team_member:'ยังไม่ได้กำหนดผู้ทำงานของออเดอร์นี้',amount_exceeds_owed:'จำนวนเงินเกินยอดค้างจ่ายของทีม',invalid_amount:'จำนวนเงินไม่ถูกต้อง',already_paid:'ออเดอร์นี้ยืนยันรับเงินไปแล้ว',already_refunded:'ออเดอร์นี้คืนเงินไปแล้ว',order_cancelled:'ออเดอร์นี้ถูกยกเลิกแล้ว',not_paid:'ออเดอร์นี้ยังไม่ได้ชำระเงิน (ใช้การยกเลิกปกติ)',has_active_payouts:'มีการจ่ายเงินทีมแล้ว ต้องยกเลิกรายการจ่ายก่อน',already_voided:'รายการจ่ายนี้ถูกยกเลิกไปแล้ว',payout_not_found:'ไม่พบรายการจ่าย',order_locked_finance:'ลบไม่ได้ ออเดอร์นี้ผูกกับการชำระเงินหรือการจ่ายทีมแล้ว',order_not_found:'ไม่พบออเดอร์',reason_required:'กรุณาใส่เหตุผลอย่างน้อย 3 ตัวอักษร',cannot_change_self:'เปลี่ยนสิทธิ์ของบัญชีตัวเองไม่ได้',invalid_role:'สิทธิ์ไม่ถูกต้อง',invalid_team_pct:'ส่วนแบ่งทีมต้องอยู่ระหว่าง 0–100',invalid_discount_cap:'เพดานส่วนลดต้องอยู่ระหว่าง 0–20%',forbidden:'ไม่มีสิทธิ์ทำรายการนี้ (เฉพาะ OWNER)'});
-let finCfg=null,mbrs=[],audits=[],discountCap=20,guard={cap:20,owner_pct:null};
+Object.assign(ERR,{feature_disabled:'ฟีเจอร์นี้ปิดใช้งานอยู่',reward_not_found:'ไม่พบของรางวัลนี้',reward_not_available:'ของรางวัลนี้ยังไม่เปิดหรือหมดช่วงเวลาแล้ว',reward_sold_out:'ของรางวัลหมดแล้ว',reward_limit_reached:'คุณแลกของรางวัลนี้ครบสิทธิ์แล้ว',insufficient_points:'แต้มไม่เพียงพอ',tier_not_found:'ไม่พบระดับ VIP นี้',invalid_date:'วันที่ต้องเป็นอนาคต',invalid_config:'ค่าตั้งค่าไม่ถูกต้อง',base_tier_required:'ลบหรือปิดระดับพื้นฐาน (ยอด 0) ไม่ได้',ledger_immutable:'แก้ไขประวัติแต้มไม่ได้',discount_not_allowed:'ขณะนี้ร้านปิดการใช้ส่วนลด (เพดานส่วนลด 0%)',order_not_paid:'ออเดอร์นี้ยังไม่ได้ยืนยันรับเงินจากลูกค้า',order_not_done:'ออเดอร์ยังไม่เสร็จสิ้น',no_transaction:'ยังไม่มีรายการการเงิน (ออเดอร์ต้องเสร็จสิ้นก่อน)',no_team_member:'ยังไม่ได้กำหนดผู้ทำงานของออเดอร์นี้',amount_exceeds_owed:'จำนวนเงินเกินยอดค้างจ่ายของทีม',invalid_amount:'จำนวนเงินไม่ถูกต้อง',already_paid:'ออเดอร์นี้ยืนยันรับเงินไปแล้ว',already_refunded:'ออเดอร์นี้คืนเงินไปแล้ว',order_cancelled:'ออเดอร์นี้ถูกยกเลิกแล้ว',not_paid:'ออเดอร์นี้ยังไม่ได้ชำระเงิน (ใช้การยกเลิกปกติ)',has_active_payouts:'มีการจ่ายเงินทีมแล้ว ต้องยกเลิกรายการจ่ายก่อน',already_voided:'รายการจ่ายนี้ถูกยกเลิกไปแล้ว',payout_not_found:'ไม่พบรายการจ่าย',order_locked_finance:'ลบไม่ได้ ออเดอร์นี้ผูกกับการชำระเงินหรือการจ่ายทีมแล้ว',order_not_found:'ไม่พบออเดอร์',reason_required:'กรุณาใส่เหตุผลอย่างน้อย 3 ตัวอักษร',cannot_change_self:'เปลี่ยนสิทธิ์ของบัญชีตัวเองไม่ได้',invalid_role:'สิทธิ์ไม่ถูกต้อง',invalid_team_pct:'ส่วนแบ่งทีมต้องอยู่ระหว่าง 0–100',invalid_discount_cap:'เพดานส่วนลดต้องอยู่ระหว่าง 0–20%',forbidden:'ไม่มีสิทธิ์ทำรายการนี้ (เฉพาะ OWNER)'});
+let finCfg=null,mbrs=[],audits=[],discountCap=20,guard={cap:20,owner_pct:null},LY=null,lyPub=null,tiersPub=[],rewardsL=[],ptsHist=[],vipHist=[],mtb='profile',lastTier=null;
 async function loadSec(){
   if(!isOwner())return;
   const{data,error}=await sb.rpc('owner_get_finance_config');
@@ -865,6 +897,162 @@ async function loadAudit(){const{data,error}=await sb.rpc('owner_audit',{p_limit
 function renderAudit(){
   $('aul').innerHTML=audits.length?audits.map(a=>`<tr><td>${esc(dt(a.at))}</td><td>${esc(a.actor_name||'ระบบ')} <span class="mut">(${esc(a.actor_role||'-')})</span></td><td>${esc(ACT_TH[a.action]||a.action)}</td><td>${esc(ENT_TH[a.entity]||a.entity)}<div class="mut">${esc(a.entity_id||'')}</div></td><td class="mut" style="overflow-wrap:anywhere">${esc(auDiff(a.old_value,a.new_value))}</td><td>${esc(a.reason||'—')}</td></tr>`).join(''):'<tr><td colspan="6" class="mut">ยังไม่มีรายการ</td></tr>';
 }
+/* ---------- สมาชิก VIP / โปรไฟล์ / กระเป๋าแต้ม ---------- */
+async function loadLoyalty(){
+  const p=await sb.rpc('loyalty_public');lyPub=p.error?null:p.data;
+  const on=!!(lyPub&&lyPub.enabled);$('nav-member').classList.toggle('hide',!on);
+  if(!on){LY=null;tiersPub=[];rewardsL=[];if(location.hash==='#member')renderMember();calc();return}
+  const t=await sb.rpc('vip_tiers_public');tiersPub=Array.isArray(t.data)?t.data:[];
+  const r=await sb.rpc('list_rewards');rewardsL=Array.isArray(r.data)?r.data:[];
+  if(me){
+    const m=await sb.rpc('my_loyalty');LY=(m.error||!m.data||!m.data.enabled)?null:m.data;
+    if(LY&&LY.tier){if(lastTier&&lastTier!==LY.tier.id){levelUp=true;toast(`🎉 เลื่อนระดับเป็น ${LY.tier.name}!`)}lastTier=LY.tier.id}
+  }else{LY=null;lastTier=null}
+  calc();if(location.hash==='#member')renderMember();
+}
+let levelUp=false;
+function mtab(t){mtb=t;renderMember()}
+async function saveMyName(){const v=$('mn').value.trim();if(!v||v.length>40)return toast('ชื่อแสดงผลต้องไม่ว่างและไม่เกิน 40 ตัวอักษร');const{error}=await sb.from('profiles').update({name:v}).eq('id',me.id);if(error)return toast(error.message);if(prof)prof.name=v;toast('บันทึกชื่อแสดงผลแล้ว');setUser(me)}
+function tierBadge(t,sz){return t.badge_url&&/^https?:\/\//.test(t.badge_url)?`<img src="${esc(t.badge_url)}" alt="${esc(t.name)}" loading="lazy">`:esc(t.icon||'⭐')}
+const colOk=c=>/^#[0-9a-fA-F]{6}$/.test(c||'')?c:'#4aa8ff';
+async function renderMember(){
+  if(!$('mbody'))return;
+  ['profile','club','wallet'].forEach(k=>$('mt-'+k).className=mtb===k?'':'g');
+  $('mwho').textContent=me?(prof&&prof.name)||me.email:'';
+  const b=$('mbody');
+  if(lyPub&&!lyPub.enabled){b.innerHTML='<div class="card mut">ระบบสมาชิก VIP ยังไม่เปิดใช้งาน</div>';return}
+  if(mtb==='club'){
+    const cur=LY&&LY.tier?LY.tier.id:null;
+    b.innerHTML=`<div class="card"><h2>VIP Club</h2><div class="mut">ยิ่งใช้บริการมาก ยิ่งได้สิทธิพิเศษ${lyPub&&lyPub.vip_validity_days?` · นับยอดย้อนหลัง ${lyPub.vip_validity_days} วัน`:' · ระดับถาวรตามยอดสะสม'}</div><div class="ladder" style="margin-top:12px">`+(tiersPub.length?tiersPub.map(t=>`<div class="lcard${t.id===cur?' cur':''}" style="--tc:${colOk(t.color)}"><div style="display:flex;gap:10px;align-items:center"><span style="font-size:30px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;overflow:hidden;border-radius:50%">${tierBadge(t)}</span><div><b style="font-size:17px">${esc(t.name)}</b>${t.id===cur?' <span class="st done">ระดับของคุณ</span>':''}<div class="mut">ยอดสะสม ${fmt(t.min_spend)} ขึ้นไป</div></div></div><div style="margin-top:8px">${t.discount_pct>0?`<div>💸 ส่วนลดทุกออเดอร์ <b>${t.discount_pct}%</b></div>`:''}${t.points_bonus_pct>0?`<div>✨ โบนัสแต้ม <b>+${t.points_bonus_pct}%</b></div>`:''}${t.perks?`<div class="mut">${esc(t.perks)}</div>`:''}${!t.discount_pct&&!t.points_bonus_pct&&!t.perks?'<div class="mut">ระดับเริ่มต้น</div>':''}</div></div>`).join(''):'<div class="mut">ยังไม่มีระดับ</div>')+'</div></div>';return}
+  if(!me){b.innerHTML='<div class="card"><h3>เข้าสู่ระบบเพื่อดูข้อมูลสมาชิก</h3><div class="mut">ดูโปรไฟล์ ระดับ VIP แต้ม และแลกของรางวัลได้หลังเข้าสู่ระบบ</div><button style="margin-top:10px" onclick="openAuth(\'in\')">เข้าสู่ระบบ</button></div>';return}
+  if(!LY){b.innerHTML='<div class="card mut">กำลังโหลดข้อมูลสมาชิก...</div>';return}
+  if(mtb==='wallet'){
+    const ph=await sb.rpc('my_points_history',{p_limit:50});ptsHist=Array.isArray(ph.data)?ph.data:[];
+    const rc=myc.filter(x=>x.source==='reward');
+    const KT={earn:'ได้รับแต้ม',reverse_earn:'หักคืน (ยกเลิก/คืนเงิน)',redeem:'แลกของรางวัล',expire:'แต้มหมดอายุ',adjust:'ปรับโดยผู้ดูแล'};
+    b.innerHTML=`<div class="card"><h2>กระเป๋าแต้ม</h2><div class="mgrid"><div class="mstat"><span class="mut">แต้มคงเหลือ</span><b>${LY.points_balance.toLocaleString()}</b></div><div class="mstat"><span class="mut">อัตราสะสม</span><b style="font-size:16px">${lyPub.baht_per_point} บาท = 1 แต้ม</b>${LY.tier&&LY.tier.points_bonus_pct>0?`<span class="mut">โบนัสระดับ +${LY.tier.points_bonus_pct}%</span>`:''}</div>${LY.expiring?`<div class="mstat"><span class="mut">แต้มใกล้หมดอายุ</span><b style="color:#dc2626">${LY.expiring.points.toLocaleString()}</b><span class="mut">${esc(dt(LY.expiring.at))}</span></div>`:''}</div>${!LY.points_enabled?'<div class="mut">ขณะนี้ร้านปิดการให้แต้มชั่วคราว</div>':''}${LY.points_balance<0?'<div class="mut" style="color:#dc2626">แต้มติดลบจากการคืนเงิน/ยกเลิกออเดอร์หลังใช้แต้มไปแล้ว จะหักจากแต้มที่ได้ครั้งถัดไป</div>':''}</div>
+    <div class="card" style="margin-top:14px"><h3 style="margin:0 0 8px">แลกของรางวัล</h3>${lyPub.rewards_enabled?(rewardsL.length?`<div class="cgrid">`+rewardsL.map(r=>{const can=LY.points_balance>=r.points_cost&&LY.points_balance>=(lyPub.min_redeem_balance||0)&&!(r.per_user_limit&&r.my_redeemed>=r.per_user_limit)&&!(r.stock!=null&&r.stock<=0);return`<div class="rcard" style="--cc:${colOk(r.color)}"><b>${esc(r.icon||'🎁')} ${esc(r.name)}</b>${r.description?`<div class="mut">${esc(r.description)}</div>`:''}<div class="mut">ส่วนลด ${r.kind==='percent'?r.value+'%':fmt(r.value)}${r.min_total?` · ขั้นต่ำ ${fmt(r.min_total)}`:''} · ใช้ได้ ${r.valid_days} วันหลังแลก</div><div><b style="color:var(--ac2)">${r.points_cost.toLocaleString()} แต้ม</b>${r.stock!=null?` <span class="mut">เหลือ ${r.stock}</span>`:''}</div><button ${can?'':'class="g" disabled'} onclick="redeemRw(this,'${esc(r.id)}')">${r.stock!=null&&r.stock<=0?'หมดแล้ว':(r.per_user_limit&&r.my_redeemed>=r.per_user_limit)?'แลกครบสิทธิ์':can?'แลกเลย':'แต้มไม่พอ'}</button></div>`}).join('')+'</div>':'<div class="mut">ยังไม่มีของรางวัลที่เปิดให้แลก</div>'):'<div class="mut">ขณะนี้ร้านปิดการแลกของรางวัล</div>'}</div>
+    <div class="card" style="margin-top:14px"><h3 style="margin:0 0 8px">คูปองที่แลกด้วยแต้ม</h3>${rc.length?`<div class="cgrid">`+rc.map(c=>cpCard(c,{dim:c.state!=='active',line:c.state==='used'?'ใช้แล้ว':c.state==='active'?cpExp(c):'หมดอายุ'})).join('')+'</div>':'<div class="mut">ยังไม่มีคูปองจากการแลกแต้ม · เลือกใช้ได้ตอนสั่งซื้อ</div>'}</div>
+    <div class="card" style="margin-top:14px"><h3 style="margin:0 0 8px">ประวัติแต้ม</h3><div class="tw"><table class="cards"><thead><tr><th>เวลา</th><th>รายการ</th><th>แต้ม</th><th>คงเหลือ</th></tr></thead><tbody>${ptsHist.length?ptsHist.map(x=>`<tr><td>${esc(dt(x.created_at))}</td><td>${esc(KT[x.kind]||x.kind)}<div class="mut">${esc(x.reason||'')}${x.expires_at?' · หมดอายุ '+esc(dt(x.expires_at)):''}</div></td><td style="color:${x.delta>0?'var(--ok)':'#dc2626'}"><b>${x.delta>0?'+':''}${x.delta.toLocaleString()}</b></td><td>${x.balance_after.toLocaleString()}</td></tr>`).join(''):'<tr><td colspan="4" class="mut">ยังไม่มีรายการ</td></tr>'}</tbody></table></div></div>`;return}
+  // โปรไฟล์
+  const t=LY.tier,nx=LY.next_tier,cur=t?tiersPub.find(x=>x.id===t.id):null,from=cur?cur.min_spend:0;
+  const pct=nx?Math.max(0,Math.min(100,Math.round((LY.qualifying_spend-from)*100/Math.max(1,nx.min_spend-from)))):100;
+  const vh=await sb.rpc('my_vip_history');vipHist=Array.isArray(vh.data)?vh.data:[];
+  b.innerHTML=`<div class="tcard${levelUp?' up':''}" style="--tc:${colOk(t&&t.color)}"><div class="ti">${t?tierBadge(t):'👤'}</div><div style="flex:1;min-width:200px"><div class="mut">ระดับสมาชิก</div><h2>${esc(t?t.name:'สมาชิก')}${t&&t.pinned?' <span class="st doing">กำหนดโดยผู้ดูแล</span>':''}</h2>${t&&t.perks?`<div class="mut">${esc(t.perks)}</div>`:''}<div>${t&&t.discount_pct>0?`💸 ส่วนลด ${t.discount_pct}% `:''}${t&&t.points_bonus_pct>0?`✨ โบนัสแต้ม +${t.points_bonus_pct}%`:''}</div>
+  ${LY.vip_enabled?(nx?`<div class="pbar" role="progressbar" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100"><i style="width:${pct}%"></i></div><div class="mut">อีก <b>${fmt(nx.remaining)}</b> เพื่อเลื่อนเป็น ${esc(nx.icon||'')} ${esc(nx.name)}</div>`:'<div class="pbar"><i style="width:100%"></i></div><div class="mut">คุณอยู่ระดับสูงสุดแล้ว 🎉</div>'):''}</div></div>
+  <div class="mgrid"><div class="mstat"><span class="mut">ยอดใช้จ่ายสะสม</span><b>${fmt(LY.lifetime_spend)}</b>${lyPub.vip_validity_days?`<span class="mut">นับเลื่อนระดับ ${lyPub.vip_validity_days} วันล่าสุด ${fmt(LY.qualifying_spend)}</span>`:''}</div><div class="mstat"><span class="mut">แต้มคงเหลือ</span><b>${LY.points_balance.toLocaleString()}</b></div><div class="mstat"><span class="mut">ออเดอร์ที่สำเร็จ</span><b>${LY.orders_count}</b></div></div>
+  <div class="card"><h3 style="margin:0 0 8px">ชื่อแสดงผล</h3><div style="display:flex;gap:8px;max-width:420px"><input id="mn" maxlength="40" value="${esc((prof&&prof.name)||'')}" style="margin:0"><button onclick="saveMyName()">บันทึก</button></div><div class="mut" style="margin-top:6px">${esc(me.email||'')}</div></div>
+  <div class="card" style="margin-top:14px"><h3 style="margin:0 0 8px">ประวัติการเลื่อนระดับ</h3>${vipHist.length?vipHist.map(h=>`<div class="row"><span>${esc(dt(h.created_at))} · ${esc(h.from_tier||'-')} → <b>${esc(h.to_tier||'-')}</b></span><span class="mut">${esc(h.reason||'')}</span></div>`).join(''):'<div class="mut">ยังไม่มีประวัติ</div>'}</div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px"><button onclick="location.hash='#mine'">ดูประวัติการสั่งซื้อและคิวของฉัน</button><button class="g" onclick="mtab('wallet')">กระเป๋าแต้มและคูปอง</button></div>`;
+  levelUp=false;
+}
+async function redeemRw(b,id){
+  b.disabled=true;const{error}=await sb.rpc('redeem_reward',{p_reward:id});
+  if(error){b.disabled=false;return toast(ERR[error.message]||error.message)}
+  toast('แลกของรางวัลแล้ว 🎁 คูปองอยู่ในบัญชีของคุณ');await loadCoupons();
+}
+/* ---------- VIP & แต้ม (เจ้าของ) ---------- */
+let loyCfg=null,vtiers=[],vrewards=[],vmembers=[];
+async function loadVip(){
+  if(!isOwner())return;
+  const[c,t,r]=await Promise.all([sb.rpc('owner_loyalty_config_get'),sb.from('vip_tiers').select('*').order('min_spend'),sb.from('rewards').select('*').order('sort').order('points_cost')]);
+  if(c.error)return toast(c.error.code==='PGRST202'?'ยังไม่ได้รัน migration 015':(ERR[c.error.message]||c.error.message));
+  loyCfg=c.data;vtiers=t.data||[];vrewards=r.data||[];renderVip();vipMembers();
+}
+function renderVip(){
+  if(!$('vtl')||!loyCfg)return;
+  const f=loyCfg;if(document.activeElement&&/^lc-/.test(document.activeElement.id||'')){}else{
+    $('lc-en').checked=f.enabled;$('lc-vip').checked=f.vip_enabled;$('lc-pt').checked=f.points_enabled;$('lc-rw').checked=f.rewards_enabled;$('lc-lb').checked=f.leaderboard_enabled;
+    $('lc-bp').value=f.baht_per_point;$('lc-mr').value=f.min_redeem_balance;$('lc-pe').value=f.points_expiry_days??'';$('lc-ve').value=f.vip_validity_days??'';}
+  $('vtl').innerHTML=vtiers.map(t=>`<tr><td><span class="cdot" style="background:${colOk(t.color)};display:inline-block;vertical-align:middle"></span> <b>${esc(t.icon||'')} ${esc(t.name)}</b></td><td>${fmt(t.min_spend)}</td><td>${t.discount_pct}%</td><td>+${t.points_bonus_pct}%</td><td><span class="st ${t.active?'done':''}">${t.active?'เปิด':'ปิด'}</span></td><td style="white-space:nowrap"><button class="g" onclick="openTierEd('${t.id}')">แก้ไข</button> ${t.min_spend===0?'':`<button class="g" onclick="delTier(this,'${t.id}')">ลบ</button>`}</td></tr>`).join('')||'<tr><td colspan="6" class="mut">ยังไม่มีระดับ</td></tr>';
+  $('rwl').innerHTML=vrewards.map(r=>`<tr><td><b>${esc(r.icon||'🎁')} ${esc(r.name)}</b><div class="mut">${esc(r.description||'')}</div></td><td>${r.points_cost.toLocaleString()}</td><td>${r.kind==='percent'?r.value+'%':fmt(r.value)}<div class="mut">ใช้ได้ ${r.valid_days} วัน${r.min_total?' · ขั้นต่ำ '+fmt(r.min_total):''}</div></td><td>${r.stock==null?'ไม่จำกัด':r.stock}</td><td><span class="st ${r.active?'done':''}">${r.active?'เปิดแลก':'ปิด'}</span></td><td style="white-space:nowrap"><button class="g" onclick="openRewardEd('${r.id}')">แก้ไข</button> <button class="g" onclick="delReward(this,'${r.id}')">ลบ</button></td></tr>`).join('')||'<tr><td colspan="6" class="mut">ยังไม่มีของรางวัล</td></tr>';
+}
+async function saveLoyCfg(){
+  const b=$('lc-sv'),r=$('lc-r').value.trim();if(r.length<3)return toast('กรุณาใส่เหตุผลที่แก้ไข');
+  const bp=parseInt($('lc-bp').value),mr=parseInt($('lc-mr').value),pe=$('lc-pe').value.trim(),ve=$('lc-ve').value.trim();
+  if(!(bp>=1))return toast('กี่บาทต่อ 1 แต้ม ต้องเป็นจำนวนเต็มตั้งแต่ 1');if(!(mr>=0))return toast('แต้มขั้นต่ำต้องเป็นตัวเลขตั้งแต่ 0');
+  if(pe&&!(parseInt(pe)>=1))return toast('วันหมดอายุแต้มต้องเป็นตัวเลขตั้งแต่ 1 หรือเว้นว่าง');if(ve&&!(parseInt(ve)>=1))return toast('จำนวนวันนับระดับต้องเป็นตัวเลขตั้งแต่ 1 หรือเว้นว่าง');
+  if(!b.dataset.s){b.dataset.s=1;b.textContent='กดอีกครั้งเพื่อยืนยันการเปลี่ยน';setTimeout(()=>{delete b.dataset.s;b.textContent='บันทึกการตั้งค่า'},6000);return}
+  delete b.dataset.s;b.textContent='บันทึกการตั้งค่า';b.disabled=true;
+  const p={enabled:$('lc-en').checked,vip_enabled:$('lc-vip').checked,points_enabled:$('lc-pt').checked,rewards_enabled:$('lc-rw').checked,leaderboard_enabled:$('lc-lb').checked,baht_per_point:bp,min_redeem_balance:mr,points_expiry_days:pe?parseInt(pe):null,vip_validity_days:ve?parseInt(ve):null};
+  const{data,error}=await sb.rpc('owner_loyalty_config_set',{p,p_reason:r});b.disabled=false;
+  if(error)return toast(ERR[error.message]||error.message);
+  loyCfg=data;$('lc-r').value='';toast('บันทึกการตั้งค่าแล้ว');renderVip();vipMembers();loadLoyalty();
+}
+async function vipRecalc(b){const{error}=await sb.rpc('owner_loyalty_recalc');toast(error?(ERR[error.message]||error.message):'คำนวณระดับสมาชิกใหม่แล้ว');vipMembers()}
+async function vipBackfill(b){if(!b.dataset.s){b.dataset.s=1;b.textContent='ยืนยัน? (ทำครั้งเดียวต่อออเดอร์)';return}const{data,error}=await sb.rpc('owner_loyalty_backfill');delete b.dataset.s;b.textContent='นำออเดอร์เก่าที่เสร็จและรับเงินแล้วมานับ';toast(error?(ERR[error.message]||error.message):`นำมานับ ${data} ออเดอร์`);vipMembers()}
+function openTierEd(id){
+  const t=id?vtiers.find(x=>x.id===id):{name:'',min_spend:'',sort:vtiers.length,color:'#4aa8ff',icon:'',badge_url:'',discount_pct:0,points_bonus_pct:0,perks:'',active:true};if(!t)return;
+  $('odb').innerHTML=`<h3 style="margin:0 0 4px">${id?'แก้ไขระดับ VIP':'เพิ่มระดับ VIP'}</h3><input type="hidden" id="te-id" value="${esc(id||'')}">
+  <label class="l">ชื่อระดับ *</label><input id="te-n" maxlength="40" value="${esc(t.name)}">
+  <div class="two"><div><label class="l">ยอดใช้จ่ายสะสมขั้นต่ำ (บาท) *</label><input id="te-m" type="number" min="0" inputmode="numeric" value="${esc(t.min_spend)}" ${t.min_spend===0&&id?'disabled':''}></div><div><label class="l">ลำดับแสดงผล</label><input id="te-s" type="number" inputmode="numeric" value="${esc(t.sort)}"></div></div>
+  <div class="two"><div><label class="l">สี</label><input id="te-c" type="color" value="${esc(t.color)}" style="padding:4px"></div><div><label class="l">ไอคอนอีโมจิ</label><input id="te-i" maxlength="4" value="${esc(t.icon||'')}"></div></div>
+  <label class="l">รูปตราสัญลักษณ์ (ลิงก์ https:// ถ้ามี)</label><input id="te-b" maxlength="500" value="${esc(t.badge_url||'')}">
+  <div class="two"><div><label class="l">ส่วนลดทุกออเดอร์ (%) 0–20</label><input id="te-d" type="number" min="0" max="20" inputmode="numeric" value="${esc(t.discount_pct)}"></div><div><label class="l">โบนัสแต้ม (%) 0–500</label><input id="te-p" type="number" min="0" max="500" inputmode="numeric" value="${esc(t.points_bonus_pct)}"></div></div>
+  <label class="l">สิทธิพิเศษ (ข้อความ)</label><input id="te-k" maxlength="500" value="${esc(t.perks||'')}"><label class="chk"><input id="te-a" type="checkbox" ${t.active?'checked':''} ${t.min_spend===0&&id?'disabled':''}> เปิดใช้งาน</label>
+  <div class="mut" id="te-w" style="color:#dc2626;margin-top:4px"></div><div class="abtns actbar"><button class="g" onclick="$('od').classList.add('hide')">ยกเลิก</button><button id="te-sv" onclick="saveTier()">บันทึก</button></div>`;
+  $('te-d').oninput=()=>{const v=parseInt($('te-d').value);$('te-w').textContent=v>discountCap?`เพดานส่วนลดของร้านคือ ${discountCap}% ส่วนลดรวมจะถูกจำกัดตามเพดาน`:''};$('od').classList.remove('hide');
+}
+async function saveTier(){
+  const g=i=>$(i).value.trim(),n=i=>{const v=g(i);return v===''?null:(/^\d{1,9}$/.test(v)?parseInt(v,10):NaN)};
+  const id=g('te-id'),name=g('te-n'),m=$('te-m').disabled?0:n('te-m'),d=n('te-d')??0,p=n('te-p')??0;
+  if(!name)return toast('กรอกชื่อระดับ');if(m==null||Number.isNaN(m))return toast('ยอดสะสมขั้นต่ำต้องเป็นตัวเลขตั้งแต่ 0');
+  if(Number.isNaN(d)||d>20)return toast('ส่วนลดต้องอยู่ระหว่าง 0–20%');if(Number.isNaN(p)||p>500)return toast('โบนัสแต้มต้องอยู่ระหว่าง 0–500%');
+  const bu=g('te-b');if(bu&&!/^https:\/\//.test(bu))return toast('ลิงก์รูปตราต้องขึ้นต้นด้วย https://');
+  const row={name,min_spend:m,sort:n('te-s')||0,color:$('te-c').value,icon:g('te-i')||null,badge_url:bu||null,discount_pct:d,points_bonus_pct:p,perks:g('te-k')||null,active:$('te-a').checked};
+  $('te-sv').disabled=true;const{error}=id?await sb.from('vip_tiers').update(row).eq('id',id):await sb.from('vip_tiers').insert(row);$('te-sv').disabled=false;
+  if(error)return toast(error.code==='23505'?'มีระดับที่ใช้ยอดขั้นต่ำนี้อยู่แล้ว':(ERR[error.message]||error.message));
+  toast('บันทึกระดับแล้ว (คำนวณระดับสมาชิกใหม่อัตโนมัติ)');$('od').classList.add('hide');loadVip();loadLoyalty();
+}
+async function delTier(b,id){if(!b.dataset.s){b.dataset.s=1;b.textContent='ลบจริง?';b.className='r';return}const{error}=await sb.from('vip_tiers').delete().eq('id',id);toast(error?(ERR[error.message]||error.message):'ลบระดับแล้ว');loadVip();loadLoyalty()}
+function openRewardEd(id){
+  const r=id?vrewards.find(x=>x.id===id):{name:'',description:'',points_cost:'',kind:'percent',value:'',max_discount:'',min_total:0,service_ids:null,valid_days:30,stock:'',per_user_limit:'',starts_at:null,ends_at:null,sort:vrewards.length,color:'#ff9a3d',icon:'🎁',active:true};if(!r)return;
+  const sv=r.service_ids||[];
+  $('odb').innerHTML=`<h3 style="margin:0 0 4px">${id?'แก้ไขของรางวัล':'เพิ่มของรางวัล'}</h3><input type="hidden" id="re-id" value="${esc(id||'')}">
+  <label class="l">ชื่อ *</label><input id="re-n" maxlength="60" value="${esc(r.name)}"><label class="l">คำอธิบาย</label><input id="re-d" maxlength="200" value="${esc(r.description||'')}">
+  <div class="two"><div><label class="l">แต้มที่ใช้แลก *</label><input id="re-p" type="number" min="1" inputmode="numeric" value="${esc(r.points_cost)}"></div><div><label class="l">ใช้ได้กี่วันหลังแลก *</label><input id="re-v" type="number" min="1" inputmode="numeric" value="${esc(r.valid_days)}"></div></div>
+  <div class="two"><div><label class="l">ประเภทส่วนลด *</label><select id="re-k" onchange="rwWarn()"><option value="percent" ${r.kind==='percent'?'selected':''}>เปอร์เซ็นต์</option><option value="baht" ${r.kind==='baht'?'selected':''}>บาท</option></select></div><div><label class="l">มูลค่า *</label><input id="re-x" type="number" min="1" inputmode="numeric" value="${esc(r.value)}" oninput="rwWarn()"></div></div>
+  <div class="mut" id="re-w" style="color:#dc2626"></div>
+  <div class="two"><div><label class="l">ส่วนลดสูงสุด (บาท, ว่าง = ไม่จำกัด)</label><input id="re-md" type="number" min="1" inputmode="numeric" value="${esc(r.max_discount??'')}"></div><div><label class="l">ยอดสั่งซื้อขั้นต่ำ (บาท)</label><input id="re-mt" type="number" min="0" inputmode="numeric" value="${esc(r.min_total)}"></div></div>
+  <label class="l">ใช้กับบริการ (ไม่เลือกเลย = ทุกบริการ)</label><div class="chkgrid">${cfg.services.map(s=>`<label class="chk"><input type="checkbox" class="re-s" value="${esc(s.id)}" ${sv.includes(s.id)?'checked':''}> ${esc(s.name)}</label>`).join('')||'<span class="mut">ยังไม่มีบริการเสริม</span>'}</div>
+  <div class="two"><div><label class="l">สต็อก (ว่าง = ไม่จำกัด)</label><input id="re-t" type="number" min="0" inputmode="numeric" value="${esc(r.stock??'')}"></div><div><label class="l">แลกได้ต่อบัญชี (ครั้ง, ว่าง = ไม่จำกัด)</label><input id="re-u" type="number" min="1" inputmode="numeric" value="${esc(r.per_user_limit??'')}"></div></div>
+  <div class="two"><div><label class="l">เริ่มแลกได้</label><input id="re-s0" type="datetime-local" value="${toLocalDt(r.starts_at)}"></div><div><label class="l">สิ้นสุดการแลก</label><input id="re-e0" type="datetime-local" value="${toLocalDt(r.ends_at)}"></div></div>
+  <div class="two"><div><label class="l">สี</label><input id="re-c" type="color" value="${esc(r.color)}" style="padding:4px"></div><div><label class="l">ไอคอน</label><input id="re-i" maxlength="4" value="${esc(r.icon||'')}"></div></div>
+  <label class="chk"><input id="re-a" type="checkbox" ${r.active?'checked':''}> เปิดให้แลก (ปิดแล้ว คูปองที่ลูกค้าแลกไปแล้วยังใช้ได้)</label>
+  <div class="abtns actbar"><button class="g" onclick="$('od').classList.add('hide')">ยกเลิก</button><button id="re-sv" onclick="saveReward()">บันทึก</button></div>`;
+  rwWarn();$('od').classList.remove('hide');
+}
+function rwWarn(){const k=$('re-k').value,v=parseInt($('re-x').value);$('re-w').textContent=(k==='percent'&&v>discountCap)?`เพดานส่วนลดของร้านคือ ${discountCap}% คูปองนี้จะถูกจำกัดเหลือ ${discountCap}% ตอนใช้งาน`:(k==='baht'&&v>0)?`ส่วนลดเป็นบาทจะถูกจำกัดไม่เกิน ${discountCap}% ของยอดสั่งซื้อ`:''}
+async function saveReward(){
+  const g=i=>$(i).value.trim(),n=i=>{const v=g(i);return v===''?null:(/^\d{1,9}$/.test(v)?parseInt(v,10):NaN)};
+  const id=g('re-id'),name=g('re-n'),pc=n('re-p'),val=n('re-x'),vd=n('re-v'),k=$('re-k').value,md=n('re-md'),mt=n('re-mt')??0,st=n('re-t'),pu=n('re-u');
+  if(!name)return toast('กรอกชื่อของรางวัล');if(!(pc>=1))return toast('แต้มที่ใช้แลกต้องเป็นจำนวนเต็มตั้งแต่ 1');if(!(val>=1)||(k==='percent'&&val>100))return toast(k==='percent'?'เปอร์เซ็นต์ต้อง 1–100':'มูลค่าส่วนลดต้องมากกว่า 0');
+  if(!(vd>=1))return toast('จำนวนวันใช้งานต้องเป็นจำนวนเต็มตั้งแต่ 1');if([md,st,pu].some(x=>Number.isNaN(x))||Number.isNaN(mt)||(md!=null&&md<1)||(pu!=null&&pu<1))return toast('ตรวจตัวเลขสต็อก/จำกัด/ส่วนลดสูงสุดอีกครั้ง');
+  const s0=g('re-s0')?new Date($('re-s0').value).toISOString():null,e0=g('re-e0')?new Date($('re-e0').value).toISOString():null;if(s0&&e0&&e0<=s0)return toast('วันสิ้นสุดต้องหลังวันเริ่ม');
+  const sv=[...document.querySelectorAll('.re-s:checked')].map(e=>e.value);
+  const row={name,description:g('re-d')||null,points_cost:pc,kind:k,value:val,max_discount:k==='percent'?md:null,min_total:mt,service_ids:sv.length?sv:null,valid_days:vd,stock:st,per_user_limit:pu,starts_at:s0,ends_at:e0,color:$('re-c').value,icon:g('re-i')||null,active:$('re-a').checked};
+  $('re-sv').disabled=true;const{error}=id?await sb.from('rewards').update(row).eq('id',id):await sb.from('rewards').insert(row);$('re-sv').disabled=false;
+  if(error)return toast(ERR[error.message]||error.message);toast('บันทึกของรางวัลแล้ว');$('od').classList.add('hide');loadVip();loadLoyalty();
+}
+async function delReward(b,id){if(!b.dataset.s){b.dataset.s=1;b.textContent='ลบจริง?';b.className='r';return}const{error}=await sb.from('rewards').delete().eq('id',id);toast(error?error.message:'ลบของรางวัลแล้ว (ประวัติการแลกยังอยู่)');loadVip()}
+async function vipMembers(){const{data,error}=await sb.rpc('owner_member_search',{p_q:$('vm-q').value.trim()||null});if(error)return toast(ERR[error.message]||error.message);vmembers=data||[];$('vml').innerHTML=vmembers.length?vmembers.map(m=>`<tr><td><b>${esc(m.name||'-')}</b><div class="mut">${esc(m.email)}</div></td><td><span class="cdot" style="background:${colOk(m.tier_color)};display:inline-block;vertical-align:middle"></span> ${esc(m.tier_name||'-')}${m.pinned?' 📌':''}</td><td>${fmt(m.lifetime_spend)}</td><td>${m.points_balance.toLocaleString()}</td><td><button class="g" onclick="openMember('${esc(m.id)}')">จัดการ</button></td></tr>`).join(''):'<tr><td colspan="5" class="mut">ไม่พบสมาชิก</td></tr>'}
+async function openMember(id){
+  const{data:d,error}=await sb.rpc('owner_member_detail',{p_user:id});if(error||!d||!d.member)return toast(error?(ERR[error.message]||error.message):'สมาชิกคนนี้ยังไม่มีข้อมูลสะสม');
+  const m=d.member,KT={earn:'ได้รับ',reverse_earn:'หักคืน',redeem:'แลก',expire:'หมดอายุ',adjust:'ปรับโดยผู้ดูแล'};
+  $('odb').innerHTML=`<h3 style="margin:0">${esc(m.name||'-')}</h3><div class="mut">${esc(m.email)} · ระดับ ${esc(m.tier_name||'-')}${m.override_tier_id?' (ล็อกโดยผู้ดูแล)':''} · ยอดสะสม ${fmt(m.lifetime_spend)} · แต้ม <b>${m.points_balance.toLocaleString()}</b></div>
+  <h4 style="margin:12px 0 4px">ปรับแต้ม</h4><div class="two"><div><label class="l">จำนวน (+ เพิ่ม / − หัก)</label><input id="ad-d" type="number" inputmode="numeric" placeholder="เช่น 50 หรือ -20"></div><div><label class="l">เหตุผล *</label><input id="ad-r" maxlength="200"></div></div><button style="margin-top:6px" onclick="adjPoints(this,'${esc(id)}')">บันทึกการปรับแต้ม</button>
+  <h4 style="margin:12px 0 4px">ปรับระดับ VIP</h4><div class="two"><div><label class="l">ระดับ</label><select id="tp-t"><option value="">- ยกเลิกการล็อก (กลับตามยอดสะสม) -</option>${vtiers.filter(t=>t.active).map(t=>`<option value="${esc(t.id)}">${esc(t.name)}</option>`).join('')}</select></div><div><label class="l">ล็อกถึงวันที่ (ว่าง = ถาวร)</label><input id="tp-u" type="datetime-local"></div></div><label class="l">เหตุผล *</label><input id="tp-r" maxlength="200"><button style="margin-top:6px" onclick="setTier(this,'${esc(id)}')">บันทึกระดับ</button>
+  <h4 style="margin:12px 0 4px">ประวัติแต้ม</h4><div style="max-height:180px;overflow:auto">${d.ledger.map(x=>`<div class="row"><span>${esc(dt(x.created_at))} · ${esc(KT[x.kind]||x.kind)} <span class="mut">${esc(x.reason||'')}</span></span><b style="color:${x.delta>0?'var(--ok)':'#dc2626'}">${x.delta>0?'+':''}${x.delta}</b></div>`).join('')||'<div class="mut">ไม่มีรายการ</div>'}</div>
+  <h4 style="margin:12px 0 4px">ยอดสะสมรายออเดอร์</h4><div style="max-height:140px;overflow:auto">${d.spend.map(x=>`<div class="row"><span>${no3(x.no)} · ${esc(dt(x.at))}${x.voided_at?` <span class="mut">(ยกเลิก: ${esc(x.void_reason||'')})</span>`:''}</span><b style="${x.voided_at?'text-decoration:line-through':''}">${fmt(x.amount)}</b></div>`).join('')||'<div class="mut">ไม่มีรายการ</div>'}</div>
+  <h4 style="margin:12px 0 4px">ประวัติเลื่อน/ลดระดับ</h4>${d.history.map(h=>`<div class="row"><span>${esc(dt(h.created_at))} · ${esc(h.from_tier||'-')} → <b>${esc(h.to_tier||'-')}</b></span><span class="mut">${esc(h.source==='admin'?'ผู้ดูแล':'อัตโนมัติ')}: ${esc(h.reason||'')}</span></div>`).join('')||'<div class="mut">ไม่มีประวัติ</div>'}
+  <div class="abtns actbar"><button class="g" onclick="$('od').classList.add('hide')">ปิด</button></div>`;$('od').classList.remove('hide');
+}
+async function adjPoints(b,id){const v=parseInt($('ad-d').value),r=$('ad-r').value.trim();if(!v||Number.isNaN(v))return toast('ใส่จำนวนแต้ม (ไม่ใช่ 0)');if(r.length<3)return toast('กรุณาใส่เหตุผล');
+  if(!b.dataset.s){b.dataset.s=1;b.textContent=`ยืนยัน ${v>0?'เพิ่ม':'หัก'} ${Math.abs(v)} แต้ม?`;return}
+  const{error}=await sb.rpc('owner_adjust_points',{p_user:id,p_delta:v,p_reason:r});if(error){delete b.dataset.s;b.textContent='บันทึกการปรับแต้ม';return toast(ERR[error.message]||error.message)}toast('ปรับแต้มแล้ว');openMember(id);vipMembers()}
+async function setTier(b,id){const t=$('tp-t').value||null,u=$('tp-u').value?new Date($('tp-u').value).toISOString():null,r=$('tp-r').value.trim();if(r.length<3)return toast('กรุณาใส่เหตุผล');
+  if(!b.dataset.s){b.dataset.s=1;b.textContent='ยืนยัน?';return}
+  const{error}=await sb.rpc('owner_set_member_tier',{p_user:id,p_tier:t,p_until:u,p_reason:r});if(error){delete b.dataset.s;b.textContent='บันทึกระดับ';return toast(ERR[error.message]||error.message)}toast('ปรับระดับแล้ว');openMember(id);vipMembers()}
 /* ---------- จัดการคูปอง (แอดมิน) ---------- */
 async function loadCpAdm(){loadGuard();const{data,error}=await sb.rpc('admin_coupons');if(error)toast(error.message==='forbidden'?'ไม่มีสิทธิ์':error.code==='PGRST202'?'ยังไม่ได้รัน migration 010':'โหลดคูปองไม่สำเร็จ: '+error.message);cpns=Array.isArray(data)?data:[];renderCpAdm()}
 function cpStatus(x){const n=Date.now();if(!x.active)return['ปิดอยู่',''];if(x.expires_at&&n>+new Date(x.expires_at))return['หมดอายุ',''];if(x.starts_at&&n<+new Date(x.starts_at))return['ยังไม่เริ่ม','doing'];if(x.max_total&&x.claimed>=x.max_total)return['เก็บครบแล้ว','doing'];return['เปิดใช้งาน','done']}
