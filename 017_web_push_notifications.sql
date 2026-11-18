@@ -676,3 +676,15 @@ begin
 end $$;
 revoke execute on function public.push_cleanup(integer) from public, anon, authenticated;
 grant execute on function public.push_cleanup(integer) to service_role;
+
+-- ───────── 14) ตาข่ายกันพลาด: ระบายคิวทุกนาที แม้ยังไม่มีใครเปิดเว็บ ─────────
+-- ทางหลักคือ trigger → pg_net ด้านบน (ส่งทันที) ; cron นี้เก็บงานที่ "รีไทร"
+-- หรือกรณี pg_net ล่ม ชั่วคราว ไม่ต้องรอให้ลูกค้าเปิดเว็บก่อน
+create extension if not exists pg_cron with schema cron;
+select cron.schedule(
+  'mpshop-push-drain',
+  '* * * * *',
+  $job$select public._push_kick(true) where exists (
+    select 1 from public.push_outbox where status = 'pending' and next_attempt_at <= now()
+  )$job$
+);
