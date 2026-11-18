@@ -244,69 +244,71 @@ begin
 end $$;
 revoke execute on function public._notification_audience(text,uuid[]) from public, anon, authenticated;
 
--- ───────── 7) trigger: เหตุการณ์จริงของออเดอร์ → แจ้งเตือนลูกค้า ─────────
-create or replace function public._trg_notify_order_created() returns trigger
+-- ───────── 7) ต่อยอด notification เดิม (ไม่สร้างซ้ำ) ─────────
+-- ตาราง notifications เดิมมีคอลัมน์ event (NOT NULL) และมี trigger orders_notify → notify_order_event()
+-- ที่สร้างแจ้งเตือนตอนจอง/เปลี่ยนสถานะอยู่แล้ว → ที่นี่เติมค่าให้ครบและยกระดับข้อความเดิม
+-- โดยไม่เพิ่ม trigger ซ้ำบน orders (กันลูกค้าได้แจ้งเตือน 2 ครั้ง)
+alter table public.notifications alter column event set default 'system';
+
+-- เติม kind/ลิงก์ให้ทุก notification ที่ถูกสร้างจากทุกทาง (ของเดิมและของใหม่)
+create or replace function public._notifications_enrich() returns trigger
 language plpgsql security definer set search_path = public as $$
 begin
-  begin
-    perform public._notify_user(
-      new.user_id,
-      'จองคิวสำเร็จ 🎉',
-      format('ออเดอร์ #%s ได้รับการยืนยันแล้ว%s กดเพื่อดูรายละเอียดงาน',
-             lpad(new.no::text, 3, '0'),
-             case when coalesce(new.items::text,'') <> '' then ' · ' || left(new.items::text, 120) else '' end),
-      'order_created', new.id, null, '#order', 'ดูรายละเอียดงาน',
-      jsonb_build_object('no', new.no, 'status', new.status, 'items', new.items::text, 'total', new.total));
-  exception when others then
-    raise warning 'notify(order_created) skipped: %', sqlerrm;
-  end;
+  if new.event is null or btrim(new.event) = '' then
+    new.event := coalesce(nullif(btrim(new.kind), ''), 'system');
+  end if;
+  if new.kind is null or btrim(new.kind) = '' or new.kind = 'system' then
+    new.kind := new.event;
+  end if;
+  if new.order_id is not null and new.link_url is null then
+    new.link_url := '#order';
+    new.link_label := coalesce(new.link_label, 'ดูรายละเอียดงาน');
+  end if;
   return new;
 end $$;
 
-create or replace function public._trg_notify_order_status() returns trigger
+drop trigger if exists notifications_enrich_trg on public.notifications;
+create trigger notifications_enrich_trg before insert on public.notifications
+  for each row execute function public._notifications_enrich();
+
+-- แถวเก่าที่มีอยู่แล้ว: เติม kind จาก event และทำให้กดเปิดงานได้
+update public.notifications set kind = event where kind is null or kind = 'system';
+update public.notifications
+   set link_url = '#order', link_label = coalesce(link_label, 'ดูรายละเอียดงาน')
+ where order_id is not null and link_url is null;
+
+-- ฟังก์ชันเดิมของร้าน: คงชื่อ event เดิม + การส่ง Discord เดิม
+-- แต่เพิ่มเลขออเดอร์/รายการ/สถานะ/ปุ่มกดดูรายละเอียด และรองรับสถานะ waiting
+create or replace function public.notify_order_event() returns trigger
 language plpgsql security definer set search_path = public as $$
-declare t text; b text; k text;
+declare ev text; t text; b text; n3 text := '#' || lpad(new.no::text, 3, '0');
 begin
-  if new.status is not distinct from old.status then return new; end if;
-  begin
+  if tg_op = 'INSERT' then
+    ev := 'order_created';
+    t  := 'จองคิวสำเร็จ 🎉';
+    b  := 'ออเดอร์ ' || n3 || ' ได้รับการยืนยันแล้ว' ||
+          case when coalesce(new.items, '') <> '' then ' · ' || left(new.items, 120) else '' end ||
+          ' กดเพื่อดูรายละเอียดงาน';
+  elsif new.status is distinct from old.status then
     case new.status
-      when 'pending' then
-        t := 'ออเดอร์รอดำเนินการ ⏳';
-        b := format('ออเดอร์ #%s เข้าคิวแล้ว ทีมงานจะยืนยันให้เร็วที่สุด', lpad(new.no::text,3,'0'));
-        k := 'order_status';
-      when 'confirmed' then
-        t := 'ยืนยันออเดอร์แล้ว ✅';
-        b := format('ออเดอร์ #%s ได้รับการยืนยันแล้ว ทีมงานจะเริ่มดำเนินการเร็ว ๆ นี้', lpad(new.no::text,3,'0'));
-        k := 'order_status';
-      when 'doing' then
-        t := 'ทีมงานรับงานแล้ว 🛠️';
-        b := format('ออเดอร์ #%s กำลังดำเนินการอยู่ กดเพื่อติดตามความคืบหน้า', lpad(new.no::text,3,'0'));
-        k := 'order_status';
-      when 'waiting' then
-        t := 'งานของคุณพักชั่วคราว ⏸';
-        b := format('ออเดอร์ #%s รอดำเนินการต่อ ทีมงานจะกลับมาทำให้เร็วที่สุด', lpad(new.no::text,3,'0'));
-        k := 'order_status';
-      when 'done' then
-        t := 'งานเสร็จสมบูรณ์ 🎉';
-        b := format('ออเดอร์ #%s เสร็จสิ้นแล้ว กดเพื่อดูหลักฐานและรายละเอียดงาน', lpad(new.no::text,3,'0'));
-        k := 'order_done';
-      when 'cancelled' then
-        t := 'ออเดอร์ถูกยกเลิก 🔴';
-        b := format('ออเดอร์ #%s ถูกยกเลิก หากมีข้อสงสัยติดต่อร้านได้เลย', lpad(new.no::text,3,'0'));
-        k := 'order_cancelled';
-      else
-        t := 'อัปเดตสถานะงาน 📋';
-        b := format('ออเดอร์ #%s มีการเปลี่ยนสถานะเป็น %s', lpad(new.no::text,3,'0'), new.status);
-        k := 'order_status';
+      when 'confirmed' then ev := 'order_confirmed'; t := 'ยืนยันออเดอร์แล้ว ✅'; b := 'ออเดอร์ ' || n3 || ' ได้รับการยืนยันแล้ว ทีมงานจะเริ่มดำเนินการเร็ว ๆ นี้';
+      when 'doing'     then ev := 'order_doing';     t := 'ทีมงานรับงานแล้ว 🛠️'; b := 'ออเดอร์ ' || n3 || ' กำลังดำเนินการอยู่ กดเพื่อติดตามความคืบหน้า';
+      when 'waiting'   then ev := 'order_waiting';   t := 'งานของคุณพักชั่วคราว ⏸'; b := 'ออเดอร์ ' || n3 || ' รอดำเนินการต่อ ทีมงานจะกลับมาทำให้เร็วที่สุด';
+      when 'done'      then ev := 'order_done';      t := 'งานเสร็จสมบูรณ์ 🎉'; b := 'ออเดอร์ ' || n3 || ' เสร็จสิ้นแล้ว กดเพื่อดูหลักฐานและรายละเอียดงาน';
+      when 'cancelled' then ev := 'order_cancelled'; t := 'ออเดอร์ถูกยกเลิก 🔴'; b := 'ออเดอร์ ' || n3 || ' ถูกยกเลิก หากมีข้อสงสัยติดต่อร้านได้เลย';
+      else return null;
     end case;
-    perform public._notify_user(new.user_id, t, b, k, new.id, null, '#order', 'ดูรายละเอียดงาน',
-      jsonb_build_object('no', new.no, 'status', new.status));
-  exception when others then
-    raise warning 'notify(order_status) skipped: %', sqlerrm;
-  end;
-  return new;
+  else
+    return null;
+  end if;
+  insert into public.notifications (user_id, order_id, event, title, body, kind, link_url, link_label, meta)
+  values (new.user_id, new.id, ev, t, b, ev, '#order', 'ดูรายละเอียดงาน',
+          jsonb_build_object('no', new.no, 'status', new.status, 'items', new.items, 'total', new.total));
+  perform public.send_discord('[' || ev || '] ' || n3 || ' · ' || new.items || ' · ' || new.total || ' ฿ — ' || t);
+  return null;
 end $$;
 
+-- รูป/ลิงก์หลักฐานความคืบหน้า (ของใหม่) → แจ้งทันที
 create or replace function public._trg_notify_order_evidence() returns trigger
 language plpgsql security definer set search_path = public as $$
 declare o public.orders; t text; b text; k text;
@@ -347,14 +349,6 @@ begin
   end;
   return new;
 end $$;
-
-drop trigger if exists notify_order_created_trg on public.orders;
-create trigger notify_order_created_trg after insert on public.orders
-  for each row execute function public._trg_notify_order_created();
-
-drop trigger if exists notify_order_status_trg on public.orders;
-create trigger notify_order_status_trg after update of status on public.orders
-  for each row execute function public._trg_notify_order_status();
 
 drop trigger if exists notify_order_evidence_trg on public.order_evidence;
 create trigger notify_order_evidence_trg after insert on public.order_evidence
@@ -723,8 +717,8 @@ language sql stable security definer set search_path = public as $$
     'avatars_bucket', exists (select 1 from storage.buckets where id = 'avatars'),
     'triggers', (select count(*) from pg_trigger t
                   where not t.tgisinternal
-                    and t.tgname in ('notify_order_created_trg','notify_order_status_trg',
-                                     'notify_order_evidence_trg','notify_order_update_trg')),
+                    and t.tgname in ('notifications_enrich_trg','notify_order_evidence_trg',
+                                     'notify_order_update_trg','orders_notify')),
     'orders_notified', (select count(*) from public.notifications where kind like 'order%'),
     'admin_view', public.is_shop_admin()
   );

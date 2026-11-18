@@ -1551,7 +1551,7 @@ function openEv(id){
   $('od').classList.remove('hide');loadEv(id,'evbox',true);
 }
 /* ---------- แจ้งเตือนลูกค้า (Notification Center) ---------- */
-const NKIND={order_created:'🎉',order_status:'🛠️',order_done:'✅',order_cancelled:'🔴',order_image:'📸',order_update:'🎬',order_message:'💬',promotion:'🎁',custom:'📢',system:'🔔'};
+const NKIND={order_created:'🎉',order_confirmed:'✅',order_doing:'🛠️',order_waiting:'⏸️',order_status:'🛠️',order_done:'✅',order_cancelled:'🔴',order_image:'📸',order_update:'🎬',order_message:'💬',promotion:'🎁',custom:'📢',system:'🔔'};
 const nIcon=k=>NKIND[k]||NKIND.system;
 let notifTick=0;
 async function loadNotifs(){
