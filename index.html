@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#ffffff">
 <title>MPSHOP - บริการรับฟาร์ม Genshin Impact</title>
+<link rel="icon" type="image/png" href="icon-192.png">
 <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <style>
@@ -163,6 +164,9 @@ tr.me td{background:var(--soft)}.warn{background:var(--warnbg);color:var(--warn)
 .nempty{padding:24px;text-align:center;color:var(--mut)}
 .nprev{margin-top:10px}.nprev .nitem{cursor:default}
 .pcard{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.pushprompt{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:linear-gradient(135deg,#eaf4ff,#f8fcff);border:1px solid #bfe0ff;border-radius:14px;padding:10px 12px;margin-bottom:10px}
+.pushprompt button{flex:none;min-height:38px;padding:6px 14px;font-size:13px}
+#pushcard .chkgrid{margin-top:2px}
 .pform{max-width:520px}
 .picklist{max-height:260px;overflow:auto;border:1px solid var(--line);border-radius:12px;margin-top:8px;padding:4px}
 .pickrow{display:flex;gap:8px;align-items:center;padding:8px;border-radius:10px;cursor:pointer;min-height:46px}
@@ -309,16 +313,16 @@ tr.me td{background:var(--soft)}.warn{background:var(--warnbg);color:var(--warn)
 <label class="l">หัวข้อแจ้งเตือน *</label><input id="nf-t" maxlength="120" placeholder="🎉 โปรโมชั่นพิเศษ">
 <label class="l">ข้อความ *</label><textarea id="nf-b" rows="4" maxlength="1000" placeholder="วันนี้ MPSHOP มีโปรโมชั่นใหม่สำหรับลูกค้า จองผ่านเว็บไซต์รับส่วนลดพิเศษ"></textarea>
 <div class="two"><div><label class="l">ข้อความบนปุ่ม</label><input id="nf-bl" maxlength="40" placeholder="ดูโปรโมชั่น"></div><div><label class="l">ลิงก์ปลายทาง</label><input id="nf-bu" maxlength="500" placeholder="#promosec หรือ https://..."></div></div>
-<label class="l">ผู้รับ *</label><select id="nf-a" onchange="nfAud()"><option value="all">ลูกค้าทั้งหมด</option><option value="customers">เฉพาะลูกค้าที่เคยมีออเดอร์</option><option value="active">เฉพาะลูกค้าที่กำลังมีงาน</option><option value="selected">เลือกลูกค้าเป็นรายบุคคล</option></select>
+<label class="l">ผู้รับ *</label><select id="nf-a" onchange="nfAud()"><option value="all">ลูกค้าทั้งหมด</option><option value="customers">เฉพาะลูกค้าที่เคยมีออเดอร์</option><option value="active">เฉพาะลูกค้าที่กำลังมีงาน</option><option value="push">ลูกค้าที่เปิดรับ Push Notification</option><option value="selected">เลือกลูกค้าเป็นรายบุคคล</option></select>
 <div id="nf-pick" class="hide"><label class="l">ค้นหาลูกค้า</label><input id="nf-q" placeholder="ชื่อ / ชื่อเล่น / อีเมล" oninput="nfSearch()"><div id="nf-cl" class="picklist"></div><div class="mut" id="nf-sel" style="margin-top:6px"></div></div>
 <label class="l">รูปภาพประกอบ (ไม่บังคับ · JPG/PNG/WebP ไม่เกิน 20MB)</label><input id="nf-file" type="file" accept="image/jpeg,image/png,image/webp" onchange="nfImg(this)"><div id="nf-imgprev"></div>
 <label class="l">ตั้งเวลาส่งล่วงหน้า (ไม่บังคับ)</label><input id="nf-at" type="datetime-local">
 <div id="nf-count" class="mut" style="margin-top:10px"></div>
 <div id="nf-prev" class="nprev"></div>
-<div class="abtns" style="margin-top:10px"><button class="g" onclick="nfPreview()">👁 ดูตัวอย่าง</button><button onclick="nfSend(this)">🚀 ส่งแจ้งเตือน</button></div></div>
+<div class="abtns" style="margin-top:10px"><button class="g" onclick="nfPreview()">👁 ดูตัวอย่าง</button><button onclick="nfSend(this)">🚀 ส่ง Push Notification</button></div></div>
 <div class="card"><h3 style="margin:0 0 8px">ประวัติการแจ้งเตือน</h3>
 <div class="two" style="grid-template-columns:repeat(auto-fit,minmax(140px,1fr))"><input id="nf-fq" placeholder="ค้นหา หัวข้อ/ลูกค้า/เลขออเดอร์" oninput="loadNotifHistory()"><select id="nf-fk" onchange="loadNotifHistory()"><option value="">ทุกประเภท</option><option value="custom">ข้อความจากร้าน</option><option value="promotion">โปรโมชั่น</option><option value="system">ระบบ</option></select><select id="nf-fs" onchange="loadNotifHistory()"><option value="">ทุกสถานะ</option><option value="sent">ส่งแล้ว</option><option value="scheduled">ตั้งเวลาไว้</option><option value="cancelled">ยกเลิก</option><option value="failed">ล้มเหลว</option></select><input id="nf-f1" type="date" title="ตั้งแต่วันที่" onchange="loadNotifHistory()"><input id="nf-f2" type="date" title="ถึงวันที่" onchange="loadNotifHistory()"></div>
-<div class="tw" style="margin-top:10px"><table class="cards"><thead><tr><th>ส่งเมื่อ</th><th>หัวข้อ</th><th>ผู้ส่ง</th><th>ผู้รับ</th><th>ส่งสำเร็จ</th><th>เปิดอ่าน</th><th>ยังไม่อ่าน</th><th></th></tr></thead><tbody id="nf-list"></tbody></table></div></div>
+<div class="tw" style="margin-top:10px"><table class="cards"><thead><tr><th>ส่งเมื่อ</th><th>หัวข้อ</th><th>ผู้ส่ง</th><th>ผู้รับ</th><th>แจ้งเตือนในเว็บ</th><th>Push สำเร็จ/เป้า</th><th>Push คลิก</th><th>เปิดอ่าน</th><th>ยังไม่อ่าน</th><th></th></tr></thead><tbody id="nf-list"></tbody></table></div></div>
 </section>
 <section id="p-vip" class="pane hide">
 <div class="card"><h2>ตั้งค่าระบบสมาชิก VIP และแต้ม</h2><div class="mut">เฉพาะเจ้าของ · ทุกการเปลี่ยนแปลงบันทึกใน Audit Log พร้อมเหตุผล · ส่วนลดของ VIP/คูปองจากแต้ม ถูกจำกัดด้วยเพดานส่วนลดของร้านเสมอ และร้านรับภาระ (ทีมได้เท่าเดิม)</div>
@@ -404,7 +408,7 @@ async function setUser(u){
   $('authbtn').textContent=me?'ออกจากระบบ':'เข้าสู่ระบบ';['regbtn','regbtn2'].forEach(i=>$(i).classList.toggle('hide',!!me));
   $('who').textContent=me?(prof&&prof.name||me.email):'';
   if(me&&prof&&prof.name&&!$('cname').value)$('cname').value=prof.name;
-  loadQueue();loadOrders();loadMine();loadNotifs();loadCoupons();if(isAdmin())loadDash();else if(isStaff())loadMy();route();
+  loadQueue();loadOrders();loadMine();loadNotifs();loadCoupons();if(me){pushSync();pushOpenFromUrl()}else{pushLoad()}if(isAdmin())loadDash();else if(isStaff())loadMy();route();
 }
 sb.auth.onAuthStateChange((_e,s)=>setTimeout(()=>setUser(s&&s.user),0));
 
@@ -976,7 +980,7 @@ async function renderMember(){
   ['profile','club','wallet'].forEach(k=>$('mt-'+k).className=mtb===k?'':'g');
   $('mwho').textContent=me?(prof&&prof.name)||me.email:'';
   const b=$('mbody');
-  if(lyPub&&!lyPub.enabled){b.innerHTML='<div class="card mut">ระบบสมาชิก VIP ยังไม่เปิดใช้งาน</div>';return}
+  if(lyPub&&!lyPub.enabled){b.innerHTML='<div class="card mut">ระบบสมาชิก VIP ยังไม่เปิดใช้งาน</div>'+(me?'<div class="card" id="pushcard" style="margin-top:14px">'+pushCardInner()+'</div>':'');return}
   if(mtb==='club'){
     const cur=LY&&LY.tier?LY.tier.id:null;
     b.innerHTML=`<div class="card"><h2>VIP Club</h2><div class="mut">ยิ่งใช้บริการมาก ยิ่งได้สิทธิพิเศษ${lyPub&&lyPub.vip_validity_days?` · นับยอดย้อนหลัง ${lyPub.vip_validity_days} วัน`:' · ระดับถาวรตามยอดสะสม'}</div><div class="ladder" style="margin-top:12px">`+(tiersPub.length?tiersPub.map(t=>`<div class="lcard${t.id===cur?' cur':''}" style="--tc:${colOk(t.color)}"><div style="display:flex;gap:10px;align-items:center"><span style="font-size:30px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;overflow:hidden;border-radius:50%">${tierBadge(t)}</span><div><b style="font-size:17px">${esc(t.name)}</b>${t.id===cur?' <span class="st done">ระดับของคุณ</span>':''}<div class="mut">ยอดสะสม ${fmt(t.min_spend)} ขึ้นไป</div></div></div><div style="margin-top:8px">${t.discount_pct>0?`<div>💸 ส่วนลดทุกออเดอร์ <b>${t.discount_pct}%</b></div>`:''}${t.points_bonus_pct>0?`<div>✨ โบนัสแต้ม <b>+${t.points_bonus_pct}%</b></div>`:''}${t.perks?`<div class="mut">${esc(t.perks)}</div>`:''}${!t.discount_pct&&!t.points_bonus_pct&&!t.perks?'<div class="mut">ระดับเริ่มต้น</div>':''}</div></div>`).join(''):'<div class="mut">ยังไม่มีระดับ</div>')+'</div></div>';return}
@@ -1006,6 +1010,7 @@ async function renderMember(){
   <label class="l">ชื่อเล่น</label><input id="pnick" maxlength="30" placeholder="เช่น บี" value="${esc((pdetail&&pdetail.nickname)||'')}">
   <label class="l">ข้อความแนะนำตัว</label><textarea id="pbio" rows="2" maxlength="200" placeholder="เล่าเรื่องสั้น ๆ เกี่ยวกับคุณ (ไม่บังคับ)">${esc((pdetail&&pdetail.bio)||'')}</textarea>
   <div style="display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap"><button id="psave" onclick="saveProfile()">บันทึกโปรไฟล์</button><span class="mut">แก้ไขได้เฉพาะบัญชีของคุณ</span></div></div>
+  <div class="card" id="pushcard" style="margin-top:14px">${pushCardInner()}</div>
   <div class="card" style="margin-top:14px"><h3 style="margin:0 0 8px">ประวัติการเลื่อนระดับ</h3>${vipHist.length?vipHist.map(h=>`<div class="row"><span>${esc(dt(h.created_at))} · ${esc(h.from_tier||'-')} → <b>${esc(h.to_tier||'-')}</b></span><span class="mut">${esc(h.reason||'')}</span></div>`).join(''):'<div class="mut">ยังไม่มีประวัติ</div>'}</div>
   <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px"><button onclick="location.hash='#mine'">ดูประวัติการสั่งซื้อและคิวของฉัน</button><button class="g" onclick="mtab('wallet')">กระเป๋าแต้มและคูปอง</button></div>`;
   levelUp=false;
@@ -1584,6 +1589,7 @@ async function openNotifs(){
   await loadNotifs();
   const un=notifs.filter(x=>!x.read_at).length;
   $('odb').innerHTML=`<div class="nhead"><div style="display:flex;gap:8px;align-items:center;min-width:0"><h3 style="margin:0">🔔 การแจ้งเตือน</h3>${avHtml(prof&&prof.avatar_url,(prof&&prof.nickname)||(prof&&prof.name),'sm')}</div>${un?`<button class="g" onclick="readAllNotifs()">อ่านทั้งหมด (${un})</button>`:''}</div>
+  <div id="pushprompt" class="${pushPromptHtml()?'':'hide'}">${pushPromptHtml()}</div>
   <div class="nlist">${notifs.length?notifs.map(nItem).join(''):'<div class="nempty">ยังไม่มีการแจ้งเตือน</div>'}</div>
   <button class="g" style="width:100%;margin-top:14px" onclick="$('od').classList.add('hide')">ปิด</button>`;
   $('od').classList.remove('hide');
@@ -1728,7 +1734,7 @@ async function pickAvatar(inp){
 }
 /* ---------- หลังบ้าน: การแจ้งเตือน (สร้าง/ตั้งเวลา/ประวัติ/สถิติ) ---------- */
 let nd=null,nfAudience='all',nfSel=new Set(),nfCust=[],nfImgUrl='',nfCampaigns=[];
-const ADU_TH={all:'ลูกค้าทั้งหมด',customers:'ลูกค้าที่เคยมีออเดอร์',active:'ลูกค้าที่กำลังมีงาน',selected:'เลือกรายคน'};
+const ADU_TH={all:'ลูกค้าทั้งหมด',customers:'ลูกค้าที่เคยมีออเดอร์',active:'ลูกค้าที่กำลังมีงาน',push:'ลูกค้าที่เปิดรับ Push Notification',selected:'เลือกรายคน'};
 const NST_TH={draft:'ฉบับร่าง',scheduled:'ตั้งเวลาไว้',sending:'กำลังส่ง',sent:'ส่งแล้ว',cancelled:'ยกเลิก',failed:'ล้มเหลว'};
 const NK_TH={custom:'ข้อความจากร้าน',system:'ระบบ',promotion:'โปรโมชั่น'};
 function renderNotifDash(){
@@ -1799,7 +1805,7 @@ async function nfSend(b){
   const{data,error}=await sb.rpc('admin_send_notification',{p_title:d.title,p_body:d.body,p_image:d.image_url,p_button_label:d.button_label,p_button_url:d.button_url,p_audience:$('nf-a').value,p_user_ids:[...nfSel],p_scheduled_at:at,p_kind:'custom'});
   b.disabled=false;b.textContent='🚀 ส่งแจ้งเตือน';
   if(error)return toast(ERR[error.message]||error.message);
-  toast(at?`ตั้งเวลาส่งถึง ${data.recipients} คนแล้ว`:`ส่งแจ้งเตือนถึง ${data.sent} คนแล้ว 🚀`);
+  toast(at?`ตั้งเวลาส่งถึง ${data.recipients} คนแล้ว`:`ส่งถึง ${data.sent} คน · Push ${data.push||0} เครื่องแล้ว 🚀`);
   ['nf-t','nf-b','nf-bl','nf-bu','nf-at'].forEach(i=>{if($(i))$(i).value=''});
   nfImgUrl='';$('nf-imgprev').innerHTML='';$('nf-prev').innerHTML='';nfSel.clear();nfCust=[];
   if($('nf-cl'))$('nf-cl').innerHTML='';if($('nf-sel'))$('nf-sel').textContent='';
@@ -1812,7 +1818,7 @@ async function loadNotifHistory(){
   nfCampaigns=Array.isArray(data)?data:[];
   $('nf-list').innerHTML=nfCampaigns.length?nfCampaigns.map(x=>{
     const when=x.sent_at||x.scheduled_at||x.created_at;
-    return`<tr><td>${esc(dt(when))}<div class="mut">${esc(NST_TH[x.status]||x.status)}</div></td><td><b>${esc(x.title)}</b><div class="mut clamp">${esc(x.body)}</div><div class="mut">${esc(NK_TH[x.kind]||x.kind)} · ${esc(ADU_TH[x.audience]||x.audience)}</div></td><td>${esc(x.created_by_name||'ระบบ')}</td><td>${(x.recipients||0).toLocaleString()}</td><td>${(x.sent_now||0).toLocaleString()}</td><td>${(x.read_count||0).toLocaleString()}</td><td>${(x.unread_count||0).toLocaleString()}</td><td style="white-space:nowrap"><button class="g" onclick="nfDetail('${esc(x.id)}')">รายละเอียด</button>${x.status==='scheduled'?` <button class="g" onclick="nfCancel(this,'${esc(x.id)}')">ยกเลิก</button>`:''}</td></tr>`}).join(''):'<tr><td colspan="8" class="mut">ยังไม่มีประวัติการแจ้งเตือน</td></tr>';
+    return`<tr><td>${esc(dt(when))}<div class="mut">${esc(NST_TH[x.status]||x.status)}</div></td><td><b>${esc(x.title)}</b><div class="mut clamp">${esc(x.body)}</div><div class="mut">${esc(NK_TH[x.kind]||x.kind)} · ${esc(ADU_TH[x.audience]||x.audience)}</div></td><td>${esc(x.created_by_name||'ระบบ')}</td><td>${(x.recipients||0).toLocaleString()}</td><td>${(x.sent_now||0).toLocaleString()}</td><td>${(x.read_count||0).toLocaleString()}</td><td>${(x.unread_count||0).toLocaleString()}</td><td>${(x.push_sent||0).toLocaleString()}/${(x.push_targets||0).toLocaleString()}${x.push_failed?`<div class="mut" style="color:#dc2626">ล้มเหลว ${x.push_failed}</div>`:(x.push_pending?`<div class="mut">รอส่ง ${x.push_pending}</div>`:'')}</td><td>${(x.push_clicked||0).toLocaleString()}</td><td style="white-space:nowrap"><button class="g" onclick="nfDetail('${esc(x.id)}')">รายละเอียด</button>${x.status==='scheduled'?` <button class="g" onclick="nfCancel(this,'${esc(x.id)}')">ยกเลิก</button>`:''}</td></tr>`}).join(''):'<tr><td colspan="8" class="mut">ยังไม่มีประวัติการแจ้งเตือน</td></tr>';
 }
 async function nfDetail(id){
   const{data,error}=await sb.rpc('admin_notification_detail',{p_id:id});
@@ -1824,6 +1830,8 @@ async function nfDetail(id){
   <div class="row"><span class="mut">กลุ่มผู้รับ</span><span>${esc(ADU_TH[c.audience]||c.audience)}</span></div>
   <div class="row"><span class="mut">ผู้รับ / ส่งสำเร็จ</span><span>${(c.recipients||0).toLocaleString()} / ${(c.sent||0).toLocaleString()}</span></div>
   <div class="row"><span class="mut">เปิดอ่าน / ยังไม่อ่าน</span><span>${(data.read_count||0).toLocaleString()} / ${(data.unread_count||0).toLocaleString()}</span></div>
+  <div class="row"><span class="mut">Push (เป้าหมาย / สำเร็จ / ล้มเหลว)</span><span>${((data.push&&data.push.targets)||0).toLocaleString()} / <b>${((data.push&&data.push.sent)||0).toLocaleString()}</b> / ${((data.push&&data.push.failed)||0).toLocaleString()}</span></div>
+  <div class="row"><span class="mut">Push ที่รอส่ง / เปิดจาก Push</span><span>${((data.push&&data.push.pending)||0).toLocaleString()} / ${((data.push&&data.push.clicked)||0).toLocaleString()}</span></div>
   <div class="pvb">${esc(c.body||'')}</div>
   <div class="mut" style="margin-top:12px">ผู้รับล่าสุด</div>
   <div style="max-height:240px;overflow:auto">${rs.length?rs.map(r=>`<div class="row" style="border-bottom:1px solid var(--line)"><span style="display:flex;gap:8px;align-items:center">${avHtml(r.avatar_url,r.name,'sm')} ${esc(r.name||'-')}</span><span class="mut">${r.read_at?'อ่านแล้ว '+esc(dt(r.read_at)):'ยังไม่อ่าน'}</span></div>`).join(''):'<div class="mut">ไม่มีข้อมูลผู้รับ</div>'}</div>
@@ -1846,10 +1854,127 @@ async function notifyPromo(b,id){
   toast(`แจ้งเตือนโปรโมชั่น ${p?p.code:''} ถึง ${data.sent} คนแล้ว 🎉`);
 }
 
+/* ---------- Web Push: แจ้งเตือนแม้ปิดเว็บไซต์ (Service Worker + VAPID) ---------- */
+let pushSt={ready:false,ok:false,perm:'default',sub:false,devices:0,devicesTotal:0,orders:true,promos:true,news:true,busy:false};
+let notifTarget=null;
+const pushSupported=()=>!!(('serviceWorker'in navigator)&&('PushManager'in window)&&('Notification'in window)&&window.isSecureContext);
+function pushB64(s){const t=String(s||'').replace(/-/g,'+').replace(/_/g,'/');const p='='.repeat((4-t.length%4)%4);const r=atob(t+p);const u=new Uint8Array(r.length);for(let i=0;i<r.length;i++)u[i]=r.charCodeAt(i);return u}
+async function pushLocalSub(){
+  if(!pushSupported())return null;
+  try{const regs=await navigator.serviceWorker.getRegistrations();for(const r of regs){const s=await r.pushManager.getSubscription();if(s)return s}}catch(e){}
+  return null;
+}
+async function pushLoad(){
+  pushSt.ok=pushSupported();
+  pushSt.perm=pushSt.ok?Notification.permission:'denied';
+  pushSt.sub=!!(await pushLocalSub());
+  if(me){try{const r=await sb.rpc('my_push_state');const d=r&&r.data;if(!r.error&&d){pushSt.devices=d.devices||0;pushSt.devicesTotal=d.devices_total||0;pushSt.orders=d.orders!==false;pushSt.promos=d.promos!==false;pushSt.news=d.news!==false}}catch(e){}}
+  else{pushSt.devices=0;pushSt.devicesTotal=0}
+  pushSt.ready=true;pushRender();
+  return pushSt;
+}
+function pushRender(){
+  const c=$('pushcard');if(c)c.innerHTML=pushCardInner();
+  const p=$('pushprompt');if(p){const h=pushPromptHtml();p.innerHTML=h;p.classList.toggle('hide',!h)}
+}
+function pushCardInner(){
+  const chk=(k,l,d)=>`<label class="chk"><input type="checkbox" ${pushSt[k]?'checked':''} ${pushSt.ok?'':'disabled'} onchange="pushPref('${k}',this.checked)"> ${l}<span class="mut" style="font-weight:400"> — ${d}</span></label>`;
+  let head,btn='';
+  if(!pushSt.ready){head='<span class="st">⏳ กำลังตรวจสอบสถานะ...</span>'}
+  else if(!pushSt.ok){head='<span class="st">📵 อุปกรณ์นี้ไม่รองรับ</span><div class="mut">เบราว์เซอร์นี้ไม่รองรับ Web Push หรือหน้าเว็บไม่ได้เปิดผ่าน https</div>'}
+  else if(pushSt.perm==='denied'){head='<span class="st">🚫 ถูกบล็อกในเบราว์เซอร์</span><div class="mut">เปิดได้ที่ไอคอนกุญแจ/การตั้งค่าเว็บไซต์ → การแจ้งเตือน → อนุญาต</div>'}
+  else if(pushSt.sub&&pushSt.devices>0){head=`<span class="st done">✅ เปิดรับการแจ้งเตือนแล้ว</span><span class="mut">${pushSt.devices} อุปกรณ์</span>`;btn=`<button class="g" onclick="pushDisable(this)">ปิดการแจ้งเตือนบนอุปกรณ์นี้</button>`}
+  else{head='<span class="st">🔕 ยังไม่ได้เปิดการแจ้งเตือน</span>';btn=`<button onclick="pushEnable(this)">🔔 เปิดการแจ้งเตือน</button>`}
+  return `<h3 style="margin:0 0 6px">🔔 การแจ้งเตือน</h3>
+  <div class="mut" style="margin-bottom:10px">เปิดการแจ้งเตือนเพื่อรับข่าวสาร โปรโมชั่น และอัปเดตงานจาก MPSHOP แม้ไม่ได้เปิดเว็บไซต์</div>
+  <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px">${head}${btn}</div>
+  <div class="chkgrid">${chk('orders','อัปเดตออเดอร์','จองสำเร็จ เปลี่ยนสถานะ งานเสร็จ รูปอัปเดตงาน')}${chk('promos','โปรโมชั่น','โปรโมชั่นและแคมเปญใหม่จากร้าน')}${chk('news','ข่าวสารจาก MPSHOP','ประกาศและข้อความทั่วไปจากร้าน')}</div>
+  <div class="mut" style="margin-top:8px">ปิด "โปรโมชั่น" ได้โดยไม่กระทบการแจ้งเตือนงานของออเดอร์ · เปิดรับได้หลายอุปกรณ์พร้อมกัน</div>`;
+}
+function pushPromptHtml(){
+  if(!me||!pushSt.ready||!pushSt.ok||pushSt.perm==='denied'||(pushSt.sub&&pushSt.devices>0))return '';
+  return `<div class="pushprompt"><div style="min-width:0"><b>🔔 เปิดการแจ้งเตือน</b><div class="mut">รับข่าวสาร โปรโมชั่น และอัปเดตงานจาก MPSHOP แม้ไม่ได้เปิดเว็บไซต์</div></div><button onclick="pushEnable(this)">เปิดเลย</button></div>`;
+}
+async function pushEnable(btn){
+  if(!me){toast('เข้าสู่ระบบก่อนเปิดการแจ้งเตือน');return openAuth('in')}
+  if(!pushSupported())return toast('อุปกรณ์นี้ไม่รองรับการแจ้งเตือนแบบ Push');
+  if(pushSt.busy)return;
+  pushSt.busy=true;if(btn)btn.disabled=true;
+  try{
+    const perm=await Notification.requestPermission();
+    pushSt.perm=perm;
+    if(perm!=='granted'){toast(perm==='denied'?'ถูกบล็อกการแจ้งเตือน — เปิดได้ในการตั้งค่าเบราว์เซอร์':'ยังไม่ได้อนุญาตการแจ้งเตือน')}
+    else{
+      const k=await sb.rpc('push_public_key');
+      if(k.error||!k.data)throw new Error('ระบบยังไม่พร้อม (ยังไม่มีกุญแจ VAPID)');
+      const reg=await navigator.serviceWorker.register('sw.js',{scope:'./'});
+      await navigator.serviceWorker.ready;
+      let sub=await reg.pushManager.getSubscription();
+      if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:pushB64(k.data)});
+      const j=sub.toJSON();
+      const r=await sb.rpc('push_subscribe',{p_endpoint:j.endpoint,p_p256dh:(j.keys&&j.keys.p256dh)||'',p_auth:(j.keys&&j.keys.auth)||'',p_ua:navigator.userAgent,p_platform:navigator.platform||''});
+      if(r.error)throw r.error;
+      if(r.data){pushSt.devices=r.data.devices||0;pushSt.devicesTotal=r.data.devices_total||0}
+      pushSt.sub=true;pushSt.perm='granted';
+      toast('เปิดการแจ้งเตือนแล้ว 🔔');
+    }
+  }catch(e){toast('เปิดการแจ้งเตือนไม่สำเร็จ: '+((e&&e.message)||e))}
+  pushSt.busy=false;if(btn)btn.disabled=false;
+  pushSt.ready=true;pushRender();
+}
+async function pushDisable(btn){
+  if(pushSt.busy)return;
+  pushSt.busy=true;if(btn)btn.disabled=true;
+  try{
+    const regs=await navigator.serviceWorker.getRegistrations();
+    for(const r of regs){
+      const s=await r.pushManager.getSubscription();
+      if(!s)continue;
+      const ep=s.endpoint;
+      try{await s.unsubscribe()}catch(e){}
+      try{await sb.rpc('push_unsubscribe',{p_endpoint:ep})}catch(e){}
+    }
+    pushSt.sub=false;pushSt.devices=0;
+    toast('ปิดการแจ้งเตือนบนอุปกรณ์นี้แล้ว');
+  }catch(e){toast('ปิดไม่สำเร็จ: '+((e&&e.message)||e))}
+  pushSt.busy=false;if(btn)btn.disabled=false;
+  pushRender();
+}
+async function pushPref(k,on){
+  const key={orders:'p_orders',promos:'p_promos',news:'p_news'}[k];if(!key)return;
+  const old=pushSt[k];pushSt[k]=on;
+  const r=await sb.rpc('push_set_prefs',{[key]:on});
+  if(r.error){pushSt[k]=old;toast(ERR[r.error.message]||r.error.message)}
+  else if(r.data){pushSt.orders=r.data.orders!==false;pushSt.promos=r.data.promos!==false;pushSt.news=r.data.news!==false;toast('บันทึกการตั้งค่าการแจ้งเตือนแล้ว')}
+  pushRender();
+}
+async function pushSync(){
+  if(!me||!pushSupported())return pushLoad();
+  await pushLoad();
+  const s=await pushLocalSub();
+  if(s&&Notification.permission==='granted'){
+    try{const j=s.toJSON();await sb.rpc('push_subscribe',{p_endpoint:j.endpoint,p_p256dh:(j.keys&&j.keys.p256dh)||'',p_auth:(j.keys&&j.keys.auth)||'',p_ua:navigator.userAgent,p_platform:navigator.platform||''})}catch(e){}
+    await pushLoad();
+  }
+  return pushSt;
+}
+async function pushOpenFromUrl(){
+  try{const q=new URLSearchParams(location.search).get('n');if(q&&!notifTarget)notifTarget=q}catch(e){}
+  if(!notifTarget)return;
+  if(!me){toast('เข้าสู่ระบบเพื่อดูการแจ้งเตือน');return openAuth('in')}
+  const id=notifTarget;notifTarget=null;
+  try{history.replaceState(null,'',location.pathname+location.hash)}catch(e){}
+  try{await sb.rpc('push_mark_click',{p_notification:id})}catch(e){}
+  await loadNotifs();
+  if(notifs.some(x=>x.id===id))return openNotif(id);
+  toast('ไม่พบการแจ้งเตือนนี้ (อาจถูกลบแล้ว)');
+}
+try{if('serviceWorker'in navigator)navigator.serviceWorker.addEventListener('message',e=>{const d=e.data||{};if(d.type==='mpshop-notif'&&d.id){notifTarget=d.id;pushOpenFromUrl()}})}catch(e){}
+
 /* ---------- เริ่มต้น ---------- */
 const lbl=t=>{const th=[...t.querySelectorAll('thead th')].map(x=>x.textContent.trim());t.querySelectorAll('tbody tr').forEach(r=>{if(r.children.length<2)return;[...r.children].forEach((c,i)=>{if(th[i]&&!c.dataset.label)c.dataset.label=th[i]})})};
 new MutationObserver(ms=>{const s=new Set();ms.forEach(m=>{const t=m.target.closest&&m.target.closest('table');if(t)s.add(t)});s.forEach(lbl)}).observe(document.body,{childList:true,subtree:true});
-renderServices();route();loadCfg();loadQueue();loadReviews();loadCoupons();
+renderServices();route();loadCfg();loadQueue();loadReviews();loadCoupons();pushLoad();pushOpenFromUrl();
 try{sb.auth.getSession().then(r=>{const s=r&&r.data&&r.data.session;if(s&&s.user&&!me)setUser(s.user)}).catch(()=>{})}catch(e){}
 setInterval(()=>{if(!document.hidden)loadCoupons()},30000);
 setInterval(()=>{if(!document.hidden){loadCfg();loadQueue();loadOrders();loadMine();loadNotifs();if(++notifTick%7===0)sb.rpc('dispatch_due_notifications').catch(()=>{});if(isAdmin()&&at==='dash')loadDash()}},8000);
