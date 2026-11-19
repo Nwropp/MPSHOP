@@ -176,6 +176,17 @@ tr.me td{background:var(--soft)}.warn{background:var(--warnbg);color:var(--warn)
 .ncust{display:flex;gap:8px;align-items:center;min-width:0}
 @media(max-width:600px){.nitem{padding:10px 8px}.nicon{width:34px;height:34px;font-size:17px}.av-lg{width:78px;height:78px;font-size:28px}.nlist{max-height:65vh}.pcard{gap:10px}}
 .avbtn-h{width:44px;min-height:42px;padding:0;border-radius:50%}
+.navact{position:relative}.who{cursor:pointer}#who{max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#pmenu{position:absolute;right:0;top:calc(100% + 8px);z-index:90;min-width:220px;max-width:280px;background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--sh);padding:6px;display:flex;flex-direction:column;gap:2px}
+#pmenu .pmhead{padding:8px 10px 10px;border-bottom:1px solid var(--line);margin-bottom:4px;min-width:0}
+#pmenu .pmhead b{display:block;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#pmenu .pmhead span{display:block;font-size:11px;overflow-wrap:anywhere}
+#pmenu button{width:100%;min-height:42px;padding:10px;border:0;background:transparent;box-shadow:none;border-radius:10px;text-align:left;justify-content:flex-start;font-size:14px;color:var(--tx)}
+#pmenu button:hover{background:var(--soft)}
+#pmenu button.pm-danger{color:#dc2626}
+@media(min-width:901px) and (max-width:1000px){.menu a{padding:8px 5px;font-size:13px}}
+@media(max-width:1200px){#who{display:none}}
+@media(max-width:900px){#pmenu{right:0;min-width:210px}}
 </style>
 </head>
 <body>
@@ -186,8 +197,11 @@ tr.me td{background:var(--soft)}.warn{background:var(--warnbg);color:var(--warn)
 <nav id="menu" class="menu" onclick="if(event.target.tagName==='A')closeMenu()">
 <a href="#top">หน้าหลัก</a><a href="#services">บริการทั้งหมด</a><a id="nav-coupons" href="#coupons">คูปอง</a><a id="nav-member" class="hide" href="#member">สมาชิก VIP</a><a href="#promosec">โปรโมชั่น</a><a href="#queue">ติดตามงาน</a><a href="#reviews">รีวิว</a><a id="nav-contact" class="hide" href="#contact">ติดต่อเรา</a>
 <div class="menu-auth"><button id="regbtn2" onclick="closeMenu();openAuth('up')">สมัครสมาชิก</button></div>
+<div id="mmenumember" class="menu-auth hide"><button class="g" onclick="pmGo('profile')">👤 <span id="mmname"></span></button><button class="g" onclick="pmGo('logout')">ออกจากระบบ</button></div>
 </nav>
-<div class="navact"><span id="who" class="mut who"></span><button id="avbtn" class="g avbtn-h hide" onclick="location.hash='#member'" aria-label="โปรไฟล์ของฉัน" title="โปรไฟล์ของฉัน"></button><button id="bell" class="g hide" onclick="openNotifs()" aria-label="การแจ้งเตือน">🔔<span id="bc"></span></button><button id="authbtn" class="g" onclick="openAuth('in')">เข้าสู่ระบบ</button><button id="regbtn" class="js-reg-hdr" onclick="openAuth('up')">สมัครสมาชิก</button><button id="burger" class="g burger" onclick="toggleMenu()" aria-label="เมนู" aria-expanded="false">☰</button></div>
+<div class="navact"><span id="who" class="mut who" onclick="toggleProfileMenu()" title="เมนูสมาชิก"></span><button id="avbtn" class="g avbtn-h hide" onclick="toggleProfileMenu()" aria-label="เมนูโปรไฟล์" title="เมนูโปรไฟล์" aria-haspopup="true" aria-expanded="false"></button><button id="bell" class="g hide" onclick="openNotifs()" aria-label="การแจ้งเตือน">🔔<span id="bc"></span></button>
+<div id="pmenu" class="hide" role="menu" aria-label="เมนูสมาชิก"><div class="pmhead"><b id="pmname"></b><span class="mut" id="pmemail"></span></div><button role="menuitem" onclick="pmGo('profile')">👤 โปรไฟล์</button><button role="menuitem" onclick="pmGo('orders')">🧾 ออเดอร์ของฉัน</button><button role="menuitem" onclick="pmGo('notifs')">🔔 การแจ้งเตือน</button><button role="menuitem" class="pm-danger" onclick="pmGo('logout')">🚪 ออกจากระบบ</button></div>
+<button id="authbtn" class="g" onclick="openAuth('in')">เข้าสู่ระบบ</button><button id="regbtn" class="js-reg-hdr" onclick="openAuth('up')">สมัครสมาชิก</button><button id="burger" class="g burger" onclick="toggleMenu()" aria-label="เมนู" aria-expanded="false">☰</button></div>
 </div></header>
 <section id="top" class="hero"><div class="wrap">
 <div class="heroin"><div><span class="pill">✦ บริการรับฟาร์ม Genshin Impact</span><h1 class="brand">MPSHOP</h1><p class="lead">คำนวณราคา จองคิวง่าย ติดตามสถานะงานและดูหลักฐานการดำเนินงานได้ในที่เดียว</p><a class="cta" href="#services">เลือกบริการเลย →</a></div>
@@ -383,31 +397,87 @@ function route(){const a=location.hash==='#admin',m=location.hash==='#member';$(
 addEventListener('hashchange',route);
 
 /* ---------- สมาชิก ---------- */
-function openAuth(m){if(me){sb.auth.signOut();return}closeMenu();tab(m==='up'?'up':'in');$('auth').classList.remove('hide')}
-function toggleMenu(){const o=$('menu').classList.toggle('open');$('burger').setAttribute('aria-expanded',o)}
+function openAuth(m){if(me){closeProfileMenu();sb.auth.signOut();return}closeMenu();tab(m==='up'?'up':'in');$('auth').classList.remove('hide')}
+function toggleMenu(){const o=$('menu').classList.toggle('open');$('burger').setAttribute('aria-expanded',o);if(o)closeProfileMenu()}
 function closeMenu(){$('menu').classList.remove('open');$('burger').setAttribute('aria-expanded','false')}
+/* ---------- สถานะเข้าสู่ระบบบน Header: ใช้ตัวแปร me เป็นแหล่งความจริงเดียว ---------- */
+function renderAuthUI(){
+  const on=!!me;
+  const show=(id,v)=>{const el=$(id);if(el)el.classList.toggle('hide',!v)};
+  ['authbtn','regbtn','regbtn2'].forEach(id=>show(id,!on));
+  ['who','avbtn','bell','mmenumember'].forEach(id=>show(id,on));
+  const ab=$('authbtn');if(ab)ab.textContent='เข้าสู่ระบบ';
+  const nm=memberName();
+  const w=$('who');if(w)w.textContent=on?nm:'';
+  if($('mmname'))$('mmname').textContent=on?nm:'';
+  if(!on)closeProfileMenu();
+  syncProfileMenu();
+}
+function memberName(){return me?((prof&&(prof.nickname||prof.name))||me.email||'สมาชิก'):''}
+function syncProfileMenu(){
+  const nm=memberName();
+  if($('pmname'))$('pmname').textContent=nm||'สมาชิก';
+  if($('pmemail'))$('pmemail').textContent=(me&&me.email)||'';
+  if($('mmname'))$('mmname').textContent=nm;
+}
+function toggleProfileMenu(){
+  if(!me)return;
+  const m=$('pmenu');if(!m)return;
+  const open=m.classList.contains('hide');
+  syncProfileMenu();
+  m.classList.toggle('hide',!open);
+  const a=$('avbtn');if(a)a.setAttribute('aria-expanded',String(open));
+}
+function closeProfileMenu(){const m=$('pmenu');if(m)m.classList.add('hide');const a=$('avbtn');if(a)a.setAttribute('aria-expanded','false')}
+function pmGo(k){
+  closeProfileMenu();closeMenu();
+  if(k==='logout')return doLogout();
+  if(k==='notifs')return openNotifs();
+  if(k==='profile'){location.hash='#member';return}
+  if(k==='orders'){location.hash='#mine';route();setTimeout(()=>{const el=$('mine');if(el)el.scrollIntoView({behavior:'smooth',block:'start'})},80)}
+}
+async function doLogout(){
+  closeProfileMenu();
+  try{const{error}=await sb.auth.signOut();if(error){toast(error.message);return}}catch(e){}
+  await setUser(null);
+}
+document.addEventListener('click',e=>{const m=$('pmenu');if(!m||m.classList.contains('hide'))return;if(e.target.closest&&e.target.closest('#pmenu,#avbtn,#who'))return;closeProfileMenu()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeProfileMenu()});
 function closeAuth(){$('auth').classList.add('hide')}
 function tab(m){mode=m;$('t-in').className=m==='in'?'':'g';$('t-up').className=m==='up'?'':'g';$('f-name').classList.toggle('hide',m!=='up');$('a-go').textContent=m==='in'?'เข้าสู่ระบบ':'สมัครสมาชิก'}
 async function doAuth(){
   const email=$('a-email').value.replace(/[\s\u200B-\u200F\u202A-\u202E\u2060\uFEFF]/g,'').toLowerCase(),password=$('a-pass').value;
   if(!/^[^@]+@[^@]+\.[^@]+$/.test(email))return toast('รูปแบบอีเมลไม่ถูกต้อง');
   if(password.length<6)return toast('รหัสผ่านต้องมีอย่างน้อย 6 ตัว');
-  $('a-go').disabled=true;
-  const r=mode==='in'?await sb.auth.signInWithPassword({email,password}):await sb.auth.signUp({email,password,options:{data:{name:$('a-name').value.trim()}}});
-  $('a-go').disabled=false;
-  if(r.error)return toast(r.error.message);
-  if(mode==='up'&&!r.data.session){
-    const l=await sb.auth.signInWithPassword({email,password});
-    if(l.error)return toast('สมัครแล้ว แต่เข้าสู่ระบบไม่ได้: '+l.error.message);
+  const go=$('a-go');if(!go||go.disabled)return;
+  go.disabled=true;
+  try{
+    const r=mode==='in'?await sb.auth.signInWithPassword({email,password}):await sb.auth.signUp({email,password,options:{data:{name:$('a-name').value.trim()}}});
+    if(!r||r.error)return toast((r&&r.error&&r.error.message)||'เข้าสู่ระบบไม่สำเร็จ');
+    if(mode==='up'&&!r.data.session){
+      const l=await sb.auth.signInWithPassword({email,password});
+      if(l.error)return toast('สมัครแล้ว แต่เข้าสู่ระบบไม่ได้: '+l.error.message);
+    }
+    closeAuth();toast('ยินดีต้อนรับ');
+  }catch(e){
+    toast('เชื่อมต่อไม่สำเร็จ: '+((e&&e.message)||e));
+  }finally{
+    go.disabled=false;
   }
-  closeAuth();toast('ยินดีต้อนรับ');
 }
 async function setUser(u){
   me=u||null;prof=null;cpn=null;cquote=null;LY=null;lastTier=null;pdetail=null;profileTried=false;profileOk=false;notifs=[];
-  if(me){const{data}=await sb.from('profiles').select('*').eq('id',me.id).maybeSingle();prof=data;await loadProfileDetail();sb.rpc('dispatch_due_notifications').catch(()=>{})}
-  $('authbtn').textContent=me?'ออกจากระบบ':'เข้าสู่ระบบ';['regbtn','regbtn2'].forEach(i=>$(i).classList.toggle('hide',!!me));
-  $('who').textContent=me?(prof&&prof.name||me.email):'';
-  if(me&&prof&&prof.name&&!$('cname').value)$('cname').value=prof.name;
+  renderAuthUI();
+  if(me){
+    try{
+      const{data,error}=await sb.from('profiles').select('*').eq('id',me.id).maybeSingle();
+      prof=error?null:data;
+      await loadProfileDetail();
+      Promise.resolve(sb.rpc('dispatch_due_notifications')).catch(()=>{});
+    }catch(e){/* โหลดโปรไฟล์พลาด ต้องไม่บล็อกส่วนที่เหลือของหน้า */}
+    renderAuthUI();
+  }
+  if(me&&prof&&prof.name&&$('cname')&&!$('cname').value)$('cname').value=prof.name;
   loadQueue();loadOrders();loadMine();loadNotifs();loadCoupons();if(me){pushSync();pushOpenFromUrl()}else{pushLoad()}if(isAdmin())loadDash();else if(isStaff())loadMy();route();
 }
 sb.auth.onAuthStateChange((_e,s)=>setTimeout(()=>setUser(s&&s.user),0));
@@ -1569,12 +1639,13 @@ async function loadNotifs(){
 function renderBell(){
   const n=notifs.filter(x=>!x.read_at).length,bc=$('bc');
   if(bc){bc.textContent=n>99?'99+':(n?String(n):'');bc.classList.toggle('hide',!n)}
-  $('bell').classList.toggle('hide',!me);
+  const bl=$('bell');if(bl)bl.classList.toggle('hide',!me);
   const nm=me?((prof&&(prof.nickname||prof.name))||me.email):'';
   const ha=$('avbtn');if(ha){ha.classList.toggle('hide',!me);ha.innerHTML=avHtml(prof&&prof.avatar_url,nm,'sm')}
   const mv=$('mavatar');if(mv)mv.innerHTML=avHtml(prof&&prof.avatar_url,nm,'md');
   const ma=$('mineav');if(ma){ma.classList.toggle('hide',!me);ma.innerHTML=me?avHtml(prof&&prof.avatar_url,nm,'sm'):''}
   if($('mwho'))$('mwho').textContent=nm;
+  syncProfileMenu();
 }
 function nItem(n){
   const un=!n.read_at,u=n.link_url||'',has=!!(n.order_id||u);
@@ -1699,9 +1770,8 @@ async function saveProfile(){
   if(error)return toast(migErr(error));
   pdetail=data;profileTried=true;profileOk=true;
   prof=prof||{};prof.name=data.name;prof.nickname=data.nickname;prof.avatar_url=data.avatar_url;
-  $('who').textContent=prof.nickname||prof.name||me.email;
   if($('cname')&&!$('cname').value)$('cname').value=data.name||'';
-  toast('บันทึกโปรไฟล์แล้ว');renderBell();renderMember();
+  toast('บันทึกโปรไฟล์แล้ว');renderAuthUI();renderBell();renderMember();
 }
 async function pickAvatar(inp){
   const f=inp.files&&inp.files[0];inp.value='';
@@ -1976,8 +2046,13 @@ const lbl=t=>{const th=[...t.querySelectorAll('thead th')].map(x=>x.textContent.
 new MutationObserver(ms=>{const s=new Set();ms.forEach(m=>{const t=m.target.closest&&m.target.closest('table');if(t)s.add(t)});s.forEach(lbl)}).observe(document.body,{childList:true,subtree:true});
 renderServices();route();loadCfg();loadQueue();loadReviews();loadCoupons();pushLoad();pushOpenFromUrl();
 try{sb.auth.getSession().then(r=>{const s=r&&r.data&&r.data.session;if(s&&s.user&&!me)setUser(s.user)}).catch(()=>{})}catch(e){}
+/* กลับมาที่แท็บ: ตรวจ session จริงอีกครั้ง (รับมือ session หมดอายุระหว่างพักหน้า) */
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden)return;
+  try{sb.auth.getSession().then(r=>{const s=r&&r.data&&r.data.session,u=(s&&s.user)||null;if((u&&u.id)!==(me&&me.id))setUser(u)}).catch(()=>{})}catch(e){}
+});
 setInterval(()=>{if(!document.hidden)loadCoupons()},30000);
-setInterval(()=>{if(!document.hidden){loadCfg();loadQueue();loadOrders();loadMine();loadNotifs();if(++notifTick%7===0)sb.rpc('dispatch_due_notifications').catch(()=>{});if(isAdmin()&&at==='dash')loadDash()}},8000);
+setInterval(()=>{if(!document.hidden){loadCfg();loadQueue();loadOrders();loadMine();loadNotifs();if(++notifTick%7===0)Promise.resolve(sb.rpc('dispatch_due_notifications')).catch(()=>{});if(isAdmin()&&at==='dash')loadDash()}},8000);
 </script>
 </body>
 </html>
