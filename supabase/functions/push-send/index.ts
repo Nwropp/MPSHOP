@@ -82,6 +82,15 @@ function mustEnv(name: string): string {
   return v;
 }
 
+/**
+ * Shared secret สำหรับ POST: ถ้าตั้ง env PUSH_DRAIN_SECRET ไว้ จะบังคับ header x-mpshop-key
+ * (ฝั่งฐานข้อมูลส่งมาให้เองจาก public.push_runtime.drain_secret) ถ้าไม่ตั้ง จะเปิดเหมือนเดิม
+ * เพื่อไม่ให้คิวหยุดส่งระหว่างที่ยังไม่ได้ redeploy
+ */
+function drainSecret(): string {
+  return env("PUSH_DRAIN_SECRET").trim();
+}
+
 /* ---------- HKDF ---------- */
 async function hkdf(salt: Uint8Array, ikm: Uint8Array, info: Uint8Array, len: number): Promise<Uint8Array> {
   const key = await crypto.subtle.importKey("raw", ikm, "HKDF", false, ["deriveBits"]);
@@ -277,12 +286,17 @@ export async function handler(req: Request): Promise<Response> {
   try {
     if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: { "Access-Control-Allow-Origin": "*" } });
     if (req.method === "GET") {
-      // เรียกครั้งแรกจะสร้างกุญแจ VAPID ให้เอง (ใช้ตรวจสถานะและดึง public key)
+      // เรียกครั้งแรกจะสร้างกุญแจ VAPID ให้เอง — ไม่คืนสถานะคิวให้คนนอกแล้ว
       const keys = await vapidKeys();
-      const cfg = await rpc("push_admin_state", {});
-      return json({ ok: true, service: "mpshop-push", vapid_public_key: keys.pub, queue: cfg });
+      return json({ ok: true, service: "mpshop-push", vapid_public_key: keys.pub });
     }
     if (req.method !== "POST") return json({ ok: false, error: "method_not_allowed" }, 405);
+
+    const need = drainSecret();
+    if (need && req.headers.get("x-mpshop-key") !== need) {
+      return json({ ok: false, error: "unauthorized" }, 401);
+    }
+
     const started = Date.now();
     const res = await drain();
     return json({ ok: true, ...res, ms: Date.now() - started });

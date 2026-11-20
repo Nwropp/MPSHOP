@@ -6,6 +6,10 @@
 <meta name="theme-color" content="#ffffff">
 <title>MPSHOP - บริการรับฟาร์ม Genshin Impact</title>
 <link rel="icon" type="image/png" href="icon-192.png">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="MPSHOP">
 <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <style>
@@ -374,11 +378,20 @@ tr.me td{background:var(--soft)}.warn{background:var(--warnbg);color:var(--warn)
 <div class="tabs"><button id="t-in" onclick="tab('in')">เข้าสู่ระบบ</button><button id="t-up" class="g" onclick="tab('up')">สมัครสมาชิก</button></div>
 <div id="f-name" class="hide"><label class="l">ชื่อที่ใช้เรียก</label><input id="a-name" maxlength="40"></div>
 <label class="l">อีเมล</label><input id="a-email" type="email" autocomplete="email">
-<label class="l">รหัสผ่าน (อย่างน้อย 6 ตัว)</label><input id="a-pass" type="password" autocomplete="current-password">
+<label class="l">รหัสผ่าน (อย่างน้อย 8 ตัว)</label><input id="a-pass" type="password" autocomplete="current-password">
 <button id="a-go" style="width:100%;margin-top:14px" onclick="doAuth()">เข้าสู่ระบบ</button>
+<button id="a-forgot" class="g" style="width:100%;margin-top:8px" onclick="forgotPassword()">ลืมรหัสผ่าน?</button>
 <div class="orsep"><span>หรือ</span></div>
 <button class="g" id="a-google" style="width:100%;margin-top:10px;display:flex;align-items:center;justify-content:center;gap:9px" onclick="googleAuth()"><svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.5l6.7-6.7C35.6 2.5 30.2 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.8 6.1C12.2 13.4 17.6 9.5 24 9.5z"/><path fill="#4285F4" d="M46.1 24.6c0-1.6-.1-2.8-.4-4.1H24v8.4h12.6c-.3 2.1-1.6 5.2-4.7 7.3l7.6 5.9c4.5-4.2 6.6-10.3 6.6-17.5z"/><path fill="#FBBC05" d="M10.4 28.7A14.6 14.6 0 0 1 9.6 24c0-1.6.3-3.2.8-4.7l-7.8-6.1A24 24 0 0 0 0 24c0 3.9.9 7.5 2.6 10.8l7.8-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 12-2.1 16-5.9l-7.6-5.9c-2 1.4-4.8 2.4-8.4 2.4-6.4 0-11.8-3.9-13.6-9.9l-7.8 6.1C6.5 42.6 14.6 48 24 48z"/></svg> เข้าสู่ระบบด้วย Google</button>
+<button id="a-discord" class="g hide" style="width:100%;margin-top:8px;display:flex;align-items:center;justify-content:center;gap:9px" onclick="discordAuth()"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="#5865F2" d="M20.3 4.4A19.8 19.8 0 0 0 15.4 3l-.3.6a16 16 0 0 1 4.3 1.5 15.9 15.9 0 0 0-13.5 0A16 16 0 0 1 10.2 3.6L9.9 3a19.8 19.8 0 0 0-4.9 1.4C1.6 9.2.7 13.8 1.2 18.4a19.9 19.9 0 0 0 6 3l.8-1.3c-.8-.3-1.6-.7-2.4-1.2l.6-.4a14.2 14.2 0 0 0 11.6 0l.6.4c-.8.5-1.6.9-2.4 1.2l.8 1.3a19.9 19.9 0 0 0 6-3c.6-5.3-.8-9.8-2.5-13zM8.7 15.6c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.9.9 1.8 2c0 1.1-.8 2-1.8 2zm6.6 0c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.9.9 1.8 2c0 1.1-.8 2-1.8 2z"/></svg> เข้าสู่ระบบด้วย Discord</button>
 <button class="g" style="width:100%;margin-top:8px" onclick="closeAuth()">ปิด</button></div></div>
+<div id="reset" class="modal hide" onclick="if(event.target===this)this.classList.add('hide')"><div class="card">
+<h3 style="margin:0 0 4px">ตั้งรหัสผ่านใหม่</h3>
+<div class="mut">บัญชี <b id="reset-email"></b></div>
+<label class="l">รหัสผ่านใหม่ (อย่างน้อย 8 ตัว)</label><input id="reset-pass" type="password" autocomplete="new-password">
+<button id="reset-go" style="width:100%;margin-top:14px" onclick="saveNewPassword()">บันทึกรหัสผ่านใหม่</button>
+<div class="mut" id="reset-hint" style="margin-top:8px">ลิงก์นี้ใช้ได้ครั้งเดียว หากหมดอายุให้กด "ลืมรหัสผ่าน" ใหม่</div>
+</div></div>
 <div id="od" class="modal hide" onclick="if(event.target===this)this.classList.add('hide')"><div class="card" id="odb" style="max-height:90vh;overflow:auto"></div></div>
 <div id="cpm" class="modal hide" onclick="if(event.target===this)this.classList.add('hide')"><div class="card" id="cpb"></div></div>
 <div id="toast"></div>
@@ -451,6 +464,59 @@ async function googleAuth(){
   }
   setTimeout(()=>{if(b)b.disabled=false},5000);   // ถ้าไม่ได้ถูกพาออกไป ให้กดซ้ำได้
 }
+/* ---------- ลืมรหัสผ่าน / ตั้งรหัสผ่านใหม่ ---------- */
+async function forgotPassword(){
+  const email=($('a-email').value||'').trim().toLowerCase();
+  if(!/^[^@]+@[^@]+\.[^@]+$/.test(email))return toast('กรอกอีเมลก่อนกด "ลืมรหัสผ่าน"');
+  const b=$('a-forgot');if(b)b.disabled=true;
+  try{
+    const{error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:authRedirect()});
+    if(error)throw error;
+    closeAuth();
+    toast('ถ้ามีบัญชีนี้อยู่ ระบบได้ส่งลิงก์ตั้งรหัสผ่านใหม่ไปที่อีเมลแล้ว');
+  }catch(e){
+    toast('ส่งลิงก์ไม่สำเร็จ: '+((e&&e.message)||e));
+  }
+  if(b)b.disabled=false;
+}
+function openReset(u){
+  $('auth').classList.add('hide');
+  $('reset').classList.remove('hide');
+  if($('reset-email'))$('reset-email').textContent=(u&&u.email)||'';
+  if($('reset-pass'))$('reset-pass').value='';
+}
+async function saveNewPassword(){
+  const p=($('reset-pass').value||'');
+  if(p.length<8)return toast('รหัสผ่านต้องมีอย่างน้อย 8 ตัว');
+  const b=$('reset-go');if(b)b.disabled=true;
+  const{error}=await sb.auth.updateUser({password:p});
+  if(b)b.disabled=false;
+  if(error)return toast('บันทึกไม่สำเร็จ: '+error.message);
+  $('reset').classList.add('hide');
+  try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}
+  toast('ตั้งรหัสผ่านใหม่แล้ว');
+  try{const r=await sb.auth.getSession();const s=r&&r.data&&r.data.session;if(s&&s.user)await setUser(s.user)}catch(e){}
+}
+/* ---------- Discord OAuth (ปุ่มจะแสดงเมื่อเปิด provider ใน Supabase แล้ว) ---------- */
+async function providerReady(name){
+  try{const r=await fetch(SB_URL+'/auth/v1/settings',{headers:{apikey:SB_KEY}});const j=await r.json();return !!(j&&j.external&&j.external[name])}catch(e){return false}
+}
+async function syncProviders(){
+  try{if(await providerReady('discord'))$('a-discord').classList.remove('hide')}catch(e){}
+}
+async function discordAuth(){
+  const b=$('a-discord');if(b&&b.disabled)return;if(b)b.disabled=true;
+  if(!(await providerReady('discord'))){if(b)b.disabled=false;return toast('ยังไม่ได้เปิด Discord Login ใน Supabase')}
+  try{
+    const{error}=await sb.auth.signInWithOAuth({provider:'discord',options:{redirectTo:authRedirect()}});
+    if(error)throw error;
+  }catch(e){
+    if(b)b.disabled=false;
+    toast('เข้าสู่ระบบด้วย Discord ไม่สำเร็จ: '+((e&&e.message)||e));
+    return;
+  }
+  setTimeout(()=>{if(b)b.disabled=false},5000);
+}
 function syncProfileMenu(){
   const nm=memberName();
   if($('pmname'))$('pmname').textContent=nm||'สมาชิก';
@@ -485,15 +551,15 @@ function tab(m){mode=m;$('t-in').className=m==='in'?'':'g';$('t-up').className=m
 async function doAuth(){
   const email=$('a-email').value.replace(/[\s\u200B-\u200F\u202A-\u202E\u2060\uFEFF]/g,'').toLowerCase(),password=$('a-pass').value;
   if(!/^[^@]+@[^@]+\.[^@]+$/.test(email))return toast('รูปแบบอีเมลไม่ถูกต้อง');
-  if(password.length<6)return toast('รหัสผ่านต้องมีอย่างน้อย 6 ตัว');
+  if(password.length<8)return toast('รหัสผ่านต้องมีอย่างน้อย 8 ตัว');
   const go=$('a-go');if(!go||go.disabled)return;
   go.disabled=true;
   try{
     const r=mode==='in'?await sb.auth.signInWithPassword({email,password}):await sb.auth.signUp({email,password,options:{data:{name:$('a-name').value.trim()}}});
     if(!r||r.error)return toast((r&&r.error&&r.error.message)||'เข้าสู่ระบบไม่สำเร็จ');
     if(mode==='up'&&!r.data.session){
-      const l=await sb.auth.signInWithPassword({email,password});
-      if(l.error)return toast('สมัครแล้ว แต่เข้าสู่ระบบไม่ได้: '+l.error.message);
+      closeAuth();
+      return toast('สมัครแล้ว — เปิดลิงก์ยืนยันในอีเมลก่อนเข้าสู่ระบบ');
     }
     closeAuth();toast('ยินดีต้อนรับ');
   }catch(e){
@@ -523,7 +589,10 @@ async function setUser(u){
   loadQueue();loadOrders();loadMine();loadNotifs();loadCoupons();if(me){pushSync();pushOpenFromUrl()}else{pushLoad()}if(isAdmin()&&location.hash==='#admin'&&at==='dash')loadDash();else if(isStaff()&&location.hash==='#admin')loadMy();route();
 }
 /* Supabase ยิง INITIAL_SESSION ตอนเปิดหน้า (แม้ไม่มี session) — ข้ามถ้าผู้ใช้คนเดิมอยู่แล้ว กันการโหลดซ้ำชุดใหญ่ */
-sb.auth.onAuthStateChange((_e,s)=>setTimeout(()=>{const u=(s&&s.user)||null;if(((u&&u.id)||null)!==((me&&me.id)||null))setUser(u)},0));
+sb.auth.onAuthStateChange((ev,s)=>{
+  if(ev==='PASSWORD_RECOVERY'){openReset(s&&s.user);return}
+  setTimeout(()=>{const u=(s&&s.user)||null;if(((u&&u.id)||null)!==((me&&me.id)||null))setUser(u)},0);
+});
 
 /* ---------- หน้าบ้าน ---------- */
 async function loadCfg(quiet){
@@ -664,7 +733,7 @@ function calc(){
 }
 async function loadQueue(quiet){
   if(quiet&&_hold('q',12000))return;
-  const{data}=await sb.from('public_queue').select('*').order('no');queue=data||[];_mark('q');
+  const{data}=await sb.rpc('public_queue_list',{p_limit:50});queue=Array.isArray(data)?data:[];_mark('q');
   $('pq').innerHTML=queue.length?queue.map(q=>`<tr class="${q.mine?'me':''}"><td><b>#${String(q.no).padStart(3,'0')}</b></td><td>${esc(q.name)}${q.mine?' <span class="mut">(คุณ)</span>':''}</td><td>${esc(q.items)}</td><td><span class="st ${esc(q.status)}">${ST[q.status]||''}</span></td></tr>`).join(''):'<tr><td colspan="4" class="mut">ยังไม่มีคิว</td></tr>';
 }
 const ERR={promo_not_found:'ไม่พบโค้ดนี้',promo_expired:'โค้ดหมดอายุหรือยังไม่เริ่มใช้งาน',promo_used_up:'โค้ดนี้ถูกใช้ครบสิทธิ์แล้ว',promo_already_used:'คุณใช้โค้ดนี้ครบสิทธิ์แล้ว',promo_min_total:'ยอดสั่งซื้อยังไม่ถึงขั้นต่ำของโค้ดนี้',login_required:'กรุณาเข้าสู่ระบบก่อนจอง',missing_contact:'กรุณากรอกชื่อและช่องทางติดต่อ',invalid_gems:'จำนวน Primogems ไม่ถูกต้อง',empty_order:'กรุณาเลือกบริการอย่างน้อย 1 รายการ',duplicate_order:'คุณเพิ่งจองรายการเดียวกันไป กรุณารอสักครู่หรือดูในตารางคิว',too_many_active_orders:'คุณมีงานค้างครบ 5 คิวแล้ว กรุณารอให้งานเดิมเสร็จก่อน'};
@@ -822,7 +891,7 @@ function renderDash(){
 function renderQ(){
   const q=$('fq').value.trim().toLowerCase().replace('#',''),s=$('fs').value,f=$('ff').value,t=$('ft').value;
   const L=orders.filter(o=>(!s||o.status===s)&&(!f||bkk(o.created_at)>=f)&&(!t||bkk(o.created_at)<=t)&&(!q||String(o.no).padStart(3,'0').includes(q)||String(o.name).toLowerCase().includes(q)));
-  $('aq').innerHTML=L.length?L.map(o=>`<tr><td><b>${no3(o.no)}</b><div class="mut">${esc(dt(o.created_at))}</div></td><td><b>${esc(o.name)}</b><div class="mut">${esc(o.channel)}: ${esc(o.contact)}</div></td><td>${esc(o.items)}</td><td><b>${fmt(o.total)}</b><div>${payBadge(o)}</div></td><td><select style="width:auto;margin:0" onchange="setSt('${o.id}',this.value)">${Object.keys(ST).map(k=>`<option value="${k}" ${o.status===k?'selected':''}>${ST[k]}</option>`).join('')}</select></td><td><select style="width:auto;margin:0" onchange="setAssign('${o.id}',this.value)"><option value="">-</option>${team.map(m=>`<option value="${m.id}" ${o.assigned_to===m.id?'selected':''}>${esc(m.name||'ไม่มีชื่อ')}</option>`).join('')}</select></td><td style="white-space:nowrap"><button class="g" onclick="openAdminOd('${o.id}')">รายละเอียด</button> <button class="g" onclick="delQ(this,'${o.id}')">ลบ</button></td></tr>`).join(''):'<tr><td colspan="7" class="mut">ไม่พบคิว</td></tr>';
+  $('aq').innerHTML=L.length?L.map(o=>`<tr><td><b>${no3(o.no)}</b><div class="mut">${esc(dt(o.created_at))}</div></td><td><b>${esc(o.name)}</b><div class="mut">${esc(o.channel)}: ${esc(o.contact)}</div></td><td>${esc(o.items)}</td><td><b>${fmt(o.total)}</b><div>${payBadge(o)}</div></td><td><select style="width:auto;margin:0" onchange="setSt('${o.id}',this.value)">${Object.keys(ST).map(k=>`<option value="${k}" ${o.status===k?'selected':''}>${ST[k]}</option>`).join('')}</select></td><td><select style="width:auto;margin:0" onchange="setAssign('${o.id}',this.value)"><option value="">-</option>${team.map(m=>`<option value="${m.id}" ${o.assigned_to===m.id?'selected':''}>${esc(m.name||'ไม่มีชื่อ')}</option>`).join('')}</select></td><td style="white-space:nowrap"><button class="g" onclick="openAdminOd('${o.id}')">รายละเอียด</button> <button class="g" onclick="delQ(this,'${o.id}')">ยกเลิก</button></td></tr>`).join(''):'<tr><td colspan="7" class="mut">ไม่พบคิว</td></tr>';
 }
 async function setSt(id,v){const{error}=await sb.from('orders').update({status:v}).eq('id',id);toast(error?error.message:'อัปเดตสถานะแล้ว');await loadOrders();loadQueue();if(at==='dash')loadDash()}
 async function setAssign(id,v){const{error}=await sb.from('orders').update({assigned_to:v||null}).eq('id',id);toast(error?error.message:'มอบหมายงานแล้ว');loadOrders()}
@@ -861,8 +930,10 @@ async function cancelO(b,id){
   await setSt(id,'cancelled');$('od').classList.add('hide');
 }
 async function delQ(b,id){
-  if(!b.dataset.s){b.dataset.s=1;b.textContent='แน่ใจ?';b.className='r';return}
-  const{error}=await sb.from('orders').delete().eq('id',id);toast(error?error.message:'ลบคิวแล้ว');loadOrders();loadQueue();
+  if(!b.dataset.s){b.dataset.s=1;b.textContent='ยืนยันยกเลิก?';b.className='r';return}
+  const{error}=await sb.from('orders').update({status:'cancelled'}).eq('id',id);
+  toast(error?error.message:'ยกเลิกคิวแล้ว (ประวัติการเงินยังอยู่)');
+  loadOrders();loadQueue();if(at==='dash')loadDash();
 }
 /* ลูกค้า */
 const cavMap={},cnick={};
@@ -2110,7 +2181,7 @@ const lblSet=new Set();let lblQueued=false;
 new MutationObserver(ms=>{ms.forEach(m=>{const t=m.target.closest&&m.target.closest('table');if(t)lblSet.add(t)});if(lblQueued||!lblSet.size)return;lblQueued=true;requestAnimationFrame(()=>{lblQueued=false;lblSet.forEach(lbl);lblSet.clear()})}).observe(document.body,{childList:true,subtree:true});
 /* Google คืน error มาทาง hash (เช่น ผู้ใช้กดยกเลิก) — แจ้งให้รู้และล้าง hash ออก */
 try{const hp=new URLSearchParams(location.hash.replace(/^#/,''));const oe=hp.get('error_description')||hp.get('error');if(oe){toast('เข้าสู่ระบบด้วย Google ไม่สำเร็จ: '+oe);history.replaceState(null,'',location.pathname+location.search)}}catch(e){}
-renderServices();route();loadCfg();loadQueue();loadReviews();loadCoupons();pushLoad();pushOpenFromUrl();
+renderServices();route();loadCfg();loadQueue();loadReviews();loadCoupons();pushLoad();pushOpenFromUrl();syncProviders();
 try{sb.auth.getSession().then(r=>{const s=r&&r.data&&r.data.session;if(s&&s.user&&!me)setUser(s.user)}).catch(()=>{})}catch(e){}
 /* กลับมาที่แท็บ: ตรวจ session จริงอีกครั้ง (รับมือ session หมดอายุระหว่างพักหน้า) */
 document.addEventListener('visibilitychange',()=>{
