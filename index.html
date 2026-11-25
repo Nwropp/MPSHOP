@@ -302,7 +302,7 @@ tr.me td{background:var(--soft)}.warn{background:var(--warnbg);color:var(--warn)
 <section id="p-th" class="pane hide"><div class="card"><h2>ประวัติและค่าตอบแทนของฉัน</h2><div id="ths" class="stats"></div><div class="tw"><table class="cards"><thead><tr><th>คิว</th><th>รายการ</th><th>เสร็จเมื่อ</th><th>ค่าตอบแทน</th><th>สถานะ</th></tr></thead><tbody id="thl"></tbody></table></div></div></section>
 <section id="p-set" class="pane hide"><div class="card"><h2>ตั้งค่าร้าน: ช่องทางติดต่อ</h2><div class="mut">แสดงในหน้าร้านเฉพาะช่องที่กรอก (ลิงก์ต้องขึ้นต้นด้วย https://)</div>
 <div class="two"><div><label class="l">Discord</label><input id="sc-d" maxlength="100"></div><div><label class="l">Facebook</label><input id="sc-f" maxlength="200"></div></div>
-<label class="l">LINE</label><input id="sc-l" maxlength="100"><button style="margin-top:10px" onclick="saveShop()">บันทึกช่องทางติดต่อ</button></div><div class="card"><h2>แจ้งเตือน Discord</h2><div class="mut">ส่งสรุปเหตุการณ์ของออเดอร์เข้าช่อง Discord ของร้าน (ไม่ส่งชื่อหรือช่องทางติดต่อลูกค้า) สร้าง Webhook ได้ที่ Discord → Server Settings → Integrations</div>
+<label class="l">LINE</label><input id="sc-l" maxlength="100"><button style="margin-top:10px" onclick="saveShop()">บันทึกช่องทางติดต่อ</button></div><div class="card"><h2>แจ้งเตือน Discord</h2><div class="mut">ส่งสรุปเหตุการณ์ของออเดอร์เข้าช่อง Discord ของร้าน และแจ้ง @everyone เมื่อมีลูกค้าจองคิวใหม่ (ระบุชื่อลูกค้า รายการ และราคา) สร้าง Webhook ได้ที่ Discord → Server Settings → Integrations</div>
 <label class="l">Webhook URL <span id="dw-st" class="mut"></span></label><input id="dw" type="password" autocomplete="off" placeholder="https://discord.com/api/webhooks/...">
 <label style="display:flex;gap:8px;align-items:center;margin-top:10px"><input id="dw-on" type="checkbox" style="width:auto;margin:0"> เปิดใช้งาน</label>
 <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"><button onclick="saveHook()">บันทึก</button><button class="g" onclick="testHook()">ส่งข้อความทดสอบ</button><button class="g" onclick="clearHook(this)">ลบ Webhook</button></div></div>
@@ -580,34 +580,6 @@ async function book(){
     return toast(ERR[error.message]||'จองไม่สำเร็จ: '+error.message);
   }
   toast('จองคิว #'+String(data).padStart(3,'0')+' สำเร็จ แอดมินจะติดต่อกลับ');
-  // ─── เรียก Discord @everyone notification ───\
-  const orderId = String(data).padStart(3, '0'); // data is already the order number string\
-  const customerName = name;
-  // รวบรวมชื่อบริการที่เลือก (จาก c.lines)
-  const serviceNames = c.lines
-    .map(l => cfg.services.find(s => s.id === l.id)?.name || "บริการ")
-    .filter((s, i, arr) => arr.indexOf(s) === i) // ลบซ้ำ
-    .join(", ");
-  const price = fmt(c.total); // ใช้รูปแบบที่แสดงผลแล้ว
-  const bookedAt = new Date().toLocaleString("th-TH");
-  
-  // เรียกใช้ Discord notification ผ่าน RPC
-  try {
-    const { error: discordError } = await sb.rpc("discord_send_notification", {
-      p_order_id: orderId,
-      p_customer_name: customerName,
-      p_service_name: serviceNames,
-      p_price: price,
-      p_booked_at: bookedAt
-    });
-    if (discordError && discordError !== "already_sent") {
-      console.warn("Discord notification failed:", discordError);
-      // ไม่ให้การล้มเหลวของ Discord ส่งผลต่อการจอง
-    }
-  } catch (e) {
-    console.error("Discord RPC error:", e);
-  }
-  // ────────────────────────────────────────
   sel.clear();cs={};$('gem').value=1600;discCode='';promo=null;cpn=null;cquote=null;$('promo').value='';renderServices();loadQueue();loadCoupons();loadMine().then(()=>$('mine').scrollIntoView());
 }
 
