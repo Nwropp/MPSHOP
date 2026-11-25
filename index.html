@@ -325,7 +325,11 @@ tr.me td{background:var(--soft)}.warn{background:var(--warnbg);color:var(--warn)
 <label class="l">LINE</label><input id="sc-l" maxlength="100"><button style="margin-top:10px" onclick="saveShop()">บันทึกช่องทางติดต่อ</button></div><div class="card"><h2>แจ้งเตือน Discord</h2><div class="mut">ส่งสรุปเหตุการณ์ของออเดอร์เข้าช่อง Discord ของร้าน และแจ้ง @everyone เมื่อมีลูกค้าจองคิวใหม่ (ระบุชื่อลูกค้า รายการ และราคา) สร้าง Webhook ได้ที่ Discord → Server Settings → Integrations</div>
 <label class="l">Webhook URL <span id="dw-st" class="mut"></span></label><input id="dw" type="password" autocomplete="off" placeholder="https://discord.com/api/webhooks/...">
 <label style="display:flex;gap:8px;align-items:center;margin-top:10px"><input id="dw-on" type="checkbox" style="width:auto;margin:0"> เปิดใช้งาน</label>
-<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"><button onclick="saveHook()">บันทึก</button><button class="g" onclick="testHook()">ส่งข้อความทดสอบ</button><button class="g" onclick="clearHook(this)">ลบ Webhook</button></div></div>
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"><button onclick="saveHook()">บันทึก</button><button class="g" onclick="testHook()">ส่งข้อความทดสอบ</button><button class="g" onclick="clearHook(this)">ลบ Webhook</button></div></div><div class="card"><h2>แจ้งเตือน Telegram</h2><div class="mut">ส่งข้อความเข้ากลุ่ม Telegram ทุกครั้งที่มีลูกค้าจองคิวใหม่ (บอทต้องอยู่ในกลุ่มและมีสิทธิ์ส่งข้อความ) Bot Token เก็บในฐานข้อมูลหลังบ้าน ฝั่งลูกค้าไม่เคยได้รับและหน้าตั้งค่าไม่แสดงค่ากลับมา</div>
+<label class="l">Chat ID <span id="tg-st" class="mut"></span></label><input id="tg-chat" inputmode="numeric" maxlength="32" autocomplete="off" placeholder="-5177687099">
+<label class="l">Bot Token <span id="tg-tk" class="mut"></span></label><input id="tg-token" type="password" autocomplete="off" placeholder="123456789:AA...">
+<label style="display:flex;gap:8px;align-items:center;margin-top:10px"><input id="tg-on" type="checkbox" style="width:auto;margin:0"> เปิดใช้งาน</label>
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"><button onclick="saveTg()">บันทึก</button><button class="g" onclick="testTg()">ส่งข้อความทดสอบ</button><button class="g" onclick="clearTg(this)">ลบ Token</button></div></div>
 </section>
 <section id="p-not" class="pane hide">
 <div class="card"><h2>ศูนย์แจ้งเตือนลูกค้า</h2><div class="sub">แจ้งเตือนทุกใบถูกบันทึกจริงและผูกกับออเดอร์/แคมเปญ ไม่ใช่ข้อความหลอกบนหน้าจอ</div><div id="nd-stats" class="stats" style="margin-top:12px"></div></div>
@@ -1393,7 +1397,7 @@ async function doGrant(id){
   toast(`แจกคูปองให้ ${Number(data).toLocaleString()} บัญชี`);$('od').classList.add('hide');loadCpAdm();
 }
 /* แจ้งเตือน Discord (แอดมิน) */
-async function loadHook(){const{data}=await sb.from('integrations').select('discord_webhook,discord_enabled').eq('id',1).maybeSingle();hook=data;renderHook()}
+async function loadHook(){const{data}=await sb.from('integrations').select('discord_webhook,discord_enabled').eq('id',1).maybeSingle();hook=data;renderHook();loadTg()}
 function renderHook(){const h=hook||{};$('dw-st').textContent=h.discord_webhook?'(ตั้งค่าแล้ว เว้นว่างเพื่อใช้ค่าเดิม)':'(ยังไม่ได้ตั้งค่า)';$('dw-on').checked=!!h.discord_enabled}
 async function saveHook(){
   const v=$('dw').value.trim(),p={discord_enabled:$('dw-on').checked};
@@ -1405,6 +1409,26 @@ async function testHook(){const{error}=await sb.rpc('admin_test_webhook');toast(
 async function clearHook(b){
   if(!b.dataset.s){b.dataset.s=1;b.textContent='ยืนยันลบ?';b.className='r';return}
   const{error}=await sb.from('integrations').update({discord_webhook:null,discord_enabled:false}).eq('id',1);toast(error?error.message:'ลบ Webhook แล้ว');loadHook();
+}
+/* แจ้งเตือน Telegram (แอดมิน) — token เป็นแบบเขียนอย่างเดียว ไม่ถูกอ่านกลับมา */
+const TGERR={forbidden:'เฉพาะแอดมินเท่านั้น',invalid_token:'Token ไม่ถูกต้อง (รูปแบบ 123456:AA...)',invalid_chat_id:'Chat ID ไม่ถูกต้อง (ตัวเลข อาจมี - นำหน้า)',telegram_not_configured:'กรุณากรอก Token และ Chat ID ก่อนเปิดใช้งาน',telegram_send_failed:'ส่งไม่สำเร็จ ตรวจ Token และ Chat ID อีกครั้ง'};
+const tgErr=e=>TGERR[e&&e.message]||(e&&e.message)||'ทำรายการไม่สำเร็จ';
+function renderTg(s){s=s||{};$('tg-st').textContent=s.chat_id?'(กลุ่ม '+s.chat_id+')':'(ยังไม่ได้ตั้งค่า)';$('tg-tk').textContent=s.has_token?'(ตั้งค่าแล้ว เว้นว่างเพื่อใช้ค่าเดิม)':'(ยังไม่ได้ตั้งค่า)';$('tg-chat').value=s.chat_id||'';$('tg-on').checked=s.enabled!==false}
+async function loadTg(){const{data,error}=await sb.rpc('admin_telegram_status');if(!error)renderTg(data)}
+async function saveTg(){
+  const chat=$('tg-chat').value.trim(),tok=$('tg-token').value.trim(),on=$('tg-on').checked;
+  if(!/^-?\d{4,20}$/.test(chat))return toast('Chat ID ไม่ถูกต้อง (ตัวเลข อาจมี - นำหน้า)');
+  if(tok&&!/^\d{5,}:[A-Za-z0-9_-]{20,}$/.test(tok))return toast('Token ไม่ถูกต้อง (รูปแบบ 123456:AA...)');
+  if(on&&!tok&&!$('tg-tk').textContent.startsWith('(ตั้งค่าแล้ว'))return toast('กรุณาใส่ Bot Token ก่อนเปิดใช้งาน');
+  const{data,error}=await sb.rpc('admin_set_telegram',{p_token:tok||null,p_chat_id:chat,p_enabled:on});
+  if(error)return toast(tgErr(error));
+  $('tg-token').value='';renderTg(data);toast('บันทึกการแจ้งเตือน Telegram แล้ว');
+}
+async function testTg(){const{error}=await sb.rpc('admin_test_telegram');toast(error?tgErr(error):'ส่งข้อความทดสอบแล้ว ตรวจในกลุ่ม Telegram')}
+async function clearTg(b){
+  if(!b.dataset.s){b.dataset.s=1;b.textContent='ยืนยันลบ Token?';b.className='r';return}
+  b.dataset.s='';b.textContent='ลบ Token';b.className='g';
+  const{error}=await sb.rpc('admin_clear_telegram');toast(error?tgErr(error):'ลบ Token และปิดการแจ้งเตือนแล้ว');loadTg();
 }
 /* ---------- แบนเนอร์สไลด์ ---------- */
 function getBanners(){return Array.isArray(cfg.banners)?cfg.banners:(cfg.heroImage?[{id:'legacy',image:cfg.heroImage,active:true}]:[])}
