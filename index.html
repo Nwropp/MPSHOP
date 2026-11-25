@@ -580,6 +580,34 @@ async function book(){
     return toast(ERR[error.message]||'จองไม่สำเร็จ: '+error.message);
   }
   toast('จองคิว #'+String(data).padStart(3,'0')+' สำเร็จ แอดมินจะติดต่อกลับ');
+  // ─── เรียก Discord @everyone notification ───\
+  const orderId = String(data).padStart(3, '0'); // data is already the order number string\
+  const customerName = name;
+  // รวบรวมชื่อบริการที่เลือก (จาก c.lines)
+  const serviceNames = c.lines
+    .map(l => cfg.services.find(s => s.id === l.id)?.name || "บริการ")
+    .filter((s, i, arr) => arr.indexOf(s) === i) // ลบซ้ำ
+    .join(", ");
+  const price = fmt(c.total); // ใช้รูปแบบที่แสดงผลแล้ว
+  const bookedAt = new Date().toLocaleString("th-TH");
+  
+  // เรียกใช้ Discord notification ผ่าน RPC
+  try {
+    const { error: discordError } = await sb.rpc("discord_send_notification", {
+      p_order_id: orderId,
+      p_customer_name: customerName,
+      p_service_name: serviceNames,
+      p_price: price,
+      p_booked_at: bookedAt
+    });
+    if (discordError && discordError !== "already_sent") {
+      console.warn("Discord notification failed:", discordError);
+      // ไม่ให้การล้มเหลวของ Discord ส่งผลต่อการจอง
+    }
+  } catch (e) {
+    console.error("Discord RPC error:", e);
+  }
+  // ────────────────────────────────────────
   sel.clear();cs={};$('gem').value=1600;discCode='';promo=null;cpn=null;cquote=null;$('promo').value='';renderServices();loadQueue();loadCoupons();loadMine().then(()=>$('mine').scrollIntoView());
 }
 
